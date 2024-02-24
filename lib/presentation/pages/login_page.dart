@@ -62,11 +62,8 @@ class LoginPage extends StatelessWidget {
                   child: RichText(
                     text: TextSpan(
                       text: 'Forgot Password?',
-                      style: TextStyle(color: Colors.orange),
-                      recognizer: TapGestureRecognizer()
-                        ..onTap = () {
-                          print('Forgot Password pressed');
-                        },
+                      style: const TextStyle(color: Colors.orange),
+                      recognizer: TapGestureRecognizer()..onTap = () {},
                     ),
                   ),
                 ),
@@ -93,11 +90,8 @@ class LoginPage extends StatelessWidget {
                         ),
                         TextSpan(
                           text: 'Sign Up',
-                          style: TextStyle(color: Colors.orange),
-                          recognizer: TapGestureRecognizer()
-                            ..onTap = () {
-                              print('pressed Sign Up link');
-                            },
+                          style: const TextStyle(color: Colors.orange),
+                          recognizer: TapGestureRecognizer()..onTap = () {},
                         ),
                       ],
                     ),
