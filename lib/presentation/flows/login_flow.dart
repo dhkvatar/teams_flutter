@@ -1,8 +1,8 @@
 import 'package:flutter/widgets.dart';
 import 'package:go_router/go_router.dart';
 import 'package:injectable/injectable.dart';
-import 'package:teams/app/navigation/home_screen.dart';
 import 'package:teams/core/navigation/routing_flow.dart';
+import 'package:teams/presentation/pages/login_page.dart';
 
 @lazySingleton
 class LoginFlow extends RoutingFlow {
@@ -13,7 +13,7 @@ class LoginFlow extends RoutingFlow {
       path: startingRoutePath,
       name: startingRoutePath,
       builder: (context, state) {
-        return const HomeScreen();
+        return const LoginPage();
       },
     );
   }
