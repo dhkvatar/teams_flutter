@@ -1,4 +1,4 @@
-import 'package:teams/app.dart';
+import 'package:teams/app/app.dart';
 import 'package:teams/bootstrap.dart';
 
 void main() async {
