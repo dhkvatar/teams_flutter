@@ -13,7 +13,7 @@ class LoginFlow extends RoutingFlow {
       path: startingRoutePath,
       name: startingRoutePath,
       builder: (context, state) {
-        return const LoginPage();
+        return LoginPage();
       },
     );
   }
