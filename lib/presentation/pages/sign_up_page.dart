@@ -1,9 +1,13 @@
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:formz/formz.dart';
+import 'package:go_router/go_router.dart';
+import 'package:teams/app/di/di.dart';
 import 'package:teams/presentation/blocs/sign_up/sign_up_bloc.dart';
 import 'package:teams/presentation/blocs/sign_up/sign_up_event.dart';
 import 'package:teams/presentation/blocs/sign_up/sign_up_state.dart';
+import 'package:teams/presentation/flows/login_flow.dart';
 import 'package:teams/presentation/ui/components/input_textfield.dart';
 import 'package:teams/presentation/ui/components/password_textfield.dart';
 import 'package:teams/presentation/ui/components/submit_button.dart';
@@ -80,9 +84,11 @@ class SignUpPage extends StatelessWidget {
                               style: Theme.of(context)
                                   .textTheme
                                   .titleSmall!
-                                  .copyWith(
-                                    color: Colors.orange,
-                                  ),
+                                  .copyWith(color: Colors.orange),
+                              recognizer: TapGestureRecognizer()
+                                ..onTap = () {
+                                  context.go(getIt<LoginFlow>().loginRoutePath);
+                                },
                             ),
                           ],
                         ),

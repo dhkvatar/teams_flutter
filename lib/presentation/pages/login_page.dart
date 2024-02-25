@@ -2,9 +2,12 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:formz/formz.dart';
+import 'package:go_router/go_router.dart';
+import 'package:teams/app/di/di.dart';
 import 'package:teams/presentation/blocs/login/login_bloc.dart';
 import 'package:teams/presentation/blocs/login/login_event.dart';
 import 'package:teams/presentation/blocs/login/login_state.dart';
+import 'package:teams/presentation/flows/login_flow.dart';
 import 'package:teams/presentation/ui/components/input_textfield.dart';
 import 'package:teams/presentation/ui/components/password_textfield.dart';
 import 'package:teams/presentation/ui/components/submit_button.dart';
@@ -105,8 +108,7 @@ class LoginPage extends StatelessWidget {
                               recognizer: TapGestureRecognizer()
                                 ..onTap = () {
                                   context
-                                      .read<LoginBloc>()
-                                      .add(const LoginSubmitted());
+                                      .go(getIt<LoginFlow>().signUpRoutePath);
                                 },
                             ),
                           ],

@@ -7,10 +7,11 @@ import 'package:teams/core/navigation/routing_flow.dart';
 import 'package:teams/presentation/blocs/login/login_bloc.dart';
 import 'package:teams/presentation/blocs/sign_up/sign_up_bloc.dart';
 import 'package:teams/presentation/pages/login_page.dart';
-// import 'package:teams/presentation/pages/onboarding_page.dart';
+import 'package:teams/presentation/pages/onboarding_page.dart';
 import 'package:teams/presentation/pages/sign_up_page.dart';
 
 const loginPage = 'login';
+const signUpPage = 'signup';
 
 @lazySingleton
 class LoginFlow extends RoutingFlow {
@@ -19,26 +20,30 @@ class LoginFlow extends RoutingFlow {
     return GoRoute(
       parentNavigatorKey: rootNavigatorKey,
       path: startingRoutePath,
-      name: startingRoutePath,
       builder: (context, state) {
-        return BlocProvider(
-          create: (_) => getIt<SignUpBloc>(),
-          child: const SignUpPage(),
-        );
-        // return const OnboardingPage();
+        return const OnboardingPage();
       },
       routes: [
         GoRoute(
           parentNavigatorKey: rootNavigatorKey,
           path: loginPage,
-          name: '$startingRoutePath/$loginPage',
-          pageBuilder: (context, state) => MaterialPage(
+          pageBuilder: (context, state) => MaterialPage<void>(
             child: BlocProvider(
               create: (_) => getIt<LoginBloc>(),
               child: LoginPage(),
             ),
           ),
         ),
+        GoRoute(
+          parentNavigatorKey: rootNavigatorKey,
+          path: signUpPage,
+          pageBuilder: (context, state) => MaterialPage<void>(
+            child: BlocProvider(
+              create: (_) => getIt<SignUpBloc>(),
+              child: const SignUpPage(),
+            ),
+          ),
+        )
       ],
     );
   }
@@ -47,4 +52,6 @@ class LoginFlow extends RoutingFlow {
   String get startingRoutePath => '/onboard';
 
   String get loginRoutePath => '$startingRoutePath/$loginPage';
+
+  String get signUpRoutePath => '$startingRoutePath/$signUpPage';
 }
