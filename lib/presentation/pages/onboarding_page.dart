@@ -83,7 +83,7 @@ class _OnboardingPageState extends State<OnboardingPage> {
                   child: Column(
                     children: [
                       Padding(
-                        padding: EdgeInsets.symmetric(horizontal: 25.0),
+                        padding: const EdgeInsets.symmetric(horizontal: 25.0),
                         child: Text(
                           'Find and build your team',
                           style: Theme.of(context).textTheme.headlineLarge!,
