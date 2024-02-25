@@ -14,6 +14,9 @@ class App extends StatelessWidget {
       title: 'App-${Flavor.appFlavor!.name}',
       routerConfig: router,
       debugShowCheckedModeBanner: Flavor.appFlavor != AppFlavor.prod,
+      theme: ThemeData(
+        useMaterial3: true,
+      ),
     );
   }
 }

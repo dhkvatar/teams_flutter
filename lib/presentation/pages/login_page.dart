@@ -21,19 +21,19 @@ class LoginPage extends StatelessWidget {
               const SizedBox(height: 150),
 
               // Logo or Sign in message
-              const Text(
+              Text(
                 'Sign In',
-                style: TextStyle(fontSize: 32),
+                style: Theme.of(context).textTheme.displaySmall!,
               ),
 
               const SizedBox(height: 25),
 
               Text(
                 'Welcome back!',
-                style: TextStyle(
-                  fontSize: 16,
-                  color: Colors.grey[700],
-                ),
+                style: Theme.of(context)
+                    .textTheme
+                    .titleMedium!
+                    .copyWith(color: Colors.grey.shade700),
               ),
 
               const SizedBox(height: 25),
@@ -62,7 +62,9 @@ class LoginPage extends StatelessWidget {
                   child: RichText(
                     text: TextSpan(
                       text: 'Forgot Password?',
-                      style: const TextStyle(color: Colors.orange),
+                      style: Theme.of(context).textTheme.titleSmall!.copyWith(
+                            color: Colors.orange,
+                          ), //const TextStyle(color: Colors.orange),
                       recognizer: TapGestureRecognizer()..onTap = () {},
                     ),
                   ),
@@ -86,11 +88,17 @@ class LoginPage extends StatelessWidget {
                       children: [
                         TextSpan(
                           text: 'Don\'t have an account? ',
-                          style: TextStyle(color: Colors.grey.shade700),
+                          style: Theme.of(context)
+                              .textTheme
+                              .titleSmall!
+                              .copyWith(color: Colors.grey.shade700),
                         ),
                         TextSpan(
                           text: 'Sign Up',
-                          style: const TextStyle(color: Colors.orange),
+                          style: Theme.of(context)
+                              .textTheme
+                              .titleSmall!
+                              .copyWith(color: Colors.orange),
                           recognizer: TapGestureRecognizer()..onTap = () {},
                         ),
                       ],
