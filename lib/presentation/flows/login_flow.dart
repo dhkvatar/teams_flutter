@@ -5,8 +5,9 @@ import 'package:injectable/injectable.dart';
 import 'package:teams/app/di/di.dart';
 import 'package:teams/core/navigation/routing_flow.dart';
 import 'package:teams/presentation/blocs/login/login_bloc.dart';
+import 'package:teams/presentation/blocs/sign_up/sign_up_bloc.dart';
 import 'package:teams/presentation/pages/login_page.dart';
-// import 'package:teams/presentation/pages/onboarding_page.dart';
+import 'package:teams/presentation/pages/onboarding_page.dart';
 import 'package:teams/presentation/pages/sign_up_page.dart';
 
 const loginPage = 'login';
@@ -20,7 +21,10 @@ class LoginFlow extends RoutingFlow {
       path: startingRoutePath,
       name: startingRoutePath,
       builder: (context, state) {
-        return const SignUpPage();
+        return BlocProvider(
+          create: (_) => getIt<SignUpBloc>(),
+          child: const SignUpPage(),
+        );
         // return const OnboardingPage();
       },
       routes: [
