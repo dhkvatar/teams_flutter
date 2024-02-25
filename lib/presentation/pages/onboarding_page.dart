@@ -1,4 +1,5 @@
 import 'package:dots_indicator/dots_indicator.dart';
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:teams/presentation/ui/components/submit_button.dart';
 
@@ -11,54 +12,116 @@ class OnboardingPage extends StatefulWidget {
 
 class _OnboardingPageState extends State<OnboardingPage> {
   final PageController _pageController = PageController();
+  final _numPages = 3;
+
+  int _currentPageIndex = 0;
+
+  int _nextPosition(int pageIndex) {
+    if (pageIndex == _numPages - 1) {
+      return 0;
+    }
+    return pageIndex + 1;
+  }
+
+  void _updateToNextPage() {
+    setState(() {
+      _currentPageIndex = _nextPosition(_currentPageIndex);
+    });
+    _pageController.animateToPage(
+      _currentPageIndex,
+      duration: const Duration(milliseconds: 100),
+      curve: Curves.easeIn,
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: Column(
         children: [
+          // PageView of images
           Expanded(
             child: PageView(
+              physics: const NeverScrollableScrollPhysics(),
               controller: _pageController,
-              children: const [
-                Center(
-                  child: Text('First page'),
+              children: [
+                Container(
+                  decoration: const BoxDecoration(
+                    image: DecorationImage(
+                      fit: BoxFit.cover,
+                      image: AssetImage('assets/basketball1.jpeg'),
+                    ),
+                  ),
                 ),
-                Center(
-                  child: Text('Second page'),
+                Container(
+                  decoration: const BoxDecoration(
+                    image: DecorationImage(
+                      fit: BoxFit.cover,
+                      image: AssetImage('assets/soccer1.jpeg'),
+                    ),
+                  ),
                 ),
-                Center(
-                  child: Text('Third page'),
+                Container(
+                  decoration: const BoxDecoration(
+                    image: DecorationImage(
+                      fit: BoxFit.cover,
+                      image: AssetImage('assets/golf1.jpeg'),
+                    ),
+                  ),
                 ),
               ],
             ),
           ),
+
+          // Bottom card
           Stack(
             children: [
               Align(
                 alignment: Alignment.bottomCenter,
-                child: Column(
-                  children: [
-                    const Padding(
-                      padding: EdgeInsets.symmetric(horizontal: 25.0),
-                      child: Text('Take a coffee'),
-                    ),
-                    const SizedBox(height: 10),
-                    const Padding(
-                      padding: EdgeInsets.symmetric(horizontal: 25.0),
-                      child: Text(
-                          'Our coffee specialists lets you order a coffee just the way you like it'),
-                    ),
-                    const SizedBox(
-                      height: 10,
-                    ),
-                    DotsIndicator(dotsCount: 3),
-                    const SizedBox(height: 20),
-                    const SubmitButton(buttonText: 'Next'),
-                    const SizedBox(height: 20),
-                    const Text('Skip'),
-                    const SizedBox(height: 50),
-                  ],
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 75.0),
+                  child: Column(
+                    children: [
+                      Padding(
+                        padding: EdgeInsets.symmetric(horizontal: 25.0),
+                        child: Text(
+                          'Find and build your team',
+                          style: Theme.of(context).textTheme.headlineLarge!,
+                        ),
+                      ),
+                      const SizedBox(height: 10),
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 25.0),
+                        child: Text(
+                          'Join a league. Find a team. Build your team.',
+                          style: Theme.of(context).textTheme.titleSmall!,
+                        ),
+                      ),
+                      const SizedBox(
+                        height: 10,
+                      ),
+                      DotsIndicator(
+                        dotsCount: _numPages,
+                        position: _currentPageIndex,
+                      ),
+                      const SizedBox(height: 20),
+                      SubmitButton(
+                        buttonText: 'Next',
+                        onPressed: _updateToNextPage,
+                      ),
+                      const SizedBox(height: 20),
+                      RichText(
+                        text: TextSpan(
+                          text: 'Skip',
+                          style: Theme.of(context)
+                              .textTheme
+                              .labelLarge!
+                              .copyWith(color: Colors.orange),
+                          recognizer: TapGestureRecognizer()..onTap = () {},
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
               ),
             ],

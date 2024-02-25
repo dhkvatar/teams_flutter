@@ -2,8 +2,11 @@ import 'package:flutter/material.dart';
 
 class SubmitButton extends StatelessWidget {
   final String buttonText;
+  final VoidCallback? onPressed;
+
   const SubmitButton({
     super.key,
+    this.onPressed,
     required this.buttonText,
   });
 
@@ -15,16 +18,20 @@ class SubmitButton extends StatelessWidget {
         children: [
           Expanded(
             child: ElevatedButton(
-              onPressed: () {},
+              onPressed: onPressed,
               style: ElevatedButton.styleFrom(
                 fixedSize: const Size.fromHeight(50.0),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(10.0),
                 ),
                 backgroundColor: Colors.orange,
-                foregroundColor: Colors.white,
               ),
-              child: Text(buttonText),
+              child: Text(
+                buttonText,
+                style: Theme.of(context).textTheme.labelLarge!.copyWith(
+                      color: Colors.white,
+                    ),
+              ),
             ),
           ),
         ],
