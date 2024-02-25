@@ -1,5 +1,10 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:formz/formz.dart';
+import 'package:teams/presentation/blocs/login/login_bloc.dart';
+import 'package:teams/presentation/blocs/login/login_event.dart';
+import 'package:teams/presentation/blocs/login/login_state.dart';
 import 'package:teams/presentation/ui/components/input_textfield.dart';
 import 'package:teams/presentation/ui/components/password_textfield.dart';
 import 'package:teams/presentation/ui/components/submit_button.dart';
@@ -39,18 +44,12 @@ class LoginPage extends StatelessWidget {
               const SizedBox(height: 25),
 
               // username or phone textfield
-              InputTextField(
-                controller: _emailController,
-                hintText: 'Email or Phone Number',
-              ),
+              _EmailPhoneInput(emailController: _emailController),
 
               const SizedBox(height: 20),
 
               // password input
-              PasswordTextField(
-                controller: _passwordController,
-                hintText: 'Password',
-              ),
+              _PasswordInput(passwordController: _passwordController),
 
               const SizedBox(height: 10),
 
@@ -74,7 +73,7 @@ class LoginPage extends StatelessWidget {
               const SizedBox(height: 50),
 
               // Button
-              const SubmitButton(buttonText: 'Sign In'),
+              _SubmitButton(),
 
               const SizedBox(height: 20),
 
@@ -99,7 +98,12 @@ class LoginPage extends StatelessWidget {
                               .textTheme
                               .titleSmall!
                               .copyWith(color: Colors.orange),
-                          recognizer: TapGestureRecognizer()..onTap = () {},
+                          recognizer: TapGestureRecognizer()
+                            ..onTap = () {
+                              context
+                                  .read<LoginBloc>()
+                                  .add(const LoginSubmitted());
+                            },
                         ),
                       ],
                     ),
@@ -109,6 +113,69 @@ class LoginPage extends StatelessWidget {
             ],
           ),
         ),
+      ),
+    );
+  }
+}
+
+class _SubmitButton extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return BlocBuilder<LoginBloc, LoginState>(
+      builder: (ctx, state) => state.formzStatus.isInProgress
+          ? const CircularProgressIndicator()
+          : SubmitButton(
+              buttonText: 'Sign In',
+              onPressed: state.isValid
+                  ? () {
+                      context.read<LoginBloc>().add(const LoginSubmitted());
+                    }
+                  : null,
+            ),
+    );
+  }
+}
+
+class _PasswordInput extends StatelessWidget {
+  const _PasswordInput({
+    required TextEditingController passwordController,
+  }) : _passwordController = passwordController;
+
+  final TextEditingController _passwordController;
+
+  @override
+  Widget build(BuildContext context) {
+    return BlocBuilder<LoginBloc, LoginState>(
+      buildWhen: (previous, current) => previous.password != current.password,
+      builder: (ctx, state) => PasswordTextField(
+        controller: _passwordController,
+        hintText: 'Password',
+        onChanged: (input) {
+          context.read<LoginBloc>().add(LoginPasswordChanged(input));
+        },
+      ),
+    );
+  }
+}
+
+class _EmailPhoneInput extends StatelessWidget {
+  const _EmailPhoneInput({
+    required TextEditingController emailController,
+  }) : _emailController = emailController;
+
+  final TextEditingController _emailController;
+
+  @override
+  Widget build(BuildContext context) {
+    return BlocBuilder<LoginBloc, LoginState>(
+      buildWhen: (previous, current) =>
+          previous.emailPhone != current.emailPhone,
+      builder: (ctx, state) => InputTextField(
+        controller: _emailController,
+        hintText: 'Email or Phone Number',
+        onChanged: (input) {
+          context.read<LoginBloc>().add(LoginEmailChanged(input));
+        },
       ),
     );
   }

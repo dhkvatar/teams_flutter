@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:injectable/injectable.dart';
+import 'package:teams/app/di/di.dart';
 import 'package:teams/core/navigation/routing_flow.dart';
+import 'package:teams/presentation/blocs/login/login_bloc.dart';
 import 'package:teams/presentation/pages/login_page.dart';
 import 'package:teams/presentation/pages/onboarding_page.dart';
 
@@ -24,7 +27,10 @@ class LoginFlow extends RoutingFlow {
           path: loginPage,
           name: '$startingRoutePath/$loginPage',
           pageBuilder: (context, state) => MaterialPage(
-            child: LoginPage(),
+            child: BlocProvider(
+              create: (_) => getIt<LoginBloc>(),
+              child: LoginPage(),
+            ),
           ),
         ),
       ],
