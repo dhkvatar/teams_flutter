@@ -64,7 +64,7 @@ class SignUpPage extends StatelessWidget {
                     text: TextSpan(
                       children: [
                         TextSpan(
-                            text: 'Already have an account?',
+                            text: 'Already have an account? ',
                             style: Theme.of(context)
                                 .textTheme
                                 .titleSmall!
