@@ -18,100 +18,104 @@ class LoginPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: SafeArea(
-        child: SingleChildScrollView(
-          child: Center(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                const SizedBox(height: 150),
+      body: GestureDetector(
+        onTap: () => FocusScope.of(context).unfocus(),
+        child: SafeArea(
+          child: SingleChildScrollView(
+            child: Center(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  const SizedBox(height: 150),
 
-                // Logo or Sign in message
-                Text(
-                  'Sign In',
-                  style: Theme.of(context).textTheme.displaySmall!,
-                ),
+                  // Logo or Sign in message
+                  Text(
+                    'Sign In',
+                    style: Theme.of(context).textTheme.displaySmall!,
+                  ),
 
-                const SizedBox(height: 25),
+                  const SizedBox(height: 25),
 
-                Text(
-                  'Welcome back!',
-                  style: Theme.of(context)
-                      .textTheme
-                      .titleMedium!
-                      .copyWith(color: Colors.grey.shade700),
-                ),
+                  Text(
+                    'Welcome back!',
+                    style: Theme.of(context)
+                        .textTheme
+                        .titleMedium!
+                        .copyWith(color: Colors.grey.shade700),
+                  ),
 
-                const SizedBox(height: 25),
+                  const SizedBox(height: 25),
 
-                // username or phone textfield
-                _EmailPhoneInput(emailController: _emailController),
+                  // username or phone textfield
+                  _EmailPhoneInput(emailController: _emailController),
 
-                const SizedBox(height: 20),
+                  const SizedBox(height: 20),
 
-                // password input
-                _PasswordInput(passwordController: _passwordController),
+                  // password input
+                  _PasswordInput(passwordController: _passwordController),
 
-                const SizedBox(height: 10),
+                  const SizedBox(height: 10),
 
-                // Forgot password link
-                Padding(
-                  padding: const EdgeInsets.only(right: 25.0),
-                  child: Align(
-                    alignment: Alignment.centerRight,
-                    child: RichText(
-                      text: TextSpan(
-                        text: 'Forgot Password?',
-                        style: Theme.of(context).textTheme.titleSmall!.copyWith(
-                              color: Colors.orange,
-                            ), //const TextStyle(color: Colors.orange),
-                        recognizer: TapGestureRecognizer()..onTap = () {},
+                  // Forgot password link
+                  Padding(
+                    padding: const EdgeInsets.only(right: 25.0),
+                    child: Align(
+                      alignment: Alignment.centerRight,
+                      child: RichText(
+                        text: TextSpan(
+                          text: 'Forgot Password?',
+                          style:
+                              Theme.of(context).textTheme.titleSmall!.copyWith(
+                                    color: Colors.orange,
+                                  ), //const TextStyle(color: Colors.orange),
+                          recognizer: TapGestureRecognizer()..onTap = () {},
+                        ),
                       ),
                     ),
                   ),
-                ),
 
-                const SizedBox(height: 50),
+                  const SizedBox(height: 50),
 
-                // Button
-                _SubmitButton(),
+                  // Button
+                  _SubmitButton(),
 
-                const SizedBox(height: 20),
+                  const SizedBox(height: 20),
 
-                // Sign-up link
-                Padding(
-                  padding: const EdgeInsets.only(left: 25.0),
-                  child: Align(
-                    alignment: Alignment.centerLeft,
-                    child: RichText(
-                      text: TextSpan(
-                        children: [
-                          TextSpan(
-                            text: 'Don\'t have an account? ',
-                            style: Theme.of(context)
-                                .textTheme
-                                .titleSmall!
-                                .copyWith(color: Colors.grey.shade700),
-                          ),
-                          TextSpan(
-                            text: 'Sign Up',
-                            style: Theme.of(context)
-                                .textTheme
-                                .titleSmall!
-                                .copyWith(color: Colors.orange),
-                            recognizer: TapGestureRecognizer()
-                              ..onTap = () {
-                                context
-                                    .read<LoginBloc>()
-                                    .add(const LoginSubmitted());
-                              },
-                          ),
-                        ],
+                  // Sign-up link
+                  Padding(
+                    padding: const EdgeInsets.only(left: 25.0),
+                    child: Align(
+                      alignment: Alignment.centerLeft,
+                      child: RichText(
+                        text: TextSpan(
+                          children: [
+                            TextSpan(
+                              text: 'Don\'t have an account? ',
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .titleSmall!
+                                  .copyWith(color: Colors.grey.shade700),
+                            ),
+                            TextSpan(
+                              text: 'Sign Up',
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .titleSmall!
+                                  .copyWith(color: Colors.orange),
+                              recognizer: TapGestureRecognizer()
+                                ..onTap = () {
+                                  context
+                                      .read<LoginBloc>()
+                                      .add(const LoginSubmitted());
+                                },
+                            ),
+                          ],
+                        ),
                       ),
                     ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
           ),
         ),

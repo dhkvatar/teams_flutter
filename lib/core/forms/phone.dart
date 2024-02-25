@@ -7,7 +7,7 @@ final class Phone extends FormzInput<String, PhoneValidationError> {
   const Phone.dirty([super.value = '']) : super.dirty();
 
   static final _phoneRegex = RegExp(
-    r'^[a-zA-Z0-9.!#$%&’*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$',
+    r'^(?:\+[0-9]+)?(?:[0-9] ?){6,14}[0-9]$',
   );
 
   @override

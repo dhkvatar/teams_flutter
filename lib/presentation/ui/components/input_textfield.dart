@@ -5,12 +5,14 @@ class InputTextField extends StatelessWidget {
   final TextEditingController? controller;
   final void Function(String)? onChanged;
   final String? errorText;
+  final TextInputType? inputType;
 
   const InputTextField({
     super.key,
     this.controller,
     this.onChanged,
     this.errorText,
+    this.inputType,
     this.hintText = '',
   });
 
@@ -19,6 +21,7 @@ class InputTextField extends StatelessWidget {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 25.0),
       child: TextField(
+        keyboardType: inputType,
         decoration: InputDecoration(
           enabledBorder: OutlineInputBorder(
             borderSide: BorderSide(color: Colors.grey.shade400),
