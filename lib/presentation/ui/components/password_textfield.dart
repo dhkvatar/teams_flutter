@@ -4,10 +4,12 @@ class PasswordTextField extends StatefulWidget {
   final String hintText;
   final TextEditingController? controller;
   final bool enableVisibilityToggle;
+  final void Function(String)? onChanged;
 
   const PasswordTextField({
     super.key,
     this.controller,
+    this.onChanged,
     this.hintText = 'Password',
     this.enableVisibilityToggle = true,
   });
@@ -49,6 +51,7 @@ class _PasswordTextFieldState extends State<PasswordTextField> {
               : null,
         ),
         obscureText: _obscureText,
+        onChanged: widget.onChanged,
       ),
     );
   }
