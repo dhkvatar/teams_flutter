@@ -1,9 +1,11 @@
-import 'package:flutter/widgets.dart';
+import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:injectable/injectable.dart';
 import 'package:teams/core/navigation/routing_flow.dart';
 import 'package:teams/presentation/pages/login_page.dart';
-// import 'package:teams/presentation/pages/onboarding_page.dart';
+import 'package:teams/presentation/pages/onboarding_page.dart';
+
+const loginPage = 'login';
 
 @lazySingleton
 class LoginFlow extends RoutingFlow {
@@ -14,12 +16,23 @@ class LoginFlow extends RoutingFlow {
       path: startingRoutePath,
       name: startingRoutePath,
       builder: (context, state) {
-        return LoginPage();
-        // return const OnboardingPage();
+        return const OnboardingPage();
       },
+      routes: [
+        GoRoute(
+          parentNavigatorKey: rootNavigatorKey,
+          path: loginPage,
+          name: '$startingRoutePath/$loginPage',
+          pageBuilder: (context, state) => MaterialPage(
+            child: LoginPage(),
+          ),
+        ),
+      ],
     );
   }
 
   @override
-  String get startingRoutePath => '/login';
+  String get startingRoutePath => '/onboard';
+
+  String get loginRoutePath => '$startingRoutePath/$loginPage';
 }
