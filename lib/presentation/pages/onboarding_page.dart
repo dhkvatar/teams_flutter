@@ -1,6 +1,9 @@
 import 'package:dots_indicator/dots_indicator.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
+import 'package:teams/app/di/di.dart';
+import 'package:teams/presentation/flows/login_flow.dart';
 import 'package:teams/presentation/ui/components/submit_button.dart';
 
 class OnboardingPage extends StatefulWidget {
@@ -16,22 +19,8 @@ class _OnboardingPageState extends State<OnboardingPage> {
 
   int _currentPageIndex = 0;
 
-  int _nextPosition(int pageIndex) {
-    if (pageIndex == _numPages - 1) {
-      return 0;
-    }
-    return pageIndex + 1;
-  }
-
-  void _updateToNextPage() {
-    setState(() {
-      _currentPageIndex = _nextPosition(_currentPageIndex);
-    });
-    _pageController.animateToPage(
-      _currentPageIndex,
-      duration: const Duration(milliseconds: 100),
-      curve: Curves.easeIn,
-    );
+  void _navigateToLoginPage(BuildContext context) {
+    context.go(getIt<LoginFlow>().loginRoutePath);
   }
 
   @override
@@ -42,7 +31,12 @@ class _OnboardingPageState extends State<OnboardingPage> {
           // PageView of images
           Expanded(
             child: PageView(
-              physics: const NeverScrollableScrollPhysics(),
+              // physics: const NeverScrollableScrollPhysics(),
+              onPageChanged: (value) {
+                setState(() {
+                  _currentPageIndex = value;
+                });
+              },
               controller: _pageController,
               children: [
                 Container(
@@ -107,7 +101,20 @@ class _OnboardingPageState extends State<OnboardingPage> {
                       const SizedBox(height: 20),
                       SubmitButton(
                         buttonText: 'Next',
-                        onPressed: _updateToNextPage,
+                        onPressed: () {
+                          if (_currentPageIndex + 1 < _numPages) {
+                            setState(() {
+                              _currentPageIndex = _currentPageIndex + 1;
+                            });
+                            _pageController.animateToPage(
+                              _currentPageIndex,
+                              duration: const Duration(milliseconds: 100),
+                              curve: Curves.easeIn,
+                            );
+                          } else {
+                            _navigateToLoginPage(context);
+                          }
+                        },
                       ),
                       const SizedBox(height: 20),
                       RichText(
@@ -117,7 +124,10 @@ class _OnboardingPageState extends State<OnboardingPage> {
                               .textTheme
                               .labelLarge!
                               .copyWith(color: Colors.orange),
-                          recognizer: TapGestureRecognizer()..onTap = () {},
+                          recognizer: TapGestureRecognizer()
+                            ..onTap = () {
+                              context.go(getIt<LoginFlow>().loginRoutePath);
+                            },
                         ),
                       ),
                     ],
