@@ -7,7 +7,7 @@ import 'package:teams/core/navigation/routing_flow.dart';
 import 'package:teams/presentation/blocs/login/login_bloc.dart';
 import 'package:teams/presentation/blocs/sign_up/sign_up_bloc.dart';
 import 'package:teams/presentation/pages/login_page.dart';
-import 'package:teams/presentation/pages/onboarding_page.dart';
+// import 'package:teams/presentation/pages/onboarding_page.dart';
 import 'package:teams/presentation/pages/sign_up_page.dart';
 
 const loginPage = 'login';

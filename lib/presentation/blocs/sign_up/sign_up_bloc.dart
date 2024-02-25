@@ -16,6 +16,7 @@ class SignUpBloc extends Bloc<SignUpEvent, SignUpState> {
     on<SignUpEmailChanged>(_onEmailChanged);
     on<SignUpPasswordChanged>(_onPasswordChanged);
     on<SignUpConfirmPasswordChanged>(_onConfirmPasswordChanged);
+    on<SignUpSubmitted>(_onSubmitted);
   }
 
   void _onNameChanged(SignUpNameChanged event, Emitter<SignUpState> emit) {
@@ -24,14 +25,15 @@ class SignUpBloc extends Bloc<SignUpEvent, SignUpState> {
       state.copyWith(
         name: name,
         isValid: Formz.validate(
-          [
-            name,
-            state.phone,
-            state.email,
-            state.password,
-            state.confirmPassword,
-          ],
-        ),
+              [
+                name,
+                state.phone,
+                state.email,
+                state.password,
+                state.confirmPassword,
+              ],
+            ) &&
+            state.password.value == state.confirmPassword.value,
       ),
     );
   }
@@ -42,14 +44,15 @@ class SignUpBloc extends Bloc<SignUpEvent, SignUpState> {
       state.copyWith(
         phone: phone,
         isValid: Formz.validate(
-          [
-            state.name,
-            phone,
-            state.email,
-            state.password,
-            state.confirmPassword,
-          ],
-        ),
+              [
+                state.name,
+                phone,
+                state.email,
+                state.password,
+                state.confirmPassword,
+              ],
+            ) &&
+            state.password.value == state.confirmPassword.value,
       ),
     );
   }
@@ -59,12 +62,13 @@ class SignUpBloc extends Bloc<SignUpEvent, SignUpState> {
     emit(state.copyWith(
       email: email,
       isValid: Formz.validate([
-        state.name,
-        state.phone,
-        email,
-        state.password,
-        state.confirmPassword,
-      ]),
+            state.name,
+            state.phone,
+            email,
+            state.password,
+            state.confirmPassword,
+          ]) &&
+          state.password.value == state.confirmPassword.value,
     ));
   }
 
@@ -74,12 +78,13 @@ class SignUpBloc extends Bloc<SignUpEvent, SignUpState> {
     emit(state.copyWith(
       password: password,
       isValid: Formz.validate([
-        state.name,
-        state.phone,
-        state.email,
-        password,
-        state.confirmPassword,
-      ]),
+            state.name,
+            state.phone,
+            state.email,
+            password,
+            state.confirmPassword,
+          ]) &&
+          password.value == state.confirmPassword.value,
     ));
   }
 
@@ -89,12 +94,28 @@ class SignUpBloc extends Bloc<SignUpEvent, SignUpState> {
     emit(state.copyWith(
       confirmPassword: confirmPassword,
       isValid: Formz.validate([
-        state.name,
-        state.phone,
-        state.email,
-        state.password,
-        confirmPassword,
-      ]),
+            state.name,
+            state.phone,
+            state.email,
+            state.password,
+            confirmPassword,
+          ]) &&
+          state.password.value == confirmPassword.value,
     ));
+  }
+
+  void _onSubmitted(SignUpSubmitted event, Emitter<SignUpState> emit) async {
+    if (state.isValid) {
+      emit(state.copyWith(
+          formzSubmissionStatus: FormzSubmissionStatus.inProgress));
+      try {
+        await Future.delayed(const Duration(seconds: 1));
+        emit(state.copyWith(
+            formzSubmissionStatus: FormzSubmissionStatus.success));
+      } catch (_) {
+        emit(state.copyWith(
+            formzSubmissionStatus: FormzSubmissionStatus.failure));
+      }
+    }
   }
 }

@@ -31,3 +31,7 @@ final class SignUpConfirmPasswordChanged extends SignUpEvent {
 
   final String confirmPassword;
 }
+
+final class SignUpSubmitted extends SignUpEvent {
+  const SignUpSubmitted();
+}

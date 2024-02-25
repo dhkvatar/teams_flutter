@@ -105,7 +105,14 @@ class _SubmitButton extends StatelessWidget {
     return BlocBuilder<SignUpBloc, SignUpState>(
       builder: (ctx, state) => state.formzSubmissionStatus.isInProgress
           ? const CircularProgressIndicator()
-          : const SubmitButton(buttonText: 'Sign Up'),
+          : SubmitButton(
+              buttonText: 'Sign Up',
+              onPressed: state.isValid
+                  ? () {
+                      context.read<SignUpBloc>().add(const SignUpSubmitted());
+                    }
+                  : null,
+            ),
     );
   }
 }
@@ -122,7 +129,6 @@ class _ConfirmPasswordInput extends StatelessWidget {
           context
               .read<SignUpBloc>()
               .add(SignUpConfirmPasswordChanged(confirmPassword));
-          print(confirmPassword);
         },
       ),
     );
@@ -138,7 +144,6 @@ class _PasswordInput extends StatelessWidget {
         hintText: 'Password',
         onChanged: (password) {
           context.read<SignUpBloc>().add(SignUpPasswordChanged(password));
-          print(password);
         },
       ),
     );
@@ -154,7 +159,6 @@ class _EmailInput extends StatelessWidget {
         inputType: TextInputType.emailAddress,
         onChanged: (email) {
           context.read<SignUpBloc>().add(SignUpEmailChanged(email));
-          print(email);
         },
       ),
     );
@@ -171,8 +175,8 @@ class _PhoneInput extends StatelessWidget {
         hintText: 'Phone Number',
         onChanged: (phone) {
           context.read<SignUpBloc>().add(SignUpPhoneChanged(phone));
-          print(phone);
         },
+        errorText: state.phone.displayError != null ? 'invalid phone' : null,
       ),
     );
   }
@@ -187,8 +191,8 @@ class _NameInput extends StatelessWidget {
         hintText: 'Full Name',
         onChanged: (name) {
           context.read<SignUpBloc>().add(SignUpNameChanged(name));
-          print(name);
         },
+        errorText: state.name.displayError != null ? 'invalid name' : null,
       ),
     );
   }
