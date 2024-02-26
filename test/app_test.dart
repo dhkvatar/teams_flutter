@@ -6,7 +6,10 @@ import 'package:teams/core/flavors/flavors.dart';
 
 void main() {
   group('App', () {
-    setUp(() => configureDependencies(Flavor.appFlavor!.name));
+    setUp(() async {
+      await Flavor.initializeAppFlavor(AppFlavor.dev);
+      configureDependencies(Flavor.appFlavor!.name);
+    });
     testWidgets('MaterialApp created', (widgetTester) async {
       await widgetTester.pumpWidget(const App());
       expect(find.byType(MaterialApp), findsOneWidget);
