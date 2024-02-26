@@ -7,7 +7,7 @@ import 'package:teams/core/flavors/flavors.dart';
 void main() {
   group('App', () {
     setUp(() async {
-      await Flavor.initializeAppFlavor(AppFlavor.dev);
+      await Flavor.initializeAppFlavor(override: AppFlavor.dev);
       configureDependencies(Flavor.appFlavor!.name);
     });
     testWidgets('MaterialApp created', (widgetTester) async {
