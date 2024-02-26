@@ -1,8 +1,10 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:formz/formz.dart';
 import 'package:injectable/injectable.dart';
+import 'package:teams/app/di/di.dart';
 import 'package:teams/core/forms/email_phone.dart';
 import 'package:teams/core/forms/password.dart';
+import 'package:teams/domain/usecases/login_with_email.dart';
 import 'package:teams/presentation/blocs/login/login_event.dart';
 import 'package:teams/presentation/blocs/login/login_state.dart';
 
@@ -34,8 +36,8 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
     if (state.isValid) {
       emit(state.copyWith(formzStatus: FormzSubmissionStatus.inProgress));
       try {
-        // await getIt<LoginUser>()(LoginUserParams(
-        //     email: state.email.value, password: state.password.value));
+        await getIt<LoginWithEmail>()(LoginWithEmailParams(
+            email: state.emailPhone.value, password: state.password.value));
         await Future.delayed(const Duration(seconds: 1));
         emit(state.copyWith(formzStatus: FormzSubmissionStatus.success));
       } catch (_) {
