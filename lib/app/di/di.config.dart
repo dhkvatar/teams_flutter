@@ -16,9 +16,10 @@ import 'package:teams/domain/repositories/auth_repository.dart' as _i4;
 import 'package:teams/domain/usecases/get_user_stream.dart' as _i6;
 import 'package:teams/domain/usecases/is_user_logged_in.dart' as _i8;
 import 'package:teams/domain/usecases/login_with_email.dart' as _i11;
-import 'package:teams/domain/usecases/register_user.dart' as _i12;
+import 'package:teams/domain/usecases/logout.dart' as _i12;
+import 'package:teams/domain/usecases/register_user.dart' as _i13;
 import 'package:teams/presentation/blocs/login/login_bloc.dart' as _i9;
-import 'package:teams/presentation/blocs/sign_up/sign_up_bloc.dart' as _i13;
+import 'package:teams/presentation/blocs/sign_up/sign_up_bloc.dart' as _i14;
 import 'package:teams/presentation/flows/home_flow.dart' as _i7;
 import 'package:teams/presentation/flows/login_flow.dart' as _i10;
 
@@ -42,9 +43,10 @@ extension GetItInjectableX on _i1.GetIt {
     gh.lazySingleton<_i10.LoginFlow>(() => _i10.LoginFlow());
     gh.factory<_i11.LoginWithEmail>(
         () => _i11.LoginWithEmail(gh<_i4.AuthRepository>()));
-    gh.factory<_i12.RegisterUser>(
-        () => _i12.RegisterUser(gh<_i4.AuthRepository>()));
-    gh.factory<_i13.SignUpBloc>(() => _i13.SignUpBloc());
+    gh.lazySingleton<_i12.Logout>(() => _i12.Logout());
+    gh.factory<_i13.RegisterUser>(
+        () => _i13.RegisterUser(gh<_i4.AuthRepository>()));
+    gh.factory<_i14.SignUpBloc>(() => _i14.SignUpBloc());
     return this;
   }
 }
