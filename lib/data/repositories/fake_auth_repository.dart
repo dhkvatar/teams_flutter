@@ -2,11 +2,13 @@ import 'dart:async';
 
 import 'package:flutter/foundation.dart';
 import 'package:get_it/get_it.dart';
+import 'package:injectable/injectable.dart';
 import 'package:teams/core/exceptions/auth_exception.dart';
 import 'package:teams/domain/entities/user.dart';
 import 'package:teams/domain/repositories/auth_repository.dart';
 import 'package:uuid/uuid.dart';
 
+@LazySingleton(as: AuthRepository)
 class FakeAuthRepository implements AuthRepository, Disposable {
   FakeAuthRepository() {
     _userStreamController = StreamController<User?>.broadcast();

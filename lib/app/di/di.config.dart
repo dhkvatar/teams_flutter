@@ -11,9 +11,13 @@
 import 'package:get_it/get_it.dart' as _i1;
 import 'package:injectable/injectable.dart' as _i2;
 import 'package:teams/app/navigation/app_router.dart' as _i3;
-import 'package:teams/presentation/blocs/login/login_bloc.dart' as _i4;
-import 'package:teams/presentation/blocs/sign_up/sign_up_bloc.dart' as _i6;
-import 'package:teams/presentation/flows/login_flow.dart' as _i5;
+import 'package:teams/data/repositories/fake_auth_repository.dart' as _i5;
+import 'package:teams/domain/repositories/auth_repository.dart' as _i4;
+import 'package:teams/domain/usecases/get_user_stream.dart' as _i6;
+import 'package:teams/domain/usecases/is_user_logged_in.dart' as _i7;
+import 'package:teams/presentation/blocs/login/login_bloc.dart' as _i8;
+import 'package:teams/presentation/blocs/sign_up/sign_up_bloc.dart' as _i10;
+import 'package:teams/presentation/flows/login_flow.dart' as _i9;
 
 extension GetItInjectableX on _i1.GetIt {
 // initializes the registration of main-scope dependencies inside of GetIt
@@ -27,9 +31,12 @@ extension GetItInjectableX on _i1.GetIt {
       environmentFilter,
     );
     gh.lazySingleton<_i3.AppRouter>(() => _i3.AppRouter());
-    gh.factory<_i4.LoginBloc>(() => _i4.LoginBloc());
-    gh.lazySingleton<_i5.LoginFlow>(() => _i5.LoginFlow());
-    gh.factory<_i6.SignUpBloc>(() => _i6.SignUpBloc());
+    gh.lazySingleton<_i4.AuthRepository>(() => _i5.FakeAuthRepository());
+    gh.lazySingleton<_i6.GetUserStream>(() => _i6.GetUserStream());
+    gh.factory<_i7.IsUserLoggedIn>(() => _i7.IsUserLoggedIn());
+    gh.factory<_i8.LoginBloc>(() => _i8.LoginBloc());
+    gh.lazySingleton<_i9.LoginFlow>(() => _i9.LoginFlow());
+    gh.factory<_i10.SignUpBloc>(() => _i10.SignUpBloc());
     return this;
   }
 }
