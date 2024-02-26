@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "179684807976",
+    "project_id": "teams-dev-e21ca",
+    "storage_bucket": "teams-dev-e21ca.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:179684807976:android:445924b6b10d9c3ba42c1d",
+        "android_client_info": {
+          "package_name": "com.example.teams.dev"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCwwl3VEZoCBe49dWFugtXMjoPu06YDVjc"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

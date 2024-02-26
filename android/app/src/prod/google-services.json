@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "117936451405",
+    "project_id": "teams-prod-cc4c3",
+    "storage_bucket": "teams-prod-cc4c3.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:117936451405:android:2ba5b1303c679ae98b5104",
+        "android_client_info": {
+          "package_name": "com.example.teams"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBAvv2-AEo2qyQf1M8vKccWHnZRc3SBl8g"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
