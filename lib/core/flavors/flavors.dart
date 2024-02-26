@@ -7,7 +7,7 @@ enum AppFlavor { dev, prod }
 class Flavor {
   static AppFlavor? appFlavor;
 
-  static Future<void> initializeAppFlavor(AppFlavor? override) async {
+  static Future<void> initializeAppFlavor({AppFlavor? override}) async {
     if (override != null) {
       appFlavor = override;
       return;
