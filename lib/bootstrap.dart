@@ -7,8 +7,14 @@ import 'package:teams/core/flavors/flavors.dart';
 
 Future<void> bootstrap(FutureOr<Widget> Function() builder) async {
   WidgetsFlutterBinding.ensureInitialized();
+
+  // Restrict device orientation to be potrait-up only.
   await SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
 
+  // Set up app flavor.
+  await Flavor.initializeAppFlavor();
+
+  // Configure dependency injections.
   configureDependencies(Flavor.appFlavor!.name);
   runApp(await builder());
 }

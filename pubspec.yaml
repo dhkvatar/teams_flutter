@@ -18,6 +18,7 @@ dependencies:
   flutter_bloc: ^8.1.4
   flutter_native_splash: ^2.3.11
   uuid: ^4.3.3
+  package_info_plus: ^5.0.1
 
 dev_dependencies:
   flutter_test:
