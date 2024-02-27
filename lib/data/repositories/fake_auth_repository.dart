@@ -2,13 +2,11 @@ import 'dart:async';
 
 import 'package:flutter/foundation.dart';
 import 'package:get_it/get_it.dart';
-import 'package:injectable/injectable.dart';
 import 'package:teams/core/exceptions/auth_exception.dart';
 import 'package:teams/domain/entities/user.dart';
 import 'package:teams/domain/repositories/auth_repository.dart';
 import 'package:uuid/uuid.dart';
 
-@LazySingleton(as: AuthRepository)
 class FakeAuthRepository implements AuthRepository, Disposable {
   FakeAuthRepository() {
     _userStreamController = StreamController<User?>.broadcast();
@@ -27,14 +25,6 @@ class FakeAuthRepository implements AuthRepository, Disposable {
   User? _findUserByEmail(String email) {
     try {
       return _registeredUsers.values.firstWhere((user) => user.email == email);
-    } on StateError {
-      return null;
-    }
-  }
-
-  User? _findUserByPhone(String phone) {
-    try {
-      return _registeredUsers.values.firstWhere((user) => user.phone == phone);
     } on StateError {
       return null;
     }
@@ -66,25 +56,6 @@ class FakeAuthRepository implements AuthRepository, Disposable {
     }
     await Future.delayed(const Duration(seconds: 1));
     final user = _findUserByEmail(email);
-    if (user != null) {
-      if (_userPasswords[user.id] != password) {
-        throw const AuthException(type: AuthExceptionType.wrongPassword);
-      }
-      _currentUser = user;
-      _userStreamController.add(user);
-      return user;
-    }
-    throw const AuthException(type: AuthExceptionType.userNotFound);
-  }
-
-  @override
-  Future<User> loginWithPhonePassword(
-      {required String phone, required String password}) async {
-    if (_currentUser != null) {
-      throw const AuthException(type: AuthExceptionType.alreadyLoggedIn);
-    }
-    await Future.delayed(const Duration(seconds: 1));
-    final user = _findUserByPhone(phone);
     if (user != null) {
       if (_userPasswords[user.id] != password) {
         throw const AuthException(type: AuthExceptionType.wrongPassword);

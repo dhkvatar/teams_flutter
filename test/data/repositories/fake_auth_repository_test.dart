@@ -143,48 +143,4 @@ void main() {
       await fakeAuthRepository.onDispose();
     });
   });
-  group('loginWithPhonePassword', () {
-    test('throws AuthException with type userNotFound', () async {
-      final fakeAuthRepository = FakeAuthRepository();
-      expect(
-        () async {
-          await fakeAuthRepository.loginWithPhonePassword(
-              phone: user1.phone!, password: password1);
-        },
-        throwsA(predicate((e) =>
-            e is AuthException && e.type == AuthExceptionType.userNotFound)),
-      );
-      await fakeAuthRepository.onDispose();
-    });
-    test('throws AuthException with type alreadyLoggedIn', () async {
-      final fakeAuthRepository = FakeAuthRepository();
-      fakeAuthRepository.backfillUsers({user1.id: user1, user2.id: user2},
-          {user1.id: password1, user2.id: password2});
-      await fakeAuthRepository.loginWithPhonePassword(
-          phone: user1.phone!, password: password1);
-      expect(
-        () async {
-          await fakeAuthRepository.loginWithPhonePassword(
-              phone: user2.phone!, password: password2);
-        },
-        throwsA(predicate((e) =>
-            e is AuthException && e.type == AuthExceptionType.alreadyLoggedIn)),
-      );
-      await fakeAuthRepository.onDispose();
-    });
-    test('throws AuthException with type wrongPassword', () async {
-      final fakeAuthRepository = FakeAuthRepository();
-      fakeAuthRepository
-          .backfillUsers({user1.id: user1}, {user1.id: password1});
-      expect(
-        () async {
-          await fakeAuthRepository.loginWithPhonePassword(
-              phone: user1.phone!, password: password2);
-        },
-        throwsA(predicate((e) =>
-            e is AuthException && e.type == AuthExceptionType.wrongPassword)),
-      );
-      await fakeAuthRepository.onDispose();
-    });
-  });
 }
