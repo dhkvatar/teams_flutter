@@ -8,9 +8,6 @@ abstract class AuthRepository {
   Future<User> loginWithEmailPassword(
       {required String email, required String password});
 
-  Future<User> loginWithPhonePassword(
-      {required String phone, required String password});
-
   /// Logout.
   Future<void> logout();
 

@@ -8,24 +8,33 @@ class AuthException extends AppException {
   @override
   String toString() {
     switch (type) {
-      case AuthExceptionType.userNotFound:
-        return 'User not found';
-      case AuthExceptionType.unknown:
-        return 'Unknown authentication error';
-      case AuthExceptionType.wrongPassword:
-        return 'Wrong password';
       case AuthExceptionType.alreadyLoggedIn:
         return 'Already logged-in';
       case AuthExceptionType.emailExists:
         return 'Email already exists';
+      case AuthExceptionType.notAllowed:
+        return 'Request is not allowed';
+      case AuthExceptionType.unknown:
+        return 'Unknown authentication error';
+      case AuthExceptionType.userDisabled:
+        return 'User account disabled';
+      case AuthExceptionType.userNotFound:
+        return 'User not found';
+      case AuthExceptionType.weakPassword:
+        return 'Weak password';
+      case AuthExceptionType.wrongPassword:
+        return 'Wrong password';
     }
   }
 }
 
 enum AuthExceptionType {
   unknown,
-  userNotFound,
-  wrongPassword,
   alreadyLoggedIn,
   emailExists,
+  notAllowed,
+  userDisabled,
+  userNotFound,
+  weakPassword,
+  wrongPassword,
 }

@@ -89,44 +89,6 @@ class MockAuthRepository extends _i1.Mock implements _i3.AuthRepository {
       ) as _i4.Future<_i2.User>);
 
   @override
-  _i4.Future<_i2.User> loginWithPhonePassword({
-    required String? phone,
-    required String? password,
-  }) =>
-      (super.noSuchMethod(
-        Invocation.method(
-          #loginWithPhonePassword,
-          [],
-          {
-            #phone: phone,
-            #password: password,
-          },
-        ),
-        returnValue: _i4.Future<_i2.User>.value(_FakeUser_0(
-          this,
-          Invocation.method(
-            #loginWithPhonePassword,
-            [],
-            {
-              #phone: phone,
-              #password: password,
-            },
-          ),
-        )),
-        returnValueForMissingStub: _i4.Future<_i2.User>.value(_FakeUser_0(
-          this,
-          Invocation.method(
-            #loginWithPhonePassword,
-            [],
-            {
-              #phone: phone,
-              #password: password,
-            },
-          ),
-        )),
-      ) as _i4.Future<_i2.User>);
-
-  @override
   _i4.Future<void> logout() => (super.noSuchMethod(
         Invocation.method(
           #logout,
