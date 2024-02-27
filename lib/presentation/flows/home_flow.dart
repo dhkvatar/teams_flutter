@@ -2,15 +2,19 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:injectable/injectable.dart';
 import 'package:teams/core/navigation/routing_flow.dart';
+import 'package:teams/presentation/pages/chat_page.dart';
 import 'package:teams/presentation/pages/home_page.dart';
 import 'package:teams/presentation/ui/components/home_scaffold.dart';
 
 final _shellNavigatorKey = GlobalKey<NavigatorState>();
 
+const homeRoutePath = '/home';
+const chatRoutePath = '/chat';
+
 @lazySingleton
 class HomeFlow extends RoutingFlow {
   @override
-  String get startingRoutePath => '/home';
+  String get startingRoutePath => homeRoutePath;
 
   @override
   RouteBase routes(GlobalKey<NavigatorState> rootNavigatorKey) {
@@ -25,7 +29,15 @@ class HomeFlow extends RoutingFlow {
           builder: (context, state) {
             return const HomePage();
           },
-        )
+        ),
+
+        // The Chat screen
+        GoRoute(
+          path: chatRoutePath,
+          builder: (context, state) {
+            return const ChatPage();
+          },
+        ),
       ],
     );
   }

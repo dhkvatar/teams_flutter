@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
+import 'package:teams/presentation/flows/home_flow.dart';
 
 class HomeScaffold extends StatelessWidget {
-  const HomeScaffold({
+  HomeScaffold({
     super.key,
     required this.body,
   });
@@ -17,27 +19,55 @@ class HomeScaffold extends StatelessWidget {
         items: const <BottomNavigationBarItem>[
           BottomNavigationBarItem(
             icon: Icon(Icons.home),
-            label: 'A Screen',
+            label: 'Home',
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.business),
-            label: 'B Screen',
+            icon: Icon(Icons.search),
+            label: 'Teams',
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.note),
-            label: 'C Screen',
+            icon: Icon(Icons.sports_soccer),
+            label: 'My Games',
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.alarm),
-            label: 'D Screen',
+            icon: Icon(Icons.bar_chart),
+            label: 'Stats',
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.chat),
-            label: 'Chat',
+            label: 'Messages',
           ),
         ],
-        currentIndex: 0,
+        currentIndex: _getSelectedIndex(context),
+        onTap: (idx) => _onItemTapped(idx, context),
       ),
     );
+  }
+
+  final Map<String, int> _routePathToNavBarIndex = {
+    homeRoutePath: 0,
+    chatRoutePath: 4,
+  };
+
+  int _getSelectedIndex(BuildContext context) {
+    final location = GoRouterState.of(context).uri.toString();
+    if (location.startsWith(homeRoutePath)) {
+      return _routePathToNavBarIndex[homeRoutePath]!;
+    }
+    if (location.startsWith(chatRoutePath)) {
+      return _routePathToNavBarIndex[chatRoutePath]!;
+    }
+    return 0;
+  }
+
+  void _onItemTapped(int index, BuildContext context) {
+    switch (index) {
+      case 0:
+        context.go(homeRoutePath);
+      case 4:
+        context.go(chatRoutePath);
+      default:
+        context.go(homeRoutePath);
+    }
   }
 }
