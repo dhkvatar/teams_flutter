@@ -13,16 +13,19 @@ class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('HomePage')),
       body: Center(
-        child: Column(children: [
-          ElevatedButton(
-            onPressed: () async {
-              await getIt<Logout>()();
-            },
-            child: const Text('Logout'),
-          ),
-        ]),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            const Text('HomePage'),
+            ElevatedButton(
+              onPressed: () async {
+                await getIt<Logout>()();
+              },
+              child: const Text('Logout'),
+            ),
+          ],
+        ),
       ),
     );
   }
