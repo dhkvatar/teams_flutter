@@ -25,7 +25,9 @@ mixin _$Chat {
       throw _privateConstructorUsedError; // The time the chat was created.
   DateTime get createTime =>
       throw _privateConstructorUsedError; // The last update time.
-  DateTime get updateTime => throw _privateConstructorUsedError;
+  DateTime get updateTime =>
+      throw _privateConstructorUsedError; // Whether this is a group chat.
+  bool get isGroupChat => throw _privateConstructorUsedError;
 
   @JsonKey(ignore: true)
   $ChatCopyWith<Chat> get copyWith => throw _privateConstructorUsedError;
@@ -41,7 +43,8 @@ abstract class $ChatCopyWith<$Res> {
       List<String> userIds,
       String name,
       DateTime createTime,
-      DateTime updateTime});
+      DateTime updateTime,
+      bool isGroupChat});
 }
 
 /// @nodoc
@@ -62,6 +65,7 @@ class _$ChatCopyWithImpl<$Res, $Val extends Chat>
     Object? name = null,
     Object? createTime = null,
     Object? updateTime = null,
+    Object? isGroupChat = null,
   }) {
     return _then(_value.copyWith(
       id: null == id
@@ -84,6 +88,10 @@ class _$ChatCopyWithImpl<$Res, $Val extends Chat>
           ? _value.updateTime
           : updateTime // ignore: cast_nullable_to_non_nullable
               as DateTime,
+      isGroupChat: null == isGroupChat
+          ? _value.isGroupChat
+          : isGroupChat // ignore: cast_nullable_to_non_nullable
+              as bool,
     ) as $Val);
   }
 }
@@ -100,7 +108,8 @@ abstract class _$$ChatImplCopyWith<$Res> implements $ChatCopyWith<$Res> {
       List<String> userIds,
       String name,
       DateTime createTime,
-      DateTime updateTime});
+      DateTime updateTime,
+      bool isGroupChat});
 }
 
 /// @nodoc
@@ -118,6 +127,7 @@ class __$$ChatImplCopyWithImpl<$Res>
     Object? name = null,
     Object? createTime = null,
     Object? updateTime = null,
+    Object? isGroupChat = null,
   }) {
     return _then(_$ChatImpl(
       id: null == id
@@ -140,6 +150,10 @@ class __$$ChatImplCopyWithImpl<$Res>
           ? _value.updateTime
           : updateTime // ignore: cast_nullable_to_non_nullable
               as DateTime,
+      isGroupChat: null == isGroupChat
+          ? _value.isGroupChat
+          : isGroupChat // ignore: cast_nullable_to_non_nullable
+              as bool,
     ));
   }
 }
@@ -152,7 +166,8 @@ class _$ChatImpl implements _Chat {
       required final List<String> userIds,
       required this.name,
       required this.createTime,
-      required this.updateTime})
+      required this.updateTime,
+      required this.isGroupChat})
       : _userIds = userIds;
 
 // The unique identifier of the chat.
@@ -177,10 +192,13 @@ class _$ChatImpl implements _Chat {
 // The last update time.
   @override
   final DateTime updateTime;
+// Whether this is a group chat.
+  @override
+  final bool isGroupChat;
 
   @override
   String toString() {
-    return 'Chat(id: $id, userIds: $userIds, name: $name, createTime: $createTime, updateTime: $updateTime)';
+    return 'Chat(id: $id, userIds: $userIds, name: $name, createTime: $createTime, updateTime: $updateTime, isGroupChat: $isGroupChat)';
   }
 
   @override
@@ -194,7 +212,9 @@ class _$ChatImpl implements _Chat {
             (identical(other.createTime, createTime) ||
                 other.createTime == createTime) &&
             (identical(other.updateTime, updateTime) ||
-                other.updateTime == updateTime));
+                other.updateTime == updateTime) &&
+            (identical(other.isGroupChat, isGroupChat) ||
+                other.isGroupChat == isGroupChat));
   }
 
   @override
@@ -204,7 +224,8 @@ class _$ChatImpl implements _Chat {
       const DeepCollectionEquality().hash(_userIds),
       name,
       createTime,
-      updateTime);
+      updateTime,
+      isGroupChat);
 
   @JsonKey(ignore: true)
   @override
@@ -219,7 +240,8 @@ abstract class _Chat implements Chat {
       required final List<String> userIds,
       required final String name,
       required final DateTime createTime,
-      required final DateTime updateTime}) = _$ChatImpl;
+      required final DateTime updateTime,
+      required final bool isGroupChat}) = _$ChatImpl;
 
   @override // The unique identifier of the chat.
   String get id;
@@ -231,6 +253,8 @@ abstract class _Chat implements Chat {
   DateTime get createTime;
   @override // The last update time.
   DateTime get updateTime;
+  @override // Whether this is a group chat.
+  bool get isGroupChat;
   @override
   @JsonKey(ignore: true)
   _$$ChatImplCopyWith<_$ChatImpl> get copyWith =>
