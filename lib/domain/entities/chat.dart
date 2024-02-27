@@ -19,5 +19,8 @@ class Chat with _$Chat {
 
     // The last update time.
     required DateTime updateTime,
+
+    // Whether this is a group chat.
+    required bool isGroupChat,
   }) = _Chat;
 }

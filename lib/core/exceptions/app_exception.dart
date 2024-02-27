@@ -5,4 +5,5 @@ abstract class AppException implements Exception {
 
 enum AppExceptionType {
   auth,
+  chat,
 }
