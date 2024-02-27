@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:teams/app/di/di.dart';
 import 'package:teams/presentation/flows/login_flow.dart';
-import 'package:teams/presentation/ui/components/submit_button.dart';
+import 'package:teams/presentation/ui/widgets/submit_button.dart';
 
 class OnboardingPage extends StatefulWidget {
   const OnboardingPage({super.key});

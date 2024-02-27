@@ -8,9 +8,9 @@ import 'package:teams/presentation/blocs/sign_up/sign_up_bloc.dart';
 import 'package:teams/presentation/blocs/sign_up/sign_up_event.dart';
 import 'package:teams/presentation/blocs/sign_up/sign_up_state.dart';
 import 'package:teams/presentation/flows/login_flow.dart';
-import 'package:teams/presentation/ui/components/input_textfield.dart';
-import 'package:teams/presentation/ui/components/password_textfield.dart';
-import 'package:teams/presentation/ui/components/submit_button.dart';
+import 'package:teams/presentation/ui/widgets/input_textfield.dart';
+import 'package:teams/presentation/ui/widgets/password_textfield.dart';
+import 'package:teams/presentation/ui/widgets/submit_button.dart';
 
 class SignUpPage extends StatelessWidget {
   const SignUpPage({super.key});
