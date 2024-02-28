@@ -1,11 +1,22 @@
+import 'package:injectable/injectable.dart';
 import 'package:teams/core/exceptions/chat_exception.dart';
 import 'package:teams/domain/entities/chat.dart';
 import 'package:teams/domain/entities/message.dart';
 import 'package:teams/domain/repositories/chat_repository.dart';
 import 'package:uuid/uuid.dart';
 
+@Injectable(as: ChatRepository)
 class FakeChatRepository implements ChatRepository {
-  final Map<String, Chat> _chats = {};
+  final Map<String, Chat> _chats = {
+    'nU7rIBOgJIQGcjVwleEedggSQEz1': Chat(
+      id: 'chat_1',
+      userIds: ['nU7rIBOgJIQGcjVwleEedggSQEz1'],
+      name: 'Chat1',
+      createTime: DateTime(2022, 2, 1),
+      updateTime: DateTime(2022, 2, 1),
+      isGroupChat: false,
+    ),
+  };
   final Map<String, Message> _messages = {};
 
   @override
@@ -30,30 +41,31 @@ class FakeChatRepository implements ChatRepository {
   }
 
   @override
-  Future<List<Chat>?> getChats(
-      {required String userId,
-      DateTime? from,
-      DateTime? to,
-      int? limit}) async {
+  Future<List<Chat>?> getChats({
+    required String userId,
+    DateTime? afterDateTime,
+    String? afterId,
+    int? limit,
+  }) async {
     final userChats =
         _chats.values.where((chat) => chat.userIds.contains(userId)).toList();
     if (userChats.isEmpty) {
       throw const ChatException(type: ChatExceptionType.userNotFound);
     }
 
-    // Filter by from time
-    if (from != null) {
-      userChats.retainWhere((e) => e.updateTime.isAfter(from));
+    // Fliter by afterDateTime
+    if (afterDateTime != null) {
+      userChats
+          .retainWhere((element) => element.updateTime.isAfter(afterDateTime));
     }
 
-    // Filter by to time
-    if (to != null) {
-      userChats.retainWhere((e) => e.updateTime.isBefore(to));
+    // Filter by afterId
+    if (afterId != null) {
+      userChats.retainWhere((element) => element.id.compareTo(afterId) > 0);
     }
-
     // Sort by updateTime and choose the latest ones upto limit.
     userChats.sort((a, b) => b.updateTime.compareTo(a.updateTime));
-    if (limit != null && limit > 0) {
+    if (limit != null && limit > 0 && userChats.length > limit) {
       userChats.removeRange(limit, userChats.length);
     }
     return userChats;

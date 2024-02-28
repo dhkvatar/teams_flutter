@@ -1,7 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:injectable/injectable.dart';
+import 'package:teams/app/di/di.dart';
+import 'package:teams/core/constants/chat_constants.dart';
 import 'package:teams/core/navigation/routing_flow.dart';
+import 'package:teams/presentation/blocs/chat/chat_bloc.dart';
+import 'package:teams/presentation/blocs/chat/chat_event.dart';
 import 'package:teams/presentation/pages/chat_page.dart';
 import 'package:teams/presentation/pages/home_page.dart';
 import 'package:teams/presentation/ui/components/home_scaffold.dart';
@@ -24,6 +29,7 @@ class HomeFlow extends RoutingFlow {
         return HomeScaffold(body: body);
       },
       routes: [
+        // The Home screen
         GoRoute(
           path: startingRoutePath,
           builder: (context, state) {
@@ -34,9 +40,16 @@ class HomeFlow extends RoutingFlow {
         // The Chat screen
         GoRoute(
           path: chatRoutePath,
-          builder: (context, state) {
-            return const ChatPage();
-          },
+          pageBuilder: (context, state) => MaterialPage(
+            child: BlocProvider(
+              create: (_) {
+                return getIt<ChatBloc>()
+                  ..add(const ChatGetChatsRequested(
+                      limit: ChatConstants.chatPageSize));
+              },
+              child: const ChatPage(),
+            ),
+          ),
         ),
       ],
     );

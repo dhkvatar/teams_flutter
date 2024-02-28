@@ -2,7 +2,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/annotations.dart';
 import 'package:mockito/mockito.dart';
 import 'package:teams/domain/repositories/auth_repository.dart';
-import 'package:teams/domain/usecases/is_user_logged_in.dart';
+import 'package:teams/domain/usecases/authentication/is_user_logged_in.dart';
 
 @GenerateNiceMocks([MockSpec<AuthRepository>()])
 import 'is_user_logged_in_test.mocks.dart';

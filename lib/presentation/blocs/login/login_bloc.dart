@@ -4,7 +4,7 @@ import 'package:injectable/injectable.dart';
 import 'package:teams/app/di/di.dart';
 import 'package:teams/core/forms/email_phone.dart';
 import 'package:teams/core/forms/password.dart';
-import 'package:teams/domain/usecases/login_with_email.dart';
+import 'package:teams/domain/usecases/authentication/login_with_email.dart';
 import 'package:teams/presentation/blocs/login/login_event.dart';
 import 'package:teams/presentation/blocs/login/login_state.dart';
 

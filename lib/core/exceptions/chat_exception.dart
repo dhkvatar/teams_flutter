@@ -12,6 +12,8 @@ class ChatException extends AppException {
         return 'Chat not found';
       case ChatExceptionType.invalidRequest:
         return 'Invalid request';
+      case ChatExceptionType.unauthenticated:
+        return 'User not authenticated';
       case ChatExceptionType.unknown:
         return 'Unknown chat error';
       case ChatExceptionType.userNotFound:
@@ -23,6 +25,7 @@ class ChatException extends AppException {
 enum ChatExceptionType {
   chatNotFound,
   invalidRequest,
+  unauthenticated,
   unknown,
   userNotFound,
 }
