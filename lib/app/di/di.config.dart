@@ -13,11 +13,15 @@ import 'package:injectable/injectable.dart' as _i2;
 import 'package:teams/app/di/di.dart' as _i14;
 import 'package:teams/app/navigation/app_router.dart' as _i3;
 import 'package:teams/domain/repositories/auth_repository.dart' as _i4;
-import 'package:teams/domain/usecases/get_user_stream.dart' as _i5;
-import 'package:teams/domain/usecases/is_user_logged_in.dart' as _i7;
-import 'package:teams/domain/usecases/login_with_email.dart' as _i10;
-import 'package:teams/domain/usecases/logout.dart' as _i11;
-import 'package:teams/domain/usecases/register_user.dart' as _i12;
+import 'package:teams/domain/usecases/authentication/get_user_stream.dart'
+    as _i5;
+import 'package:teams/domain/usecases/authentication/is_user_logged_in.dart'
+    as _i7;
+import 'package:teams/domain/usecases/authentication/login_with_email.dart'
+    as _i10;
+import 'package:teams/domain/usecases/authentication/logout.dart' as _i11;
+import 'package:teams/domain/usecases/authentication/register_user.dart'
+    as _i12;
 import 'package:teams/presentation/blocs/login/login_bloc.dart' as _i8;
 import 'package:teams/presentation/blocs/sign_up/sign_up_bloc.dart' as _i13;
 import 'package:teams/presentation/flows/home_flow.dart' as _i6;

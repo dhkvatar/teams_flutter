@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:teams/app/di/di.dart';
-import 'package:teams/domain/usecases/logout.dart';
+import 'package:teams/domain/usecases/authentication/logout.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});

@@ -4,8 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:injectable/injectable.dart';
 import 'package:teams/app/di/di.dart';
-import 'package:teams/domain/usecases/get_user_stream.dart';
-import 'package:teams/domain/usecases/is_user_logged_in.dart';
+import 'package:teams/domain/usecases/authentication/get_user_stream.dart';
+import 'package:teams/domain/usecases/authentication/is_user_logged_in.dart';
 import 'package:teams/presentation/flows/home_flow.dart';
 import 'package:teams/presentation/flows/login_flow.dart';
 

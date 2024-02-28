@@ -6,7 +6,7 @@ import 'package:teams/core/forms/email.dart';
 import 'package:teams/core/forms/name.dart';
 import 'package:teams/core/forms/password.dart';
 import 'package:teams/core/forms/phone.dart';
-import 'package:teams/domain/usecases/register_user.dart';
+import 'package:teams/domain/usecases/authentication/register_user.dart';
 import 'package:teams/presentation/blocs/sign_up/sign_up_event.dart';
 import 'package:teams/presentation/blocs/sign_up/sign_up_state.dart';
 
