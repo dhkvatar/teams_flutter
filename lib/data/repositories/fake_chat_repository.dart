@@ -7,7 +7,16 @@ import 'package:uuid/uuid.dart';
 
 @Injectable(as: ChatRepository)
 class FakeChatRepository implements ChatRepository {
-  final Map<String, Chat> _chats = {};
+  final Map<String, Chat> _chats = {
+    'nU7rIBOgJIQGcjVwleEedggSQEz1': Chat(
+      id: 'chat_1',
+      userIds: ['nU7rIBOgJIQGcjVwleEedggSQEz1'],
+      name: 'Chat1',
+      createTime: DateTime(2022, 2, 1),
+      updateTime: DateTime(2022, 2, 1),
+      isGroupChat: false,
+    ),
+  };
   final Map<String, Message> _messages = {};
 
   @override
@@ -56,7 +65,7 @@ class FakeChatRepository implements ChatRepository {
     }
     // Sort by updateTime and choose the latest ones upto limit.
     userChats.sort((a, b) => b.updateTime.compareTo(a.updateTime));
-    if (limit != null && limit > 0) {
+    if (limit != null && limit > 0 && userChats.length > limit) {
       userChats.removeRange(limit, userChats.length);
     }
     return userChats;

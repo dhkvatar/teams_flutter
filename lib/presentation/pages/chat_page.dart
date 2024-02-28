@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:teams/presentation/blocs/chat/chat_bloc.dart';
 
 class ChatPage extends StatelessWidget {
   const ChatPage({super.key});
@@ -20,10 +22,17 @@ class ChatPage extends StatelessWidget {
             ),
           ),
         ),
-        body: const TabBarView(
+        body: TabBarView(
           children: [
-            Icon(Icons.cabin),
-            Icon(Icons.document_scanner),
+            Column(
+              children: [
+                const Icon(Icons.wind_power),
+                Text('${context.read<ChatBloc>().state.chatsLoadingStatus}'),
+                Text(
+                    '${context.read<ChatBloc>().state.directMessageChats.length}'),
+              ],
+            ),
+            const Icon(Icons.document_scanner),
           ],
         ),
       ),
