@@ -3,6 +3,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:teams/presentation/blocs/chat/chat_bloc.dart';
 import 'package:teams/presentation/blocs/chat/chat_state.dart';
 import 'package:teams/presentation/ui/components/chat_list_view.dart';
+import 'package:teams/presentation/ui/components/home_app_bar.dart';
+import 'package:teams/presentation/ui/components/home_bottom_navigation_bar.dart';
 
 class ChatPage extends StatelessWidget {
   const ChatPage({super.key});
@@ -12,10 +14,10 @@ class ChatPage extends StatelessWidget {
     return DefaultTabController(
       length: 2,
       child: Scaffold(
-        appBar: PreferredSize(
-          preferredSize: const Size.fromHeight(50.0),
-          child: AppBar(
-            bottom: const TabBar(
+        appBar: const PreferredSize(
+          preferredSize: Size.fromHeight(100.0),
+          child: HomeAppBar(
+            bottom: TabBar(
               indicatorSize: TabBarIndicatorSize.label,
               tabs: [
                 Tab(text: 'DM'),
@@ -30,6 +32,7 @@ class ChatPage extends StatelessWidget {
             _GroupChatsTab(),
           ],
         ),
+        bottomNavigationBar: HomeBottomNavigationBar(),
       ),
     );
   }

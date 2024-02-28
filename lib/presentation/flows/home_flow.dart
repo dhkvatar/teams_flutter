@@ -10,7 +10,6 @@ import 'package:teams/presentation/blocs/chat/chat_event.dart';
 import 'package:teams/presentation/pages/chat_details_page.dart';
 import 'package:teams/presentation/pages/chat_page.dart';
 import 'package:teams/presentation/pages/home_page.dart';
-import 'package:teams/presentation/ui/components/home_scaffold.dart';
 
 final _shellNavigatorKey = GlobalKey<NavigatorState>();
 
@@ -29,7 +28,7 @@ class HomeFlow extends RoutingFlow {
     return ShellRoute(
       navigatorKey: _shellNavigatorKey,
       builder: (context, state, body) {
-        return HomeScaffold(body: body);
+        return Scaffold(body: body);
       },
       routes: [
         // The Home screen
