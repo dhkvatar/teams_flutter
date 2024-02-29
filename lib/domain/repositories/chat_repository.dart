@@ -25,5 +25,9 @@ abstract class ChatRepository {
       int? limit});
 
   /// Get messages for a chat.
-  Future<List<Message>?> getMessages({required String chatId, int? limit});
+  Future<List<Message>?> getMessages(
+      {required String chatId,
+      DateTime? beforeDateTime,
+      String? beforeId,
+      int? limit});
 }
