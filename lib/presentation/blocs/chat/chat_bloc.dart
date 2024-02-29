@@ -30,8 +30,8 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
       emit(state.copyWith(chatsLoadingStatus: ChatsLoadingStatus.inProgress));
       final chats = await getIt<GetChats>()(
         GetChatsParams(
-          afterDateTime: event.afterDateTime,
-          afterId: event.afterChatId,
+          beforeDateTime: event.beforeDateTime,
+          beforeId: event.beforeChatId,
           limit: event.limit,
         ),
       );

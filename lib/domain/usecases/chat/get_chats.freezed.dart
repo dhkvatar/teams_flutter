@@ -16,8 +16,8 @@ final _privateConstructorUsedError = UnsupportedError(
 
 /// @nodoc
 mixin _$GetChatsParams {
-  DateTime? get afterDateTime => throw _privateConstructorUsedError;
-  String? get afterId => throw _privateConstructorUsedError;
+  DateTime? get beforeDateTime => throw _privateConstructorUsedError;
+  String? get beforeId => throw _privateConstructorUsedError;
   int? get limit => throw _privateConstructorUsedError;
 
   @JsonKey(ignore: true)
@@ -31,7 +31,7 @@ abstract class $GetChatsParamsCopyWith<$Res> {
           GetChatsParams value, $Res Function(GetChatsParams) then) =
       _$GetChatsParamsCopyWithImpl<$Res, GetChatsParams>;
   @useResult
-  $Res call({DateTime? afterDateTime, String? afterId, int? limit});
+  $Res call({DateTime? beforeDateTime, String? beforeId, int? limit});
 }
 
 /// @nodoc
@@ -47,18 +47,18 @@ class _$GetChatsParamsCopyWithImpl<$Res, $Val extends GetChatsParams>
   @pragma('vm:prefer-inline')
   @override
   $Res call({
-    Object? afterDateTime = freezed,
-    Object? afterId = freezed,
+    Object? beforeDateTime = freezed,
+    Object? beforeId = freezed,
     Object? limit = freezed,
   }) {
     return _then(_value.copyWith(
-      afterDateTime: freezed == afterDateTime
-          ? _value.afterDateTime
-          : afterDateTime // ignore: cast_nullable_to_non_nullable
+      beforeDateTime: freezed == beforeDateTime
+          ? _value.beforeDateTime
+          : beforeDateTime // ignore: cast_nullable_to_non_nullable
               as DateTime?,
-      afterId: freezed == afterId
-          ? _value.afterId
-          : afterId // ignore: cast_nullable_to_non_nullable
+      beforeId: freezed == beforeId
+          ? _value.beforeId
+          : beforeId // ignore: cast_nullable_to_non_nullable
               as String?,
       limit: freezed == limit
           ? _value.limit
@@ -76,7 +76,7 @@ abstract class _$$GetChatsParamsImplCopyWith<$Res>
       __$$GetChatsParamsImplCopyWithImpl<$Res>;
   @override
   @useResult
-  $Res call({DateTime? afterDateTime, String? afterId, int? limit});
+  $Res call({DateTime? beforeDateTime, String? beforeId, int? limit});
 }
 
 /// @nodoc
@@ -90,18 +90,18 @@ class __$$GetChatsParamsImplCopyWithImpl<$Res>
   @pragma('vm:prefer-inline')
   @override
   $Res call({
-    Object? afterDateTime = freezed,
-    Object? afterId = freezed,
+    Object? beforeDateTime = freezed,
+    Object? beforeId = freezed,
     Object? limit = freezed,
   }) {
     return _then(_$GetChatsParamsImpl(
-      afterDateTime: freezed == afterDateTime
-          ? _value.afterDateTime
-          : afterDateTime // ignore: cast_nullable_to_non_nullable
+      beforeDateTime: freezed == beforeDateTime
+          ? _value.beforeDateTime
+          : beforeDateTime // ignore: cast_nullable_to_non_nullable
               as DateTime?,
-      afterId: freezed == afterId
-          ? _value.afterId
-          : afterId // ignore: cast_nullable_to_non_nullable
+      beforeId: freezed == beforeId
+          ? _value.beforeId
+          : beforeId // ignore: cast_nullable_to_non_nullable
               as String?,
       limit: freezed == limit
           ? _value.limit
@@ -114,18 +114,18 @@ class __$$GetChatsParamsImplCopyWithImpl<$Res>
 /// @nodoc
 
 class _$GetChatsParamsImpl implements _GetChatsParams {
-  const _$GetChatsParamsImpl({this.afterDateTime, this.afterId, this.limit});
+  const _$GetChatsParamsImpl({this.beforeDateTime, this.beforeId, this.limit});
 
   @override
-  final DateTime? afterDateTime;
+  final DateTime? beforeDateTime;
   @override
-  final String? afterId;
+  final String? beforeId;
   @override
   final int? limit;
 
   @override
   String toString() {
-    return 'GetChatsParams(afterDateTime: $afterDateTime, afterId: $afterId, limit: $limit)';
+    return 'GetChatsParams(beforeDateTime: $beforeDateTime, beforeId: $beforeId, limit: $limit)';
   }
 
   @override
@@ -133,14 +133,15 @@ class _$GetChatsParamsImpl implements _GetChatsParams {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
             other is _$GetChatsParamsImpl &&
-            (identical(other.afterDateTime, afterDateTime) ||
-                other.afterDateTime == afterDateTime) &&
-            (identical(other.afterId, afterId) || other.afterId == afterId) &&
+            (identical(other.beforeDateTime, beforeDateTime) ||
+                other.beforeDateTime == beforeDateTime) &&
+            (identical(other.beforeId, beforeId) ||
+                other.beforeId == beforeId) &&
             (identical(other.limit, limit) || other.limit == limit));
   }
 
   @override
-  int get hashCode => Object.hash(runtimeType, afterDateTime, afterId, limit);
+  int get hashCode => Object.hash(runtimeType, beforeDateTime, beforeId, limit);
 
   @JsonKey(ignore: true)
   @override
@@ -152,14 +153,14 @@ class _$GetChatsParamsImpl implements _GetChatsParams {
 
 abstract class _GetChatsParams implements GetChatsParams {
   const factory _GetChatsParams(
-      {final DateTime? afterDateTime,
-      final String? afterId,
+      {final DateTime? beforeDateTime,
+      final String? beforeId,
       final int? limit}) = _$GetChatsParamsImpl;
 
   @override
-  DateTime? get afterDateTime;
+  DateTime? get beforeDateTime;
   @override
-  String? get afterId;
+  String? get beforeId;
   @override
   int? get limit;
   @override

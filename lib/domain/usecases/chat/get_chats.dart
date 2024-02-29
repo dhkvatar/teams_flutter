@@ -25,8 +25,8 @@ class GetChats implements UseCase<List<Chat>, GetChatsParams> {
     final user = authRepository.currentUser!;
     final chats = await chatRepository.getChats(
       userId: user.id,
-      afterDateTime: params.afterDateTime,
-      afterId: params.afterId,
+      beforeDateTime: params.beforeDateTime,
+      beforeId: params.beforeId,
       limit: params.limit,
     );
     return chats ?? [];
@@ -36,8 +36,8 @@ class GetChats implements UseCase<List<Chat>, GetChatsParams> {
 @freezed
 class GetChatsParams with _$GetChatsParams {
   const factory GetChatsParams({
-    DateTime? afterDateTime,
-    String? afterId,
+    DateTime? beforeDateTime,
+    String? beforeId,
     int? limit,
   }) = _GetChatsParams;
 }

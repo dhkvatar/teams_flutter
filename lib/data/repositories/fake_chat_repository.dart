@@ -79,8 +79,8 @@ class FakeChatRepository implements ChatRepository {
   @override
   Future<List<Chat>?> getChats({
     required String userId,
-    DateTime? afterDateTime,
-    String? afterId,
+    DateTime? beforeDateTime,
+    String? beforeId,
     int? limit,
   }) async {
     final userChats =
@@ -90,14 +90,14 @@ class FakeChatRepository implements ChatRepository {
     }
 
     // Fliter by afterDateTime
-    if (afterDateTime != null) {
-      userChats
-          .retainWhere((element) => element.updateTime.isAfter(afterDateTime));
+    if (beforeDateTime != null) {
+      userChats.retainWhere(
+          (element) => element.updateTime.isBefore(beforeDateTime));
     }
 
     // Filter by afterId
-    if (afterId != null) {
-      userChats.retainWhere((element) => element.id.compareTo(afterId) > 0);
+    if (beforeId != null) {
+      userChats.retainWhere((element) => element.id.compareTo(beforeId) < 0);
     }
     // Sort by updateTime and choose the latest ones upto limit.
     userChats.sort((a, b) => b.updateTime.compareTo(a.updateTime));
