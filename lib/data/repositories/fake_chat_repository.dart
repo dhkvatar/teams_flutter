@@ -83,6 +83,7 @@ class FakeChatRepository implements ChatRepository {
     String? beforeId,
     int? limit,
   }) async {
+    await Future.delayed(Duration(seconds: 1));
     final userChats =
         _chats.values.where((chat) => chat.userIds.contains(userId)).toList();
     if (userChats.isEmpty) {

@@ -7,7 +7,7 @@ final class ChatGetChatsRequested extends ChatEvent {
   const ChatGetChatsRequested({
     this.beforeDateTime,
     this.beforeChatId,
-    this.limit = 20,
+    this.limit,
   });
 
   final DateTime? beforeDateTime;
@@ -16,8 +16,16 @@ final class ChatGetChatsRequested extends ChatEvent {
 }
 
 // Request for messages for a chat.
-// final class ChatGetMessagesForChatRequested extends ChatEvent {
-//   const ChatGetMessagesForChatRequested();
+// final class ChatGetMessagesRequested extends ChatEvent {
+//   const ChatGetMessagesRequested({
+//     required this.chatId,
+//     this.beforeDateTime,
+//     this.beforeMessageId,
+//     this.limit,
+//   });
 
 //   final String chatId;
+//   final DateTime? beforeDateTime;
+//   final String? beforeMessageId;
+//   final int? limit;
 // }

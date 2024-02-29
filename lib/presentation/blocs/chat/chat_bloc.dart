@@ -61,4 +61,10 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
       ));
     }
   }
+
+  // Future<void> _onGetMessagesRequested(
+  //   ChatGetMessagesRequested event,
+  //   Emitter<ChatState> emit,
+  // ) async {
+  // }
 }
