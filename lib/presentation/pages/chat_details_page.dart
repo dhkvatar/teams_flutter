@@ -17,33 +17,47 @@ class ChatDetailsPage extends StatelessWidget {
           children: [
             Expanded(child: Container(color: Colors.blue)),
             const SizedBox(height: 10),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 15.0),
-              child: Row(
-                children: [
-                  Expanded(
-                    child: TextField(
-                      style: const TextStyle(height: 1.0),
-                      decoration: InputDecoration(
-                        enabledBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(20.0),
-                          borderSide: BorderSide(color: Colors.grey.shade300),
-                        ),
-                        focusedBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(20.0),
-                          borderSide: BorderSide(color: Colors.grey.shade400),
-                        ),
-                        hintText: 'Type message',
-                      ),
-                    ),
-                  ),
-                  const SizedBox(width: 5),
-                  const IconButton(onPressed: null, icon: Icon(Icons.send)),
-                ],
-              ),
-            ),
+
+            // Bottom chat input
+            const _ChatInput(),
           ],
         ),
+      ),
+    );
+  }
+}
+
+class _ChatInput extends StatelessWidget {
+  const _ChatInput();
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 15.0),
+      child: Row(
+        children: [
+          Expanded(
+            child: TextField(
+              keyboardType: TextInputType.multiline,
+              minLines: 1,
+              maxLines: 5,
+              style: const TextStyle(height: 1.0),
+              decoration: InputDecoration(
+                enabledBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(20.0),
+                  borderSide: BorderSide(color: Colors.grey.shade300),
+                ),
+                focusedBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(20.0),
+                  borderSide: BorderSide(color: Colors.grey.shade400),
+                ),
+                hintText: 'Type message',
+              ),
+            ),
+          ),
+          const SizedBox(width: 5),
+          const IconButton(onPressed: null, icon: Icon(Icons.send)),
+        ],
       ),
     );
   }
