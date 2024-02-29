@@ -2,6 +2,7 @@ sealed class ChatEvent {
   const ChatEvent();
 }
 
+// Request for chats.
 final class ChatGetChatsRequested extends ChatEvent {
   const ChatGetChatsRequested({
     this.afterDateTime,

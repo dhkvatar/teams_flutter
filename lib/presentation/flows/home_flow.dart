@@ -56,8 +56,11 @@ class HomeFlow extends RoutingFlow {
             GoRoute(
               path: ':chatId',
               pageBuilder: (context, state) => MaterialPage(
-                child: ChatDetailsPage(
-                  chatId: state.pathParameters['chatId']!,
+                child: BlocProvider.value(
+                  value: getIt<ChatBloc>(),
+                  child: ChatDetailsPage(
+                    chatId: state.pathParameters['chatId']!,
+                  ),
                 ),
               ),
             ),

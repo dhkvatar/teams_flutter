@@ -5,51 +5,55 @@ import 'package:teams/domain/entities/message.dart';
 import 'package:teams/domain/repositories/chat_repository.dart';
 import 'package:uuid/uuid.dart';
 
+Map<String, Chat> _generateChatsBetweenUsers(
+  List<String> userIds,
+  int n,
+) {
+  final res = <String, Chat>{};
+  for (int i = 0; i < n; i++) {
+    final id = userIds.length < 3 ? 'chat_$i' : 'group_chat_$i';
+    res[id] = Chat(
+      id: id,
+      userIds: userIds,
+      name: 'Chat$i',
+      createTime: DateTime(2022, 2, 1),
+      updateTime: DateTime(2022, 2, 1),
+      isGroupChat: false,
+    );
+  }
+  return res;
+}
+
+Map<String, Message> _generateMessagesInChats(
+  Map<String, Chat> chats,
+  int n,
+) {
+  final res = <String, Message>{};
+  chats.forEach((chatId, chat) {
+    for (int i = 0; i < n; i++) {
+      final messageId = '${chatId}_message_$i';
+      res[messageId] = Message(
+        id: messageId,
+        senderId: i % 2 == 0 ? chat.userIds[0] : chat.userIds[1],
+        chatId: chatId,
+        message: 'message_$i',
+        sentTime: DateTime(2022, 2, 1, 0, 0, 0, i),
+      );
+    }
+  });
+  return res;
+}
+
+Map<String, Chat> testChats = _generateChatsBetweenUsers(
+  ['nU7rIBOgJIQGcjVwleEedggSQEz1', 'GQR5MKaA1tN57YHZKJFhU98jXco1'],
+  100,
+);
+Map<String, Message> testMessages = _generateMessagesInChats(testChats, 100);
+
 @Injectable(as: ChatRepository)
 class FakeChatRepository implements ChatRepository {
-  final Map<String, Chat> _chats = {
-    'chat_1': Chat(
-      id: 'chat_1',
-      userIds: ['nU7rIBOgJIQGcjVwleEedggSQEz1'],
-      name: 'Chat1',
-      createTime: DateTime(2022, 2, 1),
-      updateTime: DateTime(2022, 2, 1),
-      isGroupChat: false,
-    ),
-    'chat_2': Chat(
-      id: 'chat_2',
-      userIds: ['nU7rIBOgJIQGcjVwleEedggSQEz1'],
-      name: 'Chat2',
-      createTime: DateTime(2022, 2, 2),
-      updateTime: DateTime(2022, 2, 2),
-      isGroupChat: false,
-    ),
-    'chat_5': Chat(
-      id: 'chat_5',
-      userIds: ['nU7rIBOgJIQGcjVwleEedggSQEz1'],
-      name: 'Chat5',
-      createTime: DateTime(2022, 2, 3),
-      updateTime: DateTime(2022, 2, 3),
-      isGroupChat: false,
-    ),
-    'chat_3': Chat(
-      id: 'chat_3',
-      userIds: ['nU7rIBOgJIQGcjVwleEedggSQEz1'],
-      name: 'Chat3',
-      createTime: DateTime(2022, 2, 1),
-      updateTime: DateTime(2022, 2, 1),
-      isGroupChat: true,
-    ),
-    'chat_4': Chat(
-      id: 'chat_4',
-      userIds: ['nU7rIBOgJIQGcjVwleEedggSQEz1'],
-      name: 'Chat4',
-      createTime: DateTime(2022, 2, 2),
-      updateTime: DateTime(2022, 2, 2),
-      isGroupChat: true,
-    ),
-  };
-  final Map<String, Message> _messages = {};
+  final Map<String, Chat> _chats = testChats;
+  final Map<String, Message> _messages = testMessages;
 
   @override
   Future<Chat> createChat(

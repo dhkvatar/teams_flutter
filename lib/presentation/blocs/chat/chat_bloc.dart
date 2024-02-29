@@ -6,7 +6,7 @@ import 'package:teams/domain/usecases/chat/get_chats.dart';
 import 'package:teams/presentation/blocs/chat/chat_event.dart';
 import 'package:teams/presentation/blocs/chat/chat_state.dart';
 
-@injectable
+@lazySingleton
 class ChatBloc extends Bloc<ChatEvent, ChatState> {
   ChatBloc() : super(const ChatState()) {
     on<ChatGetChatsRequested>(_onGetChatsRequested);
@@ -61,10 +61,4 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
       ));
     }
   }
-
-  // @override
-  // void onChange(Change<ChatState> change) {
-  //   print(change);
-  //   super.onChange(change);
-  // }
 }

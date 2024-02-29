@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:teams/presentation/blocs/chat/chat_bloc.dart';
+import 'package:teams/presentation/blocs/chat/chat_state.dart';
 
 class ChatDetailsPage extends StatelessWidget {
   const ChatDetailsPage({super.key, required this.chatId});
@@ -15,7 +18,7 @@ class ChatDetailsPage extends StatelessWidget {
         body: Column(
           mainAxisAlignment: MainAxisAlignment.end,
           children: [
-            Expanded(child: Container(color: Colors.blue)),
+            _MessagesList(chatId),
             const SizedBox(height: 10),
 
             // Bottom chat input
@@ -23,6 +26,28 @@ class ChatDetailsPage extends StatelessWidget {
           ],
         ),
       ),
+    );
+  }
+}
+
+class _MessagesList extends StatelessWidget {
+  const _MessagesList(this.chatId);
+
+  final String chatId;
+
+  @override
+  Widget build(BuildContext context) {
+    return BlocBuilder<ChatBloc, ChatState>(
+      builder: (ctx, state) {
+        return Expanded(
+          child: Container(
+            color: Colors.blue,
+            child: Text(
+              '${state.directMessageChats.length}',
+            ),
+          ),
+        );
+      },
     );
   }
 }
