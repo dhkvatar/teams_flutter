@@ -24,7 +24,12 @@ class ChatState with _$ChatState {
     // Map from Chat Id to the last message (earliest timestamp and smallest
     // Id) for each chat.
     Map<String, Message>? lastMessage,
+
+    // The loading status of the chats on the chat page.
     @Default(ChatsLoadingStatus.complete) chatsLoadingStatus,
+
+    // Loaded messages for each chat.
+    Map<String, List<Message>>? chatMessages,
 
     // Error message to display after processing a ChatEvent.
     String? errorMessage,
