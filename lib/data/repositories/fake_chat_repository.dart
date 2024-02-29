@@ -83,8 +83,8 @@ class FakeChatRepository implements ChatRepository {
     String? beforeId,
     int? limit,
   }) async {
-    await Future.delayed(Duration(seconds: 1));
-    final userChats =
+    await Future.delayed(const Duration(milliseconds: 500));
+    final List<Chat> userChats =
         _chats.values.where((chat) => chat.userIds.contains(userId)).toList();
     if (userChats.isEmpty) {
       throw const ChatException(type: ChatExceptionType.userNotFound);
@@ -114,6 +114,7 @@ class FakeChatRepository implements ChatRepository {
       DateTime? beforeDateTime,
       String? beforeId,
       int? limit}) async {
+    await Future.delayed(const Duration(milliseconds: 500));
     final chatMessages =
         _messages.values.where((message) => message.chatId == chatId).toList();
     if (chatMessages.isEmpty) {

@@ -13,7 +13,7 @@ class GetCurrentUser implements UseCase<User?, NoParams?> {
   }
 
   @override
-  User? call(NoParams? params) {
+  User? call([NoParams? params]) {
     return _authRepository.currentUser;
   }
 }

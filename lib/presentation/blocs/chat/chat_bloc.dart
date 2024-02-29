@@ -52,9 +52,8 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
       emit(state.copyWith(
         directMessageChats: dms,
         groupChats: groupChats,
-        lastDirectMessageChat: dms.isNotEmpty ? dms[dms.length - 1] : null,
-        lastGroupChat:
-            groupChats.isNotEmpty ? groupChats[groupChats.length - 1] : null,
+        lastDirectMessageChat: dms.isNotEmpty ? dms.last : null,
+        lastGroupChat: groupChats.isNotEmpty ? groupChats.last : null,
         chatsLoadingStatus: ChatsLoadingStatus.complete,
       ));
     } catch (e) {
@@ -94,18 +93,13 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
       final allMessages = [...existing, ...messages];
       _sortMessagesBySentTimeAndId(allMessages);
 
-      final Map<String, List<Message>> newChatMessages =
-          Map.from(state.chatMessages);
-      newChatMessages[event.chatId] = allMessages;
-
-      final Map<String, Message> newLastMessage = Map.from(state.lastMessage);
-      if (allMessages.isNotEmpty) {
-        newLastMessage[event.chatId] = allMessages.last;
-      }
-
       emit(state.copyWith(
-        chatMessages: newChatMessages,
-        lastMessage: newLastMessage,
+        chatMessages: {...state.chatMessages, event.chatId: allMessages},
+        lastMessage: {
+          ...state.lastMessage,
+          event.chatId: allMessages.isNotEmpty ? allMessages.last : null
+        },
+        lastChatAccess: {...state.lastChatAccess, event.chatId: DateTime.now()},
         messagesLoadingStatus: MessagesLoadingStatus.complete,
       ));
     } catch (e) {

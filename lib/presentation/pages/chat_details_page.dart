@@ -39,14 +39,27 @@ class _MessagesList extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocBuilder<ChatBloc, ChatState>(
       builder: (ctx, state) {
-        return Expanded(
-          child: Container(
-            color: Colors.blue,
-            child: Text(
-              '${state.directMessageChats.length}',
-            ),
-          ),
+        final messages =
+            context.read<ChatBloc>().state.chatMessages[chatId] ?? [];
+        if (state.messagesLoadingStatus == MessagesLoadingStatus.inProgress) {
+          return const CircularProgressIndicator();
+        }
+        return Column(
+          children: [
+            Text(chatId),
+            Text('${state.messagesLoadingStatus}'),
+            Text('${messages.length}'),
+          ],
         );
+        // return ListView.builder(
+        //   itemBuilder: (ctx, index) {
+        //     return MessageListItem(
+        //       message: messages[index],
+        //       userId: getIt<GetCurrentUser>()()!.id,
+        //     );
+        //   },
+        //   itemCount: messages.length,
+        // );
       },
     );
   }
