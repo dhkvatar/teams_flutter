@@ -23,13 +23,19 @@ class ChatState with _$ChatState {
 
     // Map from Chat Id to the last message (earliest timestamp and smallest
     // Id) for each chat.
-    Map<String, Message>? lastMessage,
+    @Default({}) Map<String, Message?> lastMessage,
 
     // The loading status of the chats on the chat page.
     @Default(ChatsLoadingStatus.complete) chatsLoadingStatus,
 
+    // The loading status of the messages on the chat details page.
+    @Default(MessagesLoadingStatus.complete) messagesLoadingStatus,
+
     // Loaded messages for each chat.
-    Map<String, List<Message>>? chatMessages,
+    @Default({}) Map<String, List<Message>> chatMessages,
+
+    // The last access time of each chat during the session.
+    @Default({}) Map<String, DateTime> lastChatAccess,
 
     // Error message to display after processing a ChatEvent.
     String? errorMessage,
@@ -37,6 +43,11 @@ class ChatState with _$ChatState {
 }
 
 enum ChatsLoadingStatus {
+  inProgress,
+  complete,
+}
+
+enum MessagesLoadingStatus {
   inProgress,
   complete,
 }

@@ -55,7 +55,16 @@ class _DirectChatsTab extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<ChatBloc, ChatState>(
-      builder: (ctx, state) => ChatListView(chats: state.directMessageChats),
+      builder: (ctx, state) {
+        return state.chatsLoadingStatus == ChatsLoadingStatus.inProgress
+            ? const Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  CircularProgressIndicator(),
+                ],
+              )
+            : ChatListView(chats: state.directMessageChats);
+      },
     );
   }
 }

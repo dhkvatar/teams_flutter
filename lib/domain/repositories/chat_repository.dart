@@ -20,10 +20,14 @@ abstract class ChatRepository {
   /// Get chats that a user is part of.
   Future<List<Chat>?> getChats(
       {required String userId,
-      DateTime? afterDateTime,
-      String? afterId,
+      DateTime? beforeDateTime,
+      String? beforeId,
       int? limit});
 
   /// Get messages for a chat.
-  Future<List<Message>?> getMessages({required String chatId, int? limit});
+  Future<List<Message>?> getMessages(
+      {required String chatId,
+      DateTime? beforeDateTime,
+      String? beforeId,
+      int? limit});
 }

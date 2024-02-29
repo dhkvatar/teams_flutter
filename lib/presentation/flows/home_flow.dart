@@ -27,8 +27,12 @@ class HomeFlow extends RoutingFlow {
   RouteBase routes(GlobalKey<NavigatorState> rootNavigatorKey) {
     return ShellRoute(
       navigatorKey: _shellNavigatorKey,
-      builder: (context, state, body) {
-        return Scaffold(body: body);
+      builder: (context, goRouterState, body) {
+        return BlocProvider(
+            create: (_) => getIt<ChatBloc>()
+              ..add(const ChatGetChatsRequested(
+                  limit: ChatConstants.chatPageSize)),
+            child: Scaffold(body: body));
       },
       routes: [
         // The Home screen
@@ -42,25 +46,17 @@ class HomeFlow extends RoutingFlow {
         // The Chat screen
         GoRoute(
           path: chatRoutePath,
-          pageBuilder: (context, state) => MaterialPage(
-            child: BlocProvider(
-              create: (_) {
-                return getIt<ChatBloc>()
-                  ..add(const ChatGetChatsRequested(
-                      limit: ChatConstants.chatPageSize));
-              },
-              child: const ChatPage(),
-            ),
-          ),
+          pageBuilder: (context, state) {
+            return const MaterialPage(
+              child: ChatPage(),
+            );
+          },
           routes: [
             GoRoute(
               path: ':chatId',
               pageBuilder: (context, state) => MaterialPage(
-                child: BlocProvider.value(
-                  value: getIt<ChatBloc>(),
-                  child: ChatDetailsPage(
-                    chatId: state.pathParameters['chatId']!,
-                  ),
+                child: ChatDetailsPage(
+                  chatId: state.pathParameters['chatId']!,
                 ),
               ),
             ),

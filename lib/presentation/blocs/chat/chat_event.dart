@@ -5,12 +5,27 @@ sealed class ChatEvent {
 // Request for chats.
 final class ChatGetChatsRequested extends ChatEvent {
   const ChatGetChatsRequested({
-    this.afterDateTime,
-    this.afterChatId,
-    this.limit = 20,
+    this.beforeDateTime,
+    this.beforeChatId,
+    this.limit,
   });
 
-  final DateTime? afterDateTime;
-  final String? afterChatId;
+  final DateTime? beforeDateTime;
+  final String? beforeChatId;
+  final int? limit;
+}
+
+// Request for messages for a chat.
+final class ChatGetMessagesRequested extends ChatEvent {
+  const ChatGetMessagesRequested({
+    required this.chatId,
+    this.beforeDateTime,
+    this.beforeMessageId,
+    this.limit,
+  });
+
+  final String chatId;
+  final DateTime? beforeDateTime;
+  final String? beforeMessageId;
   final int? limit;
 }

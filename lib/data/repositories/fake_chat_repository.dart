@@ -79,25 +79,26 @@ class FakeChatRepository implements ChatRepository {
   @override
   Future<List<Chat>?> getChats({
     required String userId,
-    DateTime? afterDateTime,
-    String? afterId,
+    DateTime? beforeDateTime,
+    String? beforeId,
     int? limit,
   }) async {
-    final userChats =
+    await Future.delayed(const Duration(milliseconds: 500));
+    final List<Chat> userChats =
         _chats.values.where((chat) => chat.userIds.contains(userId)).toList();
     if (userChats.isEmpty) {
       throw const ChatException(type: ChatExceptionType.userNotFound);
     }
 
-    // Fliter by afterDateTime
-    if (afterDateTime != null) {
-      userChats
-          .retainWhere((element) => element.updateTime.isAfter(afterDateTime));
+    // Fliter by beforeDateTime
+    if (beforeDateTime != null) {
+      userChats.retainWhere(
+          (element) => element.updateTime.isBefore(beforeDateTime));
     }
 
-    // Filter by afterId
-    if (afterId != null) {
-      userChats.retainWhere((element) => element.id.compareTo(afterId) > 0);
+    // Filter by beforeId
+    if (beforeId != null) {
+      userChats.retainWhere((element) => element.id.compareTo(beforeId) < 0);
     }
     // Sort by updateTime and choose the latest ones upto limit.
     userChats.sort((a, b) => b.updateTime.compareTo(a.updateTime));
@@ -109,16 +110,31 @@ class FakeChatRepository implements ChatRepository {
 
   @override
   Future<List<Message>?> getMessages(
-      {required String chatId, int? limit}) async {
+      {required String chatId,
+      DateTime? beforeDateTime,
+      String? beforeId,
+      int? limit}) async {
+    await Future.delayed(const Duration(milliseconds: 500));
     final chatMessages =
         _messages.values.where((message) => message.chatId == chatId).toList();
     if (chatMessages.isEmpty) {
       throw const ChatException(type: ChatExceptionType.chatNotFound);
     }
 
+    // Filter by beforeDateTime
+    if (beforeDateTime != null) {
+      chatMessages
+          .retainWhere((element) => element.sentTime.isBefore(beforeDateTime));
+    }
+
+    // Filter by beforeId
+    if (beforeId != null) {
+      chatMessages.retainWhere((element) => element.id.compareTo(beforeId) < 0);
+    }
+
     // Sort by sentTime and choose the latest ones upto limit.
     chatMessages.sort((a, b) => b.sentTime.compareTo(a.sentTime));
-    if (limit != null && limit > 0) {
+    if (limit != null && limit > 0 && chatMessages.length > limit) {
       chatMessages.removeRange(limit, chatMessages.length);
     }
     return chatMessages;
