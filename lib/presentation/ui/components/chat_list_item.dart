@@ -17,6 +17,7 @@ class ChatListItem extends StatelessWidget {
       child: ListTile(
         leading: const CircleAvatar(radius: 20),
         title: Text(chat.name),
+        trailing: Text(chat.updateTime.toString()),
       ),
     );
   }
