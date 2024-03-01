@@ -16,8 +16,8 @@ Map<String, Chat> _generateChatsBetweenUsers(
       id: id,
       userIds: userIds,
       name: 'Chat$i',
-      createTime: DateTime(2022, 2, 1),
-      updateTime: DateTime(2022, 2, 1),
+      createTime: DateTime(2022, 2, 1, 0, 0, 0, 0),
+      updateTime: DateTime(2022, 2, 1, 0, 0, 0, i),
       isGroupChat: false,
     );
   }
@@ -37,7 +37,7 @@ Map<String, Message> _generateMessagesInChats(
         senderId: i % 2 == 0 ? chat.userIds[0] : chat.userIds[1],
         chatId: chatId,
         message: 'message_$i',
-        sentTime: DateTime(2022, 2, 1, 0, 0, 0, i),
+        sentTime: DateTime(2022, 2, 1, 13, 0, 0, i),
       );
     }
   });

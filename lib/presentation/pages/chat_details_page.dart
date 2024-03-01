@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:teams/app/di/di.dart';
+import 'package:teams/domain/usecases/authentication/get_current_user.dart';
 import 'package:teams/presentation/blocs/chat/chat_bloc.dart';
 import 'package:teams/presentation/blocs/chat/chat_state.dart';
+import 'package:teams/presentation/ui/components/message_list_item.dart';
 
 class ChatDetailsPage extends StatelessWidget {
   const ChatDetailsPage({super.key, required this.chatId});
@@ -44,22 +47,19 @@ class _MessagesList extends StatelessWidget {
         if (state.messagesLoadingStatus == MessagesLoadingStatus.inProgress) {
           return const CircularProgressIndicator();
         }
-        return Column(
-          children: [
-            Text(chatId),
-            Text('${state.messagesLoadingStatus}'),
-            Text('${messages.length}'),
-          ],
+        return Expanded(
+          child: ListView.builder(
+            reverse: true,
+            scrollDirection: Axis.vertical,
+            itemBuilder: (ctx, index) {
+              return MessageListItem(
+                message: messages[index],
+                userId: getIt<GetCurrentUser>()()!.id,
+              );
+            },
+            itemCount: messages.length,
+          ),
         );
-        // return ListView.builder(
-        //   itemBuilder: (ctx, index) {
-        //     return MessageListItem(
-        //       message: messages[index],
-        //       userId: getIt<GetCurrentUser>()()!.id,
-        //     );
-        //   },
-        //   itemCount: messages.length,
-        // );
       },
     );
   }
