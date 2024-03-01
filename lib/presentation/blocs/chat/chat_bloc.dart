@@ -15,8 +15,12 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
     on<ChatGetMessagesRequested>(_onGetMessagesRequested);
   }
 
+  // The oldest chats should appear last.
+  // The latest chats appear first.
   void _sortChatsBySentTimeAndId(List<Chat> chats) {
     chats.sort((a, b) {
+      // a comes first if b's updateTime is smaller
+      // a comes first if a's updateTime is larger
       int timeComparison = b.updateTime.compareTo(a.updateTime);
       if (timeComparison == 0) {
         return b.id.compareTo(a.id);
@@ -64,7 +68,10 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
     }
   }
 
+  // Oldest messages should appear last.
+  // Latest messages should appear first.
   void _sortMessagesBySentTimeAndId(List<Message> messages) {
+    // a appears first if a's sentTime is earlier
     messages.sort((a, b) {
       int timeComparison = b.sentTime.compareTo(a.sentTime);
       if (timeComparison == 0) {
