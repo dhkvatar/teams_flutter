@@ -8,7 +8,7 @@ import 'package:teams/domain/usecases/chat/get_messages.dart';
 import 'package:teams/presentation/blocs/chat/chat_event.dart';
 import 'package:teams/presentation/blocs/chat/chat_state.dart';
 
-@lazySingleton
+@injectable
 class ChatBloc extends Bloc<ChatEvent, ChatState> {
   ChatBloc() : super(const ChatState()) {
     on<ChatGetChatsRequested>(_onGetChatsRequested);

@@ -49,7 +49,7 @@ extension GetItInjectableX on _i1.GetIt {
     gh.lazySingleton<_i3.AppRouter>(() => _i3.AppRouter());
     gh.lazySingleton<_i4.AuthRepository>(
         () => authRepositoryInjection.getAuthRepository());
-    gh.lazySingleton<_i5.ChatBloc>(() => _i5.ChatBloc());
+    gh.factory<_i5.ChatBloc>(() => _i5.ChatBloc());
     gh.factory<_i6.ChatRepository>(() => _i7.FakeChatRepository());
     gh.factory<_i8.GetChats>(() => _i8.GetChats(
           authRepository: gh<_i4.AuthRepository>(),

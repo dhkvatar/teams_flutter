@@ -1,4 +1,7 @@
+import 'package:formz/formz.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
+import 'package:go_router/go_router.dart';
+import 'package:teams/core/forms/chat.dart';
 import 'package:teams/domain/entities/chat.dart';
 import 'package:teams/domain/entities/message.dart';
 
@@ -44,6 +47,15 @@ class ChatState with _$ChatState {
 
     // The last access time of each chat during the session.
     @Default({}) Map<String, DateTime> lastChatAccess,
+
+    // The chat input state.
+    @Default(ChatInput.pure()) ChatInput chatInput,
+
+    // The status of chat input submission.
+    @Default(FormzSubmissionStatus.initial) FormzSubmissionStatus formzStatus,
+
+    // Whether the state of the bloc is valid for chat send submission.
+    @Default(false) bool isValid,
 
     // Error message to display after processing a ChatEvent.
     String? errorMessage,
