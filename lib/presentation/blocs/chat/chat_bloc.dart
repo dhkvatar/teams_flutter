@@ -42,6 +42,7 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
           limit: event.limit,
         ),
       );
+
       final dms = [
         ...state.directMessageChats,
         ...chats.where((element) => !element.isGroupChat).toList()
@@ -96,16 +97,37 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
           limit: event.limit,
         ),
       );
+
       final existing = state.chatMessages[event.chatId] ?? [];
       final allMessages = [...existing, ...messages];
       _sortMessagesBySentTimeAndId(allMessages);
 
+      final allDatesForChat = state.sortedDates[event.chatId]?.toSet() ?? {};
+      final groupedMessages = state.chatMessagesByDate[event.chatId] ?? {};
+      for (final message in messages) {
+        DateTime dateKey = DateTime(message.sentTime.year,
+            message.sentTime.month, message.sentTime.day);
+        groupedMessages.putIfAbsent(dateKey, () => []);
+        allDatesForChat.add(dateKey);
+        groupedMessages[dateKey]!.add(message);
+      }
+      groupedMessages.forEach((date, messages) {
+        _sortMessagesBySentTimeAndId(messages);
+      });
+      final sortedDatesList = allDatesForChat.toList();
+      sortedDatesList.sort((a, b) => b.compareTo(a));
+
       emit(state.copyWith(
+        chatMessagesByDate: {
+          ...state.chatMessagesByDate,
+          event.chatId: groupedMessages,
+        },
         chatMessages: {...state.chatMessages, event.chatId: allMessages},
         lastMessage: {
           ...state.lastMessage,
-          event.chatId: allMessages.isNotEmpty ? allMessages.last : null
+          event.chatId: allMessages.isNotEmpty ? allMessages.last : null,
         },
+        sortedDates: {...state.sortedDates, event.chatId: sortedDatesList},
         lastChatAccess: {...state.lastChatAccess, event.chatId: DateTime.now()},
         messagesLoadingStatus: MessagesLoadingStatus.complete,
       ));

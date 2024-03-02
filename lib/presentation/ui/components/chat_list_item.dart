@@ -16,6 +16,7 @@ class ChatListItem extends StatelessWidget {
     final chatBloc = context.read<ChatBloc>();
     return GestureDetector(
       onTap: () {
+        // Load latest messages only on first access to chat.
         if (chatBloc.state.lastChatAccess[chat.id] == null) {
           chatBloc.add(ChatGetMessagesRequested(chatId: chat.id));
         }
