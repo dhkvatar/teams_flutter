@@ -1,6 +1,8 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:formz/formz.dart';
 import 'package:injectable/injectable.dart';
 import 'package:teams/app/di/di.dart';
+import 'package:teams/core/forms/chat.dart';
 import 'package:teams/domain/entities/chat.dart';
 import 'package:teams/domain/entities/message.dart';
 import 'package:teams/domain/usecases/chat/get_chats.dart';
@@ -13,6 +15,7 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
   ChatBloc() : super(const ChatState()) {
     on<ChatGetChatsRequested>(_onGetChatsRequested);
     on<ChatGetMessagesRequested>(_onGetMessagesRequested);
+    on<ChatMessageInputChanged>(_onMessageInputChanged);
   }
 
   // The oldest chats should appear last.
@@ -137,5 +140,14 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
         errorMessage: 'Error fetching messages: ${e.toString()}',
       ));
     }
+  }
+
+  Future<void> _onMessageInputChanged(
+      ChatMessageInputChanged event, Emitter<ChatState> emit) async {
+    final chatInput = ChatInput.dirty(event.message);
+    emit(state.copyWith(
+      chatInput: chatInput,
+      isValid: Formz.validate([chatInput]),
+    ));
   }
 }

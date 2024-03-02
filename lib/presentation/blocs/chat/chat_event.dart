@@ -29,3 +29,19 @@ final class ChatGetMessagesRequested extends ChatEvent {
   final String? beforeMessageId;
   final int? limit;
 }
+
+final class ChatSendMessageRequested extends ChatEvent {
+  const ChatSendMessageRequested({
+    required this.chatId,
+    required this.message,
+  });
+
+  final String chatId;
+  final String message;
+}
+
+final class ChatMessageInputChanged extends ChatEvent {
+  const ChatMessageInputChanged({required this.message});
+
+  final String message;
+}

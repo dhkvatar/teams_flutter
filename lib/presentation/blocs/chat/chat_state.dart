@@ -1,6 +1,5 @@
 import 'package:formz/formz.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
-import 'package:go_router/go_router.dart';
 import 'package:teams/core/forms/chat.dart';
 import 'package:teams/domain/entities/chat.dart';
 import 'package:teams/domain/entities/message.dart';

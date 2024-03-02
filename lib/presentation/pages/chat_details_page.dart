@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:teams/app/di/di.dart';
 import 'package:teams/domain/usecases/authentication/get_current_user.dart';
 import 'package:teams/presentation/blocs/chat/chat_bloc.dart';
+import 'package:teams/presentation/blocs/chat/chat_event.dart';
 import 'package:teams/presentation/blocs/chat/chat_state.dart';
 import 'package:teams/presentation/ui/components/message_list_item.dart';
 
@@ -103,10 +104,20 @@ class _ChatInput extends StatelessWidget {
                 ),
                 hintText: 'Type message',
               ),
+              onChanged: (input) {
+                context
+                    .read<ChatBloc>()
+                    .add(ChatMessageInputChanged(message: input));
+              },
             ),
           ),
           const SizedBox(width: 5),
-          const IconButton(onPressed: null, icon: Icon(Icons.send)),
+          BlocBuilder<ChatBloc, ChatState>(
+            builder: (ctx, state) => IconButton(
+              onPressed: state.isValid ? () {} : null,
+              icon: const Icon(Icons.send),
+            ),
+          ),
         ],
       ),
     );
