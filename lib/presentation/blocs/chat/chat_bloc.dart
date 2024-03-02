@@ -7,6 +7,7 @@ import 'package:teams/domain/entities/chat.dart';
 import 'package:teams/domain/entities/message.dart';
 import 'package:teams/domain/usecases/chat/get_chats.dart';
 import 'package:teams/domain/usecases/chat/get_messages.dart';
+import 'package:teams/domain/usecases/chat/send_message.dart';
 import 'package:teams/presentation/blocs/chat/chat_event.dart';
 import 'package:teams/presentation/blocs/chat/chat_state.dart';
 
@@ -16,6 +17,7 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
     on<ChatGetChatsRequested>(_onGetChatsRequested);
     on<ChatGetMessagesRequested>(_onGetMessagesRequested);
     on<ChatMessageInputChanged>(_onMessageInputChanged);
+    on<ChatSendMessageRequested>(_onSendMessageRequested);
   }
 
   // The oldest chats should appear last.
@@ -149,5 +151,20 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
       chatInput: chatInput,
       isValid: Formz.validate([chatInput]),
     ));
+  }
+
+  Future<void> _onSendMessageRequested(
+      ChatSendMessageRequested event, Emitter<ChatState> emit) async {
+    if (state.isValid) {
+      emit(state.copyWith(formzStatus: FormzSubmissionStatus.inProgress));
+      try {
+        final message = state.chatInput.value;
+        await getIt<SendMessage>()(
+            SendMessageParams(chatId: event.chatId, message: message));
+        emit(state.copyWith(formzStatus: FormzSubmissionStatus.success));
+      } catch (_) {
+        emit(state.copyWith(formzStatus: FormzSubmissionStatus.failure));
+      }
+    }
   }
 }

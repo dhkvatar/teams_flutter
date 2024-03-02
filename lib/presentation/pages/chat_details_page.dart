@@ -26,7 +26,7 @@ class ChatDetailsPage extends StatelessWidget {
             const SizedBox(height: 10),
 
             // Bottom chat input
-            const _ChatInput(),
+            _ChatInput(chatId: chatId),
           ],
         ),
       ),
@@ -79,7 +79,9 @@ class _MessagesList extends StatelessWidget {
 }
 
 class _ChatInput extends StatelessWidget {
-  const _ChatInput();
+  const _ChatInput({required this.chatId});
+
+  final String chatId;
 
   @override
   Widget build(BuildContext context) {
@@ -114,7 +116,13 @@ class _ChatInput extends StatelessWidget {
           const SizedBox(width: 5),
           BlocBuilder<ChatBloc, ChatState>(
             builder: (ctx, state) => IconButton(
-              onPressed: state.isValid ? () {} : null,
+              onPressed: state.isValid
+                  ? () {
+                      context
+                          .read<ChatBloc>()
+                          .add(ChatSendMessageRequested(chatId: chatId));
+                    }
+                  : null,
               icon: const Icon(Icons.send),
             ),
           ),
