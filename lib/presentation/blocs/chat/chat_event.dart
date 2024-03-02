@@ -31,9 +31,10 @@ final class ChatGetMessagesRequested extends ChatEvent {
 }
 
 final class ChatSendMessageRequested extends ChatEvent {
-  const ChatSendMessageRequested({required this.chatId});
+  const ChatSendMessageRequested({required this.chatId, required this.message});
 
   final String chatId;
+  final String message;
 }
 
 final class ChatMessageInputChanged extends ChatEvent {

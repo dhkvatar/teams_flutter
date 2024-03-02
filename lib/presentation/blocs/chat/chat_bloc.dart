@@ -158,10 +158,13 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
     if (state.isValid) {
       emit(state.copyWith(formzStatus: FormzSubmissionStatus.inProgress));
       try {
-        final message = state.chatInput.value;
         await getIt<SendMessage>()(
-            SendMessageParams(chatId: event.chatId, message: message));
-        emit(state.copyWith(formzStatus: FormzSubmissionStatus.success));
+            SendMessageParams(chatId: event.chatId, message: event.message));
+        emit(state.copyWith(
+          chatInput: const ChatInput.pure(),
+          formzStatus: FormzSubmissionStatus.success,
+          isValid: false,
+        ));
       } catch (_) {
         emit(state.copyWith(formzStatus: FormzSubmissionStatus.failure));
       }

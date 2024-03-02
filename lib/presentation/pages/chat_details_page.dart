@@ -8,9 +8,10 @@ import 'package:teams/presentation/blocs/chat/chat_state.dart';
 import 'package:teams/presentation/ui/components/message_list_item.dart';
 
 class ChatDetailsPage extends StatelessWidget {
-  const ChatDetailsPage({super.key, required this.chatId});
+  ChatDetailsPage({super.key, required this.chatId});
 
   final String chatId;
+  final _chatInputController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -26,7 +27,10 @@ class ChatDetailsPage extends StatelessWidget {
             const SizedBox(height: 10),
 
             // Bottom chat input
-            _ChatInput(chatId: chatId),
+            _ChatInput(
+              chatId: chatId,
+              chatInputController: _chatInputController,
+            ),
           ],
         ),
       ),
@@ -79,9 +83,13 @@ class _MessagesList extends StatelessWidget {
 }
 
 class _ChatInput extends StatelessWidget {
-  const _ChatInput({required this.chatId});
+  const _ChatInput({
+    required this.chatId,
+    required this.chatInputController,
+  });
 
   final String chatId;
+  final TextEditingController chatInputController;
 
   @override
   Widget build(BuildContext context) {
@@ -91,6 +99,7 @@ class _ChatInput extends StatelessWidget {
         children: [
           Expanded(
             child: TextField(
+              controller: chatInputController,
               keyboardType: TextInputType.multiline,
               minLines: 1,
               maxLines: 5,
@@ -118,9 +127,9 @@ class _ChatInput extends StatelessWidget {
             builder: (ctx, state) => IconButton(
               onPressed: state.isValid
                   ? () {
-                      context
-                          .read<ChatBloc>()
-                          .add(ChatSendMessageRequested(chatId: chatId));
+                      context.read<ChatBloc>().add(ChatSendMessageRequested(
+                          chatId: chatId, message: chatInputController.text));
+                      chatInputController.clear();
                     }
                   : null,
               icon: const Icon(Icons.send),
