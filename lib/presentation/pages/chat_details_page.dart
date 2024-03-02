@@ -42,8 +42,10 @@ class _MessagesList extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocBuilder<ChatBloc, ChatState>(
       builder: (ctx, state) {
-        final messages =
-            context.read<ChatBloc>().state.chatMessages[chatId] ?? [];
+        // final messages =
+        //     context.read<ChatBloc>().state.chatMessages[chatId] ?? [];
+        final messagesByDate =
+            context.read<ChatBloc>().state.chatMessagesByDate[chatId] ?? {};
         if (state.messagesLoadingStatus == MessagesLoadingStatus.inProgress) {
           return const CircularProgressIndicator();
         }
@@ -52,12 +54,22 @@ class _MessagesList extends StatelessWidget {
             reverse: true,
             scrollDirection: Axis.vertical,
             itemBuilder: (ctx, index) {
-              return MessageListItem(
-                message: messages[index],
-                userId: getIt<GetCurrentUser>()()!.id,
+              final dateKey = state.sortedDates[chatId]!.elementAt(index);
+              return Column(
+                children: [
+                  Text(dateKey.toString()),
+                  Column(
+                    children: messagesByDate[dateKey]!.map((e) {
+                      return MessageListItem(
+                        message: e,
+                        userId: getIt<GetCurrentUser>()()!.id,
+                      );
+                    }).toList(),
+                  )
+                ],
               );
             },
-            itemCount: messages.length,
+            itemCount: messagesByDate.length,
           ),
         );
       },
