@@ -47,19 +47,23 @@ class _MessagesList extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocBuilder<ChatBloc, ChatState>(
       builder: (ctx, state) {
-        // final messages =
-        //     context.read<ChatBloc>().state.chatMessages[chatId] ?? [];
         final messagesByDate =
             context.read<ChatBloc>().state.chatMessagesByDate[chatId] ?? {};
+
         if (state.messagesLoadingStatus == MessagesLoadingStatus.inProgress) {
           return const CircularProgressIndicator();
         }
+
+        final dateKeys = messagesByDate.keys.toList();
+        dateKeys.sort((a, b) => b.compareTo(a));
+
         return Expanded(
           child: ListView.builder(
             reverse: true,
             scrollDirection: Axis.vertical,
             itemBuilder: (ctx, index) {
-              final dateKey = state.sortedDates[chatId]!.elementAt(index);
+              // final dateKey = state.sortedDates[chatId]!.elementAt(index);
+              final dateKey = dateKeys.elementAt(index);
               return Column(
                 children: [
                   Text(dateKey.toString()),
