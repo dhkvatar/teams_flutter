@@ -150,10 +150,41 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
     if (state.isValid) {
       emit(state.copyWith(formzStatus: FormzSubmissionStatus.inProgress));
       try {
-        await getIt<SendMessage>()(
+        final sentMessage = await getIt<SendMessage>()(
             SendMessageParams(chatId: event.chatId, message: event.message));
+        final sentDate = DateTime(sentMessage.sentTime.year,
+            sentMessage.sentTime.month, sentMessage.sentTime.day);
+        final messagesByDate = state.chatMessagesByDate[event.chatId] ?? {};
+        messagesByDate.putIfAbsent(sentDate, () => []);
+        final sortedMessagesForDate = [
+          ...messagesByDate[sentDate]!,
+          sentMessage
+        ];
+        _sortMessagesBySentTimeAndId(sortedMessagesForDate);
+
         emit(state.copyWith(
           chatInput: const ChatInput.pure(),
+          pendingMessagesById: {
+            ...state.pendingMessagesById,
+            event.chatId: {
+              ...state.pendingMessagesById[event.chatId] ?? {},
+              sentMessage.id: sentMessage,
+            }
+          },
+          chatMessagesByDate: {
+            ...state.chatMessagesByDate,
+            event.chatId: {
+              ...state.chatMessagesByDate[event.chatId] ?? {},
+              sentDate: sortedMessagesForDate,
+            },
+          },
+          chatMessages: {
+            ...state.chatMessages,
+            event.chatId: [
+              ...state.chatMessages[event.chatId] ?? [],
+              sentMessage,
+            ]
+          },
           formzStatus: FormzSubmissionStatus.success,
           isValid: false,
         ));

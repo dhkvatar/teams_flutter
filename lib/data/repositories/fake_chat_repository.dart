@@ -160,8 +160,10 @@ class FakeChatRepository implements ChatRepository {
       chatId: chatId,
       message: message,
       sentTime: now,
+      uploadStatus: MessageUploadStatus.uploadInProgress,
     );
 
+    // TODO: schedule the addition of the message and stream output to future.
     // Store new message.
     _messages[newMessageId] = newMessage;
     return newMessage;
