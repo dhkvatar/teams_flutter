@@ -19,5 +19,14 @@ class Message with _$Message {
 
     // The time the message was sent.
     required DateTime sentTime,
+
+    // The upload status of the message.
+    @Default(MessageUploadStatus.success) MessageUploadStatus uploadStatus,
   }) = _Message;
+}
+
+enum MessageUploadStatus {
+  uploadInProgress,
+  timeout,
+  success,
 }
