@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:formz/formz.dart';
 import 'package:injectable/injectable.dart';
@@ -5,6 +7,8 @@ import 'package:teams/app/di/di.dart';
 import 'package:teams/core/forms/chat.dart';
 import 'package:teams/domain/entities/chat.dart';
 import 'package:teams/domain/entities/message.dart';
+import 'package:teams/domain/repositories/chat_repository.dart';
+import 'package:teams/domain/usecases/chat/get_chat_updates_stream.dart';
 import 'package:teams/domain/usecases/chat/get_chats.dart';
 import 'package:teams/domain/usecases/chat/get_messages.dart';
 import 'package:teams/domain/usecases/chat/send_message.dart';
@@ -18,20 +22,49 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
     on<ChatGetMessagesRequested>(_onGetMessagesRequested);
     on<ChatMessageInputChanged>(_onMessageInputChanged);
     on<ChatSendMessageRequested>(_onSendMessageRequested);
+    // on<ChatMessageUploadReceived>(_onMessageUploadReceived);
+    // _messageUploadSubscription =
+    //     getIt<GetChatUpdatesStream>()().listen((message) {
+    //   print('ack from server on $message');
+    //   add(ChatMessageUploadReceived());
+    // });
+    on<ChatUpdateStreamReceived>(_onUpdateStreamReceived);
+    _chatUpdatesSubscription = getIt<GetChatUpdatesStream>()().listen((update) {
+      add(ChatUpdateStreamReceived(update: update));
+    });
   }
 
-  // The oldest chats should appear last.
-  // The latest chats appear first.
+  // late final StreamSubscription<Message> _messageUploadSubscription;
+  late final StreamSubscription<ChatUpdateStreamItem> _chatUpdatesSubscription;
+
   void _sortChatsBySentTimeAndId(List<Chat> chats) {
     chats.sort((a, b) {
-      // a comes first if b's updateTime is smaller
-      // a comes first if a's updateTime is larger
       int timeComparison = b.updateTime.compareTo(a.updateTime);
       if (timeComparison == 0) {
         return b.id.compareTo(a.id);
       }
       return timeComparison;
     });
+  }
+
+  Future<void> _onUpdateStreamReceived(
+      ChatUpdateStreamReceived event, Emitter<ChatState> emit) async {
+    switch (event.update.updateType) {
+      case ChatUpdateType.newMessageUploadSuccess:
+        final pendingMessagesForChat =
+            state.pendingMessagesById[event.update.chatId] ?? {};
+        pendingMessagesForChat.remove(event.update.newMessageId ?? '');
+        emit(state.copyWith(
+          // Remove the acked message from the pending messages map.
+          pendingMessagesById: {
+            ...state.pendingMessagesById,
+            event.update.chatId: pendingMessagesForChat,
+          },
+        ));
+
+      case ChatUpdateType.newMessageUploadFailure:
+      // TODO: Handle this case.
+    }
   }
 
   Future<void> _onGetChatsRequested(
@@ -192,5 +225,11 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
         emit(state.copyWith(formzStatus: FormzSubmissionStatus.failure));
       }
     }
+  }
+
+  @override
+  Future<void> close() {
+    _chatUpdatesSubscription.cancel();
+    return super.close();
   }
 }

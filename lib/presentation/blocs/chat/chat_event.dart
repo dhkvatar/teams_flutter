@@ -1,3 +1,5 @@
+import 'package:teams/domain/repositories/chat_repository.dart';
+
 sealed class ChatEvent {
   const ChatEvent();
 }
@@ -41,4 +43,10 @@ final class ChatMessageInputChanged extends ChatEvent {
   const ChatMessageInputChanged({required this.message});
 
   final String message;
+}
+
+final class ChatUpdateStreamReceived extends ChatEvent {
+  const ChatUpdateStreamReceived({required this.update});
+
+  final ChatUpdateStreamItem update;
 }

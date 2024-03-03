@@ -1,3 +1,6 @@
+import 'dart:async';
+
+import 'package:get_it/get_it.dart';
 import 'package:injectable/injectable.dart';
 import 'package:teams/core/exceptions/chat_exception.dart';
 import 'package:teams/domain/entities/chat.dart';
@@ -50,10 +53,28 @@ Map<String, Chat> testChats = _generateChatsBetweenUsers(
 );
 Map<String, Message> testMessages = _generateMessagesInChats(testChats, 50);
 
-@Injectable(as: ChatRepository)
-class FakeChatRepository implements ChatRepository {
+@LazySingleton(as: ChatRepository)
+class FakeChatRepository implements ChatRepository, Disposable {
+  FakeChatRepository() {
+    _messageStreamController = StreamController<Message>.broadcast();
+    _chatUpdatesStreamController =
+        StreamController<ChatUpdateStreamItem>.broadcast();
+    _queue = MessageUploadQueue(
+      streamController: _messageStreamController,
+      chatUpdateStreamController: _chatUpdatesStreamController,
+    );
+  }
+
   final Map<String, Chat> _chats = testChats;
   final Map<String, Message> _messages = testMessages;
+  late final StreamController<Message> _messageStreamController;
+  late final StreamController<ChatUpdateStreamItem>
+      _chatUpdatesStreamController;
+  late final MessageUploadQueue _queue;
+
+  @override
+  Stream<ChatUpdateStreamItem> get chatUpdatesStream =>
+      _chatUpdatesStreamController.stream;
 
   @override
   Future<Chat> createChat(
@@ -163,9 +184,52 @@ class FakeChatRepository implements ChatRepository {
       uploadStatus: MessageUploadStatus.uploadInProgress,
     );
 
-    // TODO: schedule the addition of the message and stream output to future.
-    // Store new message.
-    _messages[newMessageId] = newMessage;
+    // Schedule storing new message.
+    _queue.scheduleMessageUpload(
+        newMessage, const Duration(seconds: 3), _messages);
     return newMessage;
+  }
+
+  @override
+  FutureOr onDispose() {
+    _messageStreamController.close();
+  }
+}
+
+class MessageUploadQueue {
+  MessageUploadQueue({
+    required this.streamController,
+    required this.chatUpdateStreamController,
+  });
+
+  final StreamController<Message> streamController;
+  final StreamController<ChatUpdateStreamItem> chatUpdateStreamController;
+
+  Future<void> scheduleMessageUpload(
+    Message toUpload,
+    Duration duration,
+    Map<String, Message> messageList,
+  ) async {
+    await Future.delayed(duration, () {
+      streamController.add(toUpload);
+      final update = ChatUpdateStreamItem(
+        chatId: toUpload.chatId,
+        updateType: ChatUpdateType.newMessageUploadSuccess,
+        newMessageId: toUpload.id,
+      );
+
+      messageList[toUpload.id] = toUpload;
+      chatUpdateStreamController.add(update);
+    });
+  }
+
+  Future<void> uploadMessageWithDelay(
+      Map<String, Message> messages,
+      Message toAdd,
+      Duration duration,
+      StreamController streamController) async {
+    await Future.delayed(duration);
+    messages[toAdd.id] = toAdd;
+    streamController.add(toAdd);
   }
 }
