@@ -16,9 +16,7 @@ final _privateConstructorUsedError = UnsupportedError(
 
 /// @nodoc
 mixin _$ChatState {
-// Map from Chat Id to Chat.
-  Map<String, Chat> get chatsById =>
-      throw _privateConstructorUsedError; // List of direct message chats, sorted by updateTime and Id (descending).
+// List of direct message chats, sorted by updateTime and Id (descending).
   List<Chat> get directMessageChats =>
       throw _privateConstructorUsedError; // List of group chats, sorted by updateTime and Id (descending).
   List<Chat> get groupChats =>
@@ -45,6 +43,12 @@ mixin _$ChatState {
   Map<String, Map<DateTime, List<Message>>> get chatMessagesByDate =>
       throw _privateConstructorUsedError; // The last access time of each chat during the session.
   Map<String, DateTime> get lastChatAccess =>
+      throw _privateConstructorUsedError; // The chat input state.
+  ChatInput get chatInput =>
+      throw _privateConstructorUsedError; // The status of chat input submission.
+  FormzSubmissionStatus get formzStatus =>
+      throw _privateConstructorUsedError; // Whether the state of the bloc is valid for chat send submission.
+  bool get isValid =>
       throw _privateConstructorUsedError; // Error message to display after processing a ChatEvent.
   String? get errorMessage => throw _privateConstructorUsedError;
 
@@ -59,8 +63,7 @@ abstract class $ChatStateCopyWith<$Res> {
       _$ChatStateCopyWithImpl<$Res, ChatState>;
   @useResult
   $Res call(
-      {Map<String, Chat> chatsById,
-      List<Chat> directMessageChats,
+      {List<Chat> directMessageChats,
       List<Chat> groupChats,
       Chat? lastDirectMessageChat,
       Chat? lastGroupChat,
@@ -71,6 +74,9 @@ abstract class $ChatStateCopyWith<$Res> {
       Map<String, List<Message>> chatMessages,
       Map<String, Map<DateTime, List<Message>>> chatMessagesByDate,
       Map<String, DateTime> lastChatAccess,
+      ChatInput chatInput,
+      FormzSubmissionStatus formzStatus,
+      bool isValid,
       String? errorMessage});
 
   $ChatCopyWith<$Res>? get lastDirectMessageChat;
@@ -90,7 +96,6 @@ class _$ChatStateCopyWithImpl<$Res, $Val extends ChatState>
   @pragma('vm:prefer-inline')
   @override
   $Res call({
-    Object? chatsById = null,
     Object? directMessageChats = null,
     Object? groupChats = null,
     Object? lastDirectMessageChat = freezed,
@@ -102,13 +107,12 @@ class _$ChatStateCopyWithImpl<$Res, $Val extends ChatState>
     Object? chatMessages = null,
     Object? chatMessagesByDate = null,
     Object? lastChatAccess = null,
+    Object? chatInput = null,
+    Object? formzStatus = null,
+    Object? isValid = null,
     Object? errorMessage = freezed,
   }) {
     return _then(_value.copyWith(
-      chatsById: null == chatsById
-          ? _value.chatsById
-          : chatsById // ignore: cast_nullable_to_non_nullable
-              as Map<String, Chat>,
       directMessageChats: null == directMessageChats
           ? _value.directMessageChats
           : directMessageChats // ignore: cast_nullable_to_non_nullable
@@ -153,6 +157,18 @@ class _$ChatStateCopyWithImpl<$Res, $Val extends ChatState>
           ? _value.lastChatAccess
           : lastChatAccess // ignore: cast_nullable_to_non_nullable
               as Map<String, DateTime>,
+      chatInput: null == chatInput
+          ? _value.chatInput
+          : chatInput // ignore: cast_nullable_to_non_nullable
+              as ChatInput,
+      formzStatus: null == formzStatus
+          ? _value.formzStatus
+          : formzStatus // ignore: cast_nullable_to_non_nullable
+              as FormzSubmissionStatus,
+      isValid: null == isValid
+          ? _value.isValid
+          : isValid // ignore: cast_nullable_to_non_nullable
+              as bool,
       errorMessage: freezed == errorMessage
           ? _value.errorMessage
           : errorMessage // ignore: cast_nullable_to_non_nullable
@@ -194,8 +210,7 @@ abstract class _$$ChatStateImplCopyWith<$Res>
   @override
   @useResult
   $Res call(
-      {Map<String, Chat> chatsById,
-      List<Chat> directMessageChats,
+      {List<Chat> directMessageChats,
       List<Chat> groupChats,
       Chat? lastDirectMessageChat,
       Chat? lastGroupChat,
@@ -206,6 +221,9 @@ abstract class _$$ChatStateImplCopyWith<$Res>
       Map<String, List<Message>> chatMessages,
       Map<String, Map<DateTime, List<Message>>> chatMessagesByDate,
       Map<String, DateTime> lastChatAccess,
+      ChatInput chatInput,
+      FormzSubmissionStatus formzStatus,
+      bool isValid,
       String? errorMessage});
 
   @override
@@ -225,7 +243,6 @@ class __$$ChatStateImplCopyWithImpl<$Res>
   @pragma('vm:prefer-inline')
   @override
   $Res call({
-    Object? chatsById = null,
     Object? directMessageChats = null,
     Object? groupChats = null,
     Object? lastDirectMessageChat = freezed,
@@ -237,13 +254,12 @@ class __$$ChatStateImplCopyWithImpl<$Res>
     Object? chatMessages = null,
     Object? chatMessagesByDate = null,
     Object? lastChatAccess = null,
+    Object? chatInput = null,
+    Object? formzStatus = null,
+    Object? isValid = null,
     Object? errorMessage = freezed,
   }) {
     return _then(_$ChatStateImpl(
-      chatsById: null == chatsById
-          ? _value._chatsById
-          : chatsById // ignore: cast_nullable_to_non_nullable
-              as Map<String, Chat>,
       directMessageChats: null == directMessageChats
           ? _value._directMessageChats
           : directMessageChats // ignore: cast_nullable_to_non_nullable
@@ -286,6 +302,18 @@ class __$$ChatStateImplCopyWithImpl<$Res>
           ? _value._lastChatAccess
           : lastChatAccess // ignore: cast_nullable_to_non_nullable
               as Map<String, DateTime>,
+      chatInput: null == chatInput
+          ? _value.chatInput
+          : chatInput // ignore: cast_nullable_to_non_nullable
+              as ChatInput,
+      formzStatus: null == formzStatus
+          ? _value.formzStatus
+          : formzStatus // ignore: cast_nullable_to_non_nullable
+              as FormzSubmissionStatus,
+      isValid: null == isValid
+          ? _value.isValid
+          : isValid // ignore: cast_nullable_to_non_nullable
+              as bool,
       errorMessage: freezed == errorMessage
           ? _value.errorMessage
           : errorMessage // ignore: cast_nullable_to_non_nullable
@@ -298,8 +326,7 @@ class __$$ChatStateImplCopyWithImpl<$Res>
 
 class _$ChatStateImpl implements _ChatState {
   const _$ChatStateImpl(
-      {final Map<String, Chat> chatsById = const {},
-      final List<Chat> directMessageChats = const [],
+      {final List<Chat> directMessageChats = const [],
       final List<Chat> groupChats = const [],
       this.lastDirectMessageChat,
       this.lastGroupChat,
@@ -311,26 +338,17 @@ class _$ChatStateImpl implements _ChatState {
       final Map<String, Map<DateTime, List<Message>>> chatMessagesByDate =
           const {},
       final Map<String, DateTime> lastChatAccess = const {},
+      this.chatInput = const ChatInput.pure(),
+      this.formzStatus = FormzSubmissionStatus.initial,
+      this.isValid = false,
       this.errorMessage})
-      : _chatsById = chatsById,
-        _directMessageChats = directMessageChats,
+      : _directMessageChats = directMessageChats,
         _groupChats = groupChats,
         _lastMessage = lastMessage,
         _sortedDates = sortedDates,
         _chatMessages = chatMessages,
         _chatMessagesByDate = chatMessagesByDate,
         _lastChatAccess = lastChatAccess;
-
-// Map from Chat Id to Chat.
-  final Map<String, Chat> _chatsById;
-// Map from Chat Id to Chat.
-  @override
-  @JsonKey()
-  Map<String, Chat> get chatsById {
-    if (_chatsById is EqualUnmodifiableMapView) return _chatsById;
-    // ignore: implicit_dynamic_type
-    return EqualUnmodifiableMapView(_chatsById);
-  }
 
 // List of direct message chats, sorted by updateTime and Id (descending).
   final List<Chat> _directMessageChats;
@@ -433,13 +451,25 @@ class _$ChatStateImpl implements _ChatState {
     return EqualUnmodifiableMapView(_lastChatAccess);
   }
 
+// The chat input state.
+  @override
+  @JsonKey()
+  final ChatInput chatInput;
+// The status of chat input submission.
+  @override
+  @JsonKey()
+  final FormzSubmissionStatus formzStatus;
+// Whether the state of the bloc is valid for chat send submission.
+  @override
+  @JsonKey()
+  final bool isValid;
 // Error message to display after processing a ChatEvent.
   @override
   final String? errorMessage;
 
   @override
   String toString() {
-    return 'ChatState(chatsById: $chatsById, directMessageChats: $directMessageChats, groupChats: $groupChats, lastDirectMessageChat: $lastDirectMessageChat, lastGroupChat: $lastGroupChat, lastMessage: $lastMessage, chatsLoadingStatus: $chatsLoadingStatus, messagesLoadingStatus: $messagesLoadingStatus, sortedDates: $sortedDates, chatMessages: $chatMessages, chatMessagesByDate: $chatMessagesByDate, lastChatAccess: $lastChatAccess, errorMessage: $errorMessage)';
+    return 'ChatState(directMessageChats: $directMessageChats, groupChats: $groupChats, lastDirectMessageChat: $lastDirectMessageChat, lastGroupChat: $lastGroupChat, lastMessage: $lastMessage, chatsLoadingStatus: $chatsLoadingStatus, messagesLoadingStatus: $messagesLoadingStatus, sortedDates: $sortedDates, chatMessages: $chatMessages, chatMessagesByDate: $chatMessagesByDate, lastChatAccess: $lastChatAccess, chatInput: $chatInput, formzStatus: $formzStatus, isValid: $isValid, errorMessage: $errorMessage)';
   }
 
   @override
@@ -447,8 +477,6 @@ class _$ChatStateImpl implements _ChatState {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
             other is _$ChatStateImpl &&
-            const DeepCollectionEquality()
-                .equals(other._chatsById, _chatsById) &&
             const DeepCollectionEquality()
                 .equals(other._directMessageChats, _directMessageChats) &&
             const DeepCollectionEquality()
@@ -471,6 +499,11 @@ class _$ChatStateImpl implements _ChatState {
                 .equals(other._chatMessagesByDate, _chatMessagesByDate) &&
             const DeepCollectionEquality()
                 .equals(other._lastChatAccess, _lastChatAccess) &&
+            (identical(other.chatInput, chatInput) ||
+                other.chatInput == chatInput) &&
+            (identical(other.formzStatus, formzStatus) ||
+                other.formzStatus == formzStatus) &&
+            (identical(other.isValid, isValid) || other.isValid == isValid) &&
             (identical(other.errorMessage, errorMessage) ||
                 other.errorMessage == errorMessage));
   }
@@ -478,7 +511,6 @@ class _$ChatStateImpl implements _ChatState {
   @override
   int get hashCode => Object.hash(
       runtimeType,
-      const DeepCollectionEquality().hash(_chatsById),
       const DeepCollectionEquality().hash(_directMessageChats),
       const DeepCollectionEquality().hash(_groupChats),
       lastDirectMessageChat,
@@ -490,6 +522,9 @@ class _$ChatStateImpl implements _ChatState {
       const DeepCollectionEquality().hash(_chatMessages),
       const DeepCollectionEquality().hash(_chatMessagesByDate),
       const DeepCollectionEquality().hash(_lastChatAccess),
+      chatInput,
+      formzStatus,
+      isValid,
       errorMessage);
 
   @JsonKey(ignore: true)
@@ -501,8 +536,7 @@ class _$ChatStateImpl implements _ChatState {
 
 abstract class _ChatState implements ChatState {
   const factory _ChatState(
-      {final Map<String, Chat> chatsById,
-      final List<Chat> directMessageChats,
+      {final List<Chat> directMessageChats,
       final List<Chat> groupChats,
       final Chat? lastDirectMessageChat,
       final Chat? lastGroupChat,
@@ -513,10 +547,11 @@ abstract class _ChatState implements ChatState {
       final Map<String, List<Message>> chatMessages,
       final Map<String, Map<DateTime, List<Message>>> chatMessagesByDate,
       final Map<String, DateTime> lastChatAccess,
+      final ChatInput chatInput,
+      final FormzSubmissionStatus formzStatus,
+      final bool isValid,
       final String? errorMessage}) = _$ChatStateImpl;
 
-  @override // Map from Chat Id to Chat.
-  Map<String, Chat> get chatsById;
   @override // List of direct message chats, sorted by updateTime and Id (descending).
   List<Chat> get directMessageChats;
   @override // List of group chats, sorted by updateTime and Id (descending).
@@ -544,6 +579,12 @@ abstract class _ChatState implements ChatState {
   Map<String, Map<DateTime, List<Message>>> get chatMessagesByDate;
   @override // The last access time of each chat during the session.
   Map<String, DateTime> get lastChatAccess;
+  @override // The chat input state.
+  ChatInput get chatInput;
+  @override // The status of chat input submission.
+  FormzSubmissionStatus get formzStatus;
+  @override // Whether the state of the bloc is valid for chat send submission.
+  bool get isValid;
   @override // Error message to display after processing a ChatEvent.
   String? get errorMessage;
   @override

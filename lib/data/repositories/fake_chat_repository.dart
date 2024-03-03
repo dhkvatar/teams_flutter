@@ -164,7 +164,6 @@ class FakeChatRepository implements ChatRepository {
 
     // Store new message.
     _messages[newMessageId] = newMessage;
-
     return newMessage;
   }
 }
