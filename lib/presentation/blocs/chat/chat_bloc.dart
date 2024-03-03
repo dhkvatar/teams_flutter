@@ -74,14 +74,11 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
     }
   }
 
-  // Oldest messages should appear last.
-  // Latest messages should appear first.
   void _sortMessagesBySentTimeAndId(List<Message> messages) {
-    // a appears first if a's sentTime is earlier
     messages.sort((a, b) {
-      int timeComparison = b.sentTime.compareTo(a.sentTime);
+      int timeComparison = a.sentTime.compareTo(b.sentTime);
       if (timeComparison == 0) {
-        return b.id.compareTo(a.id);
+        return a.id.compareTo(b.id);
       }
       return timeComparison;
     });
@@ -107,20 +104,16 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
       final allMessages = [...existing, ...messages];
       _sortMessagesBySentTimeAndId(allMessages);
 
-      final allDatesForChat = state.sortedDates[event.chatId]?.toSet() ?? {};
       final groupedMessages = state.chatMessagesByDate[event.chatId] ?? {};
       for (final message in messages) {
         DateTime dateKey = DateTime(message.sentTime.year,
             message.sentTime.month, message.sentTime.day);
         groupedMessages.putIfAbsent(dateKey, () => []);
-        allDatesForChat.add(dateKey);
         groupedMessages[dateKey]!.add(message);
       }
       groupedMessages.forEach((date, messages) {
         _sortMessagesBySentTimeAndId(messages);
       });
-      final sortedDatesList = allDatesForChat.toList();
-      sortedDatesList.sort((a, b) => b.compareTo(a));
 
       emit(state.copyWith(
         chatMessagesByDate: {
@@ -132,7 +125,6 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
           ...state.lastMessage,
           event.chatId: allMessages.isNotEmpty ? allMessages.last : null,
         },
-        sortedDates: {...state.sortedDates, event.chatId: sortedDatesList},
         lastChatAccess: {...state.lastChatAccess, event.chatId: DateTime.now()},
         messagesLoadingStatus: MessagesLoadingStatus.complete,
       ));
