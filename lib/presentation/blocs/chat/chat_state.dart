@@ -52,6 +52,9 @@ class ChatState with _$ChatState {
     // Whether the state of the bloc is valid for chat send submission.
     @Default(false) bool isValid,
 
+    // Pending messages (message.uploadStatus == uploadInProgress) by Id
+    @Default({}) Map<String, Message> pendingMessagesById,
+
     // Error message to display after processing a ChatEvent.
     String? errorMessage,
   }) = _ChatState;
