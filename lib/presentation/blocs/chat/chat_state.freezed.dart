@@ -33,10 +33,7 @@ mixin _$ChatState {
   dynamic get chatsLoadingStatus =>
       throw _privateConstructorUsedError; // The loading status of the messages on the chat details page.
   dynamic get messagesLoadingStatus =>
-      throw _privateConstructorUsedError; // Map from each Chat Id to a sorted (descending) list of dates (only year,
-// month, day) of its messages.
-// @Default({}) Map<String, List<DateTime>> sortedDates,
-// Loaded messages for each chat.
+      throw _privateConstructorUsedError; // Loaded messages for each chat.
   Map<String, List<Message>> get chatMessages =>
       throw _privateConstructorUsedError; // Map from Chat Id to a map of dates to messages of the Chat.
 // The messages Ids are sorted by sent time and ID (descending).
@@ -388,14 +385,8 @@ class _$ChatStateImpl implements _ChatState {
   @override
   @JsonKey()
   final dynamic messagesLoadingStatus;
-// Map from each Chat Id to a sorted (descending) list of dates (only year,
-// month, day) of its messages.
-// @Default({}) Map<String, List<DateTime>> sortedDates,
 // Loaded messages for each chat.
   final Map<String, List<Message>> _chatMessages;
-// Map from each Chat Id to a sorted (descending) list of dates (only year,
-// month, day) of its messages.
-// @Default({}) Map<String, List<DateTime>> sortedDates,
 // Loaded messages for each chat.
   @override
   @JsonKey()
@@ -544,10 +535,7 @@ abstract class _ChatState implements ChatState {
   dynamic get chatsLoadingStatus;
   @override // The loading status of the messages on the chat details page.
   dynamic get messagesLoadingStatus;
-  @override // Map from each Chat Id to a sorted (descending) list of dates (only year,
-// month, day) of its messages.
-// @Default({}) Map<String, List<DateTime>> sortedDates,
-// Loaded messages for each chat.
+  @override // Loaded messages for each chat.
   Map<String, List<Message>> get chatMessages;
   @override // Map from Chat Id to a map of dates to messages of the Chat.
 // The messages Ids are sorted by sent time and ID (descending).
