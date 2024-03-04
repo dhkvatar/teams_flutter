@@ -33,8 +33,6 @@ mixin _$ChatState {
   dynamic get chatsLoadingStatus =>
       throw _privateConstructorUsedError; // The loading status of the messages on the chat details page.
   dynamic get messagesLoadingStatus =>
-      throw _privateConstructorUsedError; // Loaded messages for each chat.
-  Map<String, List<Message>> get chatMessages =>
       throw _privateConstructorUsedError; // Map from Chat Id to a map of dates to messages of the Chat.
 // The messages Ids are sorted by sent time and ID (descending).
   Map<String, Map<DateTime, List<Message>>> get chatMessagesByDate =>
@@ -70,7 +68,6 @@ abstract class $ChatStateCopyWith<$Res> {
       Map<String, Message?> lastMessage,
       dynamic chatsLoadingStatus,
       dynamic messagesLoadingStatus,
-      Map<String, List<Message>> chatMessages,
       Map<String, Map<DateTime, List<Message>>> chatMessagesByDate,
       Map<String, DateTime> lastChatAccess,
       ChatInput chatInput,
@@ -103,7 +100,6 @@ class _$ChatStateCopyWithImpl<$Res, $Val extends ChatState>
     Object? lastMessage = null,
     Object? chatsLoadingStatus = freezed,
     Object? messagesLoadingStatus = freezed,
-    Object? chatMessages = null,
     Object? chatMessagesByDate = null,
     Object? lastChatAccess = null,
     Object? chatInput = null,
@@ -141,10 +137,6 @@ class _$ChatStateCopyWithImpl<$Res, $Val extends ChatState>
           ? _value.messagesLoadingStatus
           : messagesLoadingStatus // ignore: cast_nullable_to_non_nullable
               as dynamic,
-      chatMessages: null == chatMessages
-          ? _value.chatMessages
-          : chatMessages // ignore: cast_nullable_to_non_nullable
-              as Map<String, List<Message>>,
       chatMessagesByDate: null == chatMessagesByDate
           ? _value.chatMessagesByDate
           : chatMessagesByDate // ignore: cast_nullable_to_non_nullable
@@ -217,7 +209,6 @@ abstract class _$$ChatStateImplCopyWith<$Res>
       Map<String, Message?> lastMessage,
       dynamic chatsLoadingStatus,
       dynamic messagesLoadingStatus,
-      Map<String, List<Message>> chatMessages,
       Map<String, Map<DateTime, List<Message>>> chatMessagesByDate,
       Map<String, DateTime> lastChatAccess,
       ChatInput chatInput,
@@ -250,7 +241,6 @@ class __$$ChatStateImplCopyWithImpl<$Res>
     Object? lastMessage = null,
     Object? chatsLoadingStatus = freezed,
     Object? messagesLoadingStatus = freezed,
-    Object? chatMessages = null,
     Object? chatMessagesByDate = null,
     Object? lastChatAccess = null,
     Object? chatInput = null,
@@ -286,10 +276,6 @@ class __$$ChatStateImplCopyWithImpl<$Res>
       messagesLoadingStatus: freezed == messagesLoadingStatus
           ? _value.messagesLoadingStatus!
           : messagesLoadingStatus,
-      chatMessages: null == chatMessages
-          ? _value._chatMessages
-          : chatMessages // ignore: cast_nullable_to_non_nullable
-              as Map<String, List<Message>>,
       chatMessagesByDate: null == chatMessagesByDate
           ? _value._chatMessagesByDate
           : chatMessagesByDate // ignore: cast_nullable_to_non_nullable
@@ -333,7 +319,6 @@ class _$ChatStateImpl implements _ChatState {
       final Map<String, Message?> lastMessage = const {},
       this.chatsLoadingStatus = ChatsLoadingStatus.complete,
       this.messagesLoadingStatus = MessagesLoadingStatus.complete,
-      final Map<String, List<Message>> chatMessages = const {},
       final Map<String, Map<DateTime, List<Message>>> chatMessagesByDate =
           const {},
       final Map<String, DateTime> lastChatAccess = const {},
@@ -345,7 +330,6 @@ class _$ChatStateImpl implements _ChatState {
       : _directMessageChats = directMessageChats,
         _groupChats = groupChats,
         _lastMessage = lastMessage,
-        _chatMessages = chatMessages,
         _chatMessagesByDate = chatMessagesByDate,
         _lastChatAccess = lastChatAccess,
         _pendingMessagesById = pendingMessagesById;
@@ -402,17 +386,6 @@ class _$ChatStateImpl implements _ChatState {
   @override
   @JsonKey()
   final dynamic messagesLoadingStatus;
-// Loaded messages for each chat.
-  final Map<String, List<Message>> _chatMessages;
-// Loaded messages for each chat.
-  @override
-  @JsonKey()
-  Map<String, List<Message>> get chatMessages {
-    if (_chatMessages is EqualUnmodifiableMapView) return _chatMessages;
-    // ignore: implicit_dynamic_type
-    return EqualUnmodifiableMapView(_chatMessages);
-  }
-
 // Map from Chat Id to a map of dates to messages of the Chat.
 // The messages Ids are sorted by sent time and ID (descending).
   final Map<String, Map<DateTime, List<Message>>> _chatMessagesByDate;
@@ -470,7 +443,7 @@ class _$ChatStateImpl implements _ChatState {
 
   @override
   String toString() {
-    return 'ChatState(directMessageChats: $directMessageChats, groupChats: $groupChats, lastDirectMessageChat: $lastDirectMessageChat, lastGroupChat: $lastGroupChat, lastMessage: $lastMessage, chatsLoadingStatus: $chatsLoadingStatus, messagesLoadingStatus: $messagesLoadingStatus, chatMessages: $chatMessages, chatMessagesByDate: $chatMessagesByDate, lastChatAccess: $lastChatAccess, chatInput: $chatInput, formzStatus: $formzStatus, isValid: $isValid, pendingMessagesById: $pendingMessagesById, errorMessage: $errorMessage)';
+    return 'ChatState(directMessageChats: $directMessageChats, groupChats: $groupChats, lastDirectMessageChat: $lastDirectMessageChat, lastGroupChat: $lastGroupChat, lastMessage: $lastMessage, chatsLoadingStatus: $chatsLoadingStatus, messagesLoadingStatus: $messagesLoadingStatus, chatMessagesByDate: $chatMessagesByDate, lastChatAccess: $lastChatAccess, chatInput: $chatInput, formzStatus: $formzStatus, isValid: $isValid, pendingMessagesById: $pendingMessagesById, errorMessage: $errorMessage)';
   }
 
   @override
@@ -492,8 +465,6 @@ class _$ChatStateImpl implements _ChatState {
                 .equals(other.chatsLoadingStatus, chatsLoadingStatus) &&
             const DeepCollectionEquality()
                 .equals(other.messagesLoadingStatus, messagesLoadingStatus) &&
-            const DeepCollectionEquality()
-                .equals(other._chatMessages, _chatMessages) &&
             const DeepCollectionEquality()
                 .equals(other._chatMessagesByDate, _chatMessagesByDate) &&
             const DeepCollectionEquality()
@@ -519,7 +490,6 @@ class _$ChatStateImpl implements _ChatState {
       const DeepCollectionEquality().hash(_lastMessage),
       const DeepCollectionEquality().hash(chatsLoadingStatus),
       const DeepCollectionEquality().hash(messagesLoadingStatus),
-      const DeepCollectionEquality().hash(_chatMessages),
       const DeepCollectionEquality().hash(_chatMessagesByDate),
       const DeepCollectionEquality().hash(_lastChatAccess),
       chatInput,
@@ -544,7 +514,6 @@ abstract class _ChatState implements ChatState {
       final Map<String, Message?> lastMessage,
       final dynamic chatsLoadingStatus,
       final dynamic messagesLoadingStatus,
-      final Map<String, List<Message>> chatMessages,
       final Map<String, Map<DateTime, List<Message>>> chatMessagesByDate,
       final Map<String, DateTime> lastChatAccess,
       final ChatInput chatInput,
@@ -570,8 +539,6 @@ abstract class _ChatState implements ChatState {
   dynamic get chatsLoadingStatus;
   @override // The loading status of the messages on the chat details page.
   dynamic get messagesLoadingStatus;
-  @override // Loaded messages for each chat.
-  Map<String, List<Message>> get chatMessages;
   @override // Map from Chat Id to a map of dates to messages of the Chat.
 // The messages Ids are sorted by sent time and ID (descending).
   Map<String, Map<DateTime, List<Message>>> get chatMessagesByDate;

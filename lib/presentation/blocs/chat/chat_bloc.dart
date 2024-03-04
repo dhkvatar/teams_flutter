@@ -22,12 +22,6 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
     on<ChatGetMessagesRequested>(_onGetMessagesRequested);
     on<ChatMessageInputChanged>(_onMessageInputChanged);
     on<ChatSendMessageRequested>(_onSendMessageRequested);
-    // on<ChatMessageUploadReceived>(_onMessageUploadReceived);
-    // _messageUploadSubscription =
-    //     getIt<GetChatUpdatesStream>()().listen((message) {
-    //   print('ack from server on $message');
-    //   add(ChatMessageUploadReceived());
-    // });
     on<ChatUpdateStreamReceived>(_onUpdateStreamReceived);
     _chatUpdatesSubscription = getIt<GetChatUpdatesStream>()().listen((update) {
       add(ChatUpdateStreamReceived(update: update));
@@ -134,16 +128,22 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
         ),
       );
 
-      final existing = state.chatMessages[event.chatId] ?? [];
-      final allMessages = [...existing, ...messages];
-      _sortMessagesBySentTimeAndId(allMessages);
-
+      Message? last;
       final groupedMessages = state.chatMessagesByDate[event.chatId] ?? {};
+
       for (final message in messages) {
         DateTime dateKey = DateTime(message.sentTime.year,
             message.sentTime.month, message.sentTime.day);
         groupedMessages.putIfAbsent(dateKey, () => []);
         groupedMessages[dateKey]!.add(message);
+
+        if (last == null) {
+          last = message;
+        } else if (last.sentTime.compareTo(message.sentTime) != 0) {
+          last = message.sentTime.isBefore(last.sentTime) ? message : last;
+        } else {
+          last = message.id.compareTo(last.id) < 0 ? message : last;
+        }
       }
       groupedMessages.forEach((date, messages) {
         _sortMessagesBySentTimeAndId(messages);
@@ -154,11 +154,7 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
           ...state.chatMessagesByDate,
           event.chatId: groupedMessages,
         },
-        chatMessages: {...state.chatMessages, event.chatId: allMessages},
-        lastMessage: {
-          ...state.lastMessage,
-          event.chatId: allMessages.isNotEmpty ? allMessages.last : null,
-        },
+        lastMessage: last != null ? {last.id: last} : {},
         lastChatAccess: {...state.lastChatAccess, event.chatId: DateTime.now()},
         messagesLoadingStatus: MessagesLoadingStatus.complete,
       ));
@@ -211,13 +207,6 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
               ...state.chatMessagesByDate[event.chatId] ?? {},
               sentDate: sortedMessagesForDate,
             },
-          },
-          chatMessages: {
-            ...state.chatMessages,
-            event.chatId: [
-              ...state.chatMessages[event.chatId] ?? [],
-              sentMessage,
-            ]
           },
           formzStatus: FormzSubmissionStatus.success,
           isValid: false,
