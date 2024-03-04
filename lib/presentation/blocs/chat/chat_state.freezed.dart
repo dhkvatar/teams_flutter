@@ -48,10 +48,7 @@ mixin _$ChatState {
   FormzSubmissionStatus get formzStatus =>
       throw _privateConstructorUsedError; // Whether the state of the bloc is valid for chat send submission.
   bool get isValid =>
-      throw _privateConstructorUsedError; // Pending messages (message.uploadStatus == uploadInProgress) by Id for each chat.
-// The first key is the Chat Id, the second is the pending messages by Id.
-// @Default({}) Map<String, Map<String, Message>> pendingMessagesById,
-// Error message to display after processing a ChatEvent.
+      throw _privateConstructorUsedError; // Error message to display after processing a ChatEvent.
   String? get errorMessage => throw _privateConstructorUsedError;
 
   @JsonKey(ignore: true)
@@ -432,9 +429,6 @@ class _$ChatStateImpl implements _ChatState {
   @override
   @JsonKey()
   final bool isValid;
-// Pending messages (message.uploadStatus == uploadInProgress) by Id for each chat.
-// The first key is the Chat Id, the second is the pending messages by Id.
-// @Default({}) Map<String, Map<String, Message>> pendingMessagesById,
 // Error message to display after processing a ChatEvent.
   @override
   final String? errorMessage;
@@ -556,10 +550,7 @@ abstract class _ChatState implements ChatState {
   FormzSubmissionStatus get formzStatus;
   @override // Whether the state of the bloc is valid for chat send submission.
   bool get isValid;
-  @override // Pending messages (message.uploadStatus == uploadInProgress) by Id for each chat.
-// The first key is the Chat Id, the second is the pending messages by Id.
-// @Default({}) Map<String, Map<String, Message>> pendingMessagesById,
-// Error message to display after processing a ChatEvent.
+  @override // Error message to display after processing a ChatEvent.
   String? get errorMessage;
   @override
   @JsonKey(ignore: true)

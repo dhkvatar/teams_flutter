@@ -13,7 +13,7 @@ void main() {
     late ChatBloc chatBloc;
 
     setUp(() {
-      chatBloc = ChatBloc();
+      chatBloc = ChatBloc.fromDefaultStream();
     });
 
     group('initialization', () {

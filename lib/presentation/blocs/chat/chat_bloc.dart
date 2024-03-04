@@ -17,19 +17,32 @@ import 'package:teams/presentation/blocs/chat/chat_state.dart';
 
 @injectable
 class ChatBloc extends Bloc<ChatEvent, ChatState> {
-  ChatBloc() : super(const ChatState()) {
+  ChatBloc._({required this.chatUpdatesStream}) : super(const ChatState()) {
+    _addEventHandlers();
+    chatUpdatesSubscription = chatUpdatesStream.listen((update) {
+      add(ChatUpdateStreamReceived(update: update));
+    });
+  }
+
+  void _addEventHandlers() {
     on<ChatGetChatsRequested>(_onGetChatsRequested);
     on<ChatGetMessagesRequested>(_onGetMessagesRequested);
     on<ChatMessageInputChanged>(_onMessageInputChanged);
     on<ChatSendMessageRequested>(_onSendMessageRequested);
     on<ChatUpdateStreamReceived>(_onUpdateStreamReceived);
-    _chatUpdatesSubscription = getIt<GetChatUpdatesStream>()().listen((update) {
-      add(ChatUpdateStreamReceived(update: update));
-    });
   }
 
-  // late final StreamSubscription<Message> _messageUploadSubscription;
-  late final StreamSubscription<ChatUpdateStreamItem> _chatUpdatesSubscription;
+  @factoryMethod
+  factory ChatBloc.fromDefaultStream() {
+    return ChatBloc._(chatUpdatesStream: getIt<GetChatUpdatesStream>()());
+  }
+
+  factory ChatBloc.fromStream({required Stream<ChatUpdateStreamItem> stream}) {
+    return ChatBloc._(chatUpdatesStream: stream);
+  }
+
+  final Stream<ChatUpdateStreamItem> chatUpdatesStream;
+  late final StreamSubscription<ChatUpdateStreamItem> chatUpdatesSubscription;
 
   List<String> _sortedChatIds(List<Chat> chats) {
     chats.sort((a, b) {
@@ -224,7 +237,8 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
 
   @override
   Future<void> close() {
-    _chatUpdatesSubscription.cancel();
+    chatUpdatesSubscription.cancel();
+    // _chatUpdatesSubscription.cancel();
     return super.close();
   }
 }
