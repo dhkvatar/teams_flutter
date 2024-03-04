@@ -51,17 +51,18 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
       ChatUpdateStreamReceived event, Emitter<ChatState> emit) async {
     switch (event.update.updateType) {
       case ChatUpdateType.newMessageUploadSuccess:
-        final pendingMessagesForChat =
-            state.pendingMessagesById[event.update.chatId] ?? {};
+        final Map<String, Message> pendingMessagesForChat =
+            Map.from(state.pendingMessagesById[event.update.chatId] ?? {});
         pendingMessagesForChat.remove(event.update.newMessageId ?? '');
-        emit(state.copyWith(
-          // Remove the acked message from the pending messages map.
-          pendingMessagesById: {
-            ...state.pendingMessagesById,
-            event.update.chatId: pendingMessagesForChat,
-          },
-        ));
-
+        emit(
+          state.copyWith(
+            // Remove the acked message from the pending messages map.
+            pendingMessagesById: {
+              ...state.pendingMessagesById,
+              event.update.chatId: pendingMessagesForChat,
+            },
+          ),
+        );
       case ChatUpdateType.newMessageUploadFailure:
       // TODO: Handle this case.
     }

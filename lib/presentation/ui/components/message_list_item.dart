@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:teams/domain/entities/message.dart';
+import 'package:teams/presentation/blocs/chat/chat_bloc.dart';
+import 'package:teams/presentation/blocs/chat/chat_state.dart';
 
 class MessageListItem extends StatelessWidget {
   const MessageListItem({
@@ -33,8 +36,10 @@ class MessageListItem extends StatelessWidget {
 
             // The message bubble
             Column(
-              crossAxisAlignment: CrossAxisAlignment.end,
+              crossAxisAlignment:
+                  isMe ? CrossAxisAlignment.end : CrossAxisAlignment.start,
               children: [
+                // Message bubble
                 Container(
                   padding: const EdgeInsets.all(8.0),
                   decoration: BoxDecoration(
@@ -45,13 +50,44 @@ class MessageListItem extends StatelessWidget {
                     style: const TextStyle(color: Colors.white),
                   ),
                 ),
+
                 const SizedBox(height: 4.0),
-                Text(
-                  _formatDateTime(message.sentTime),
-                  style: const TextStyle(
-                    fontSize: 12.0,
-                    color: Colors.grey,
-                  ),
+
+                Row(
+                  mainAxisAlignment:
+                      isMe ? MainAxisAlignment.end : MainAxisAlignment.start,
+                  children: [
+                    // Message sent time
+                    Text(
+                      _formatDateTime(message.sentTime),
+                      style: const TextStyle(
+                        fontSize: 12.0,
+                        color: Colors.grey,
+                      ),
+                    ),
+
+                    // Pending message indidcator
+                    BlocBuilder<ChatBloc, ChatState>(
+                      buildWhen: (previous, current) =>
+                          previous.pendingMessagesById[message.chatId] !=
+                          current.pendingMessagesById[message.chatId],
+                      builder: (ctx, state) {
+                        if (isMe &&
+                            (state.pendingMessagesById[message.chatId] ?? {})
+                                .containsKey(message.id)) {
+                          return const Padding(
+                            padding: EdgeInsets.symmetric(horizontal: 5.0),
+                            child: SizedBox(
+                              width: 8,
+                              height: 8,
+                              child: CircularProgressIndicator(),
+                            ),
+                          );
+                        }
+                        return Container();
+                      },
+                    ),
+                  ],
                 ),
               ],
             ),
