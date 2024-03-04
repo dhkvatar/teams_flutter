@@ -6,7 +6,14 @@
 import 'dart:async' as _i2;
 
 import 'package:mockito/mockito.dart' as _i1;
-import 'package:mockito/src/dummies.dart' as _i3;
+import 'package:mockito/src/dummies.dart' as _i6;
+import 'package:teams/domain/entities/chat.dart' as _i8;
+import 'package:teams/domain/entities/message.dart' as _i5;
+import 'package:teams/domain/repositories/auth_repository.dart' as _i3;
+import 'package:teams/domain/repositories/chat_repository.dart' as _i4;
+import 'package:teams/domain/usecases/chat/get_chats.dart' as _i7;
+import 'package:teams/domain/usecases/chat/get_messages.dart' as _i9;
+import 'package:teams/domain/usecases/chat/send_message.dart' as _i10;
 
 // ignore_for_file: type=lint
 // ignore_for_file: avoid_redundant_argument_values
@@ -42,37 +49,79 @@ class _FakeStreamSubscription_1<T1> extends _i1.SmartFake
         );
 }
 
+class _FakeAuthRepository_2 extends _i1.SmartFake
+    implements _i3.AuthRepository {
+  _FakeAuthRepository_2(
+    Object parent,
+    Invocation parentInvocation,
+  ) : super(
+          parent,
+          parentInvocation,
+        );
+}
+
+class _FakeChatRepository_3 extends _i1.SmartFake
+    implements _i4.ChatRepository {
+  _FakeChatRepository_3(
+    Object parent,
+    Invocation parentInvocation,
+  ) : super(
+          parent,
+          parentInvocation,
+        );
+}
+
+class _FakeMessage_4 extends _i1.SmartFake implements _i5.Message {
+  _FakeMessage_4(
+    Object parent,
+    Invocation parentInvocation,
+  ) : super(
+          parent,
+          parentInvocation,
+        );
+}
+
 /// A class which mocks [Stream].
 ///
 /// See the documentation for Mockito's code generation for more information.
 class MockStream<T> extends _i1.Mock implements _i2.Stream<T> {
-  MockStream() {
-    _i1.throwOnMissingStub(this);
-  }
-
   @override
   bool get isBroadcast => (super.noSuchMethod(
         Invocation.getter(#isBroadcast),
         returnValue: false,
+        returnValueForMissingStub: false,
       ) as bool);
 
   @override
   _i2.Future<int> get length => (super.noSuchMethod(
         Invocation.getter(#length),
         returnValue: _i2.Future<int>.value(0),
+        returnValueForMissingStub: _i2.Future<int>.value(0),
       ) as _i2.Future<int>);
 
   @override
   _i2.Future<bool> get isEmpty => (super.noSuchMethod(
         Invocation.getter(#isEmpty),
         returnValue: _i2.Future<bool>.value(false),
+        returnValueForMissingStub: _i2.Future<bool>.value(false),
       ) as _i2.Future<bool>);
 
   @override
   _i2.Future<T> get first => (super.noSuchMethod(
         Invocation.getter(#first),
-        returnValue: _i3.ifNotNull(
-              _i3.dummyValueOrNull<T>(
+        returnValue: _i6.ifNotNull(
+              _i6.dummyValueOrNull<T>(
+                this,
+                Invocation.getter(#first),
+              ),
+              (T v) => _i2.Future<T>.value(v),
+            ) ??
+            _FakeFuture_0<T>(
+              this,
+              Invocation.getter(#first),
+            ),
+        returnValueForMissingStub: _i6.ifNotNull(
+              _i6.dummyValueOrNull<T>(
                 this,
                 Invocation.getter(#first),
               ),
@@ -87,8 +136,19 @@ class MockStream<T> extends _i1.Mock implements _i2.Stream<T> {
   @override
   _i2.Future<T> get last => (super.noSuchMethod(
         Invocation.getter(#last),
-        returnValue: _i3.ifNotNull(
-              _i3.dummyValueOrNull<T>(
+        returnValue: _i6.ifNotNull(
+              _i6.dummyValueOrNull<T>(
+                this,
+                Invocation.getter(#last),
+              ),
+              (T v) => _i2.Future<T>.value(v),
+            ) ??
+            _FakeFuture_0<T>(
+              this,
+              Invocation.getter(#last),
+            ),
+        returnValueForMissingStub: _i6.ifNotNull(
+              _i6.dummyValueOrNull<T>(
                 this,
                 Invocation.getter(#last),
               ),
@@ -103,8 +163,19 @@ class MockStream<T> extends _i1.Mock implements _i2.Stream<T> {
   @override
   _i2.Future<T> get single => (super.noSuchMethod(
         Invocation.getter(#single),
-        returnValue: _i3.ifNotNull(
-              _i3.dummyValueOrNull<T>(
+        returnValue: _i6.ifNotNull(
+              _i6.dummyValueOrNull<T>(
+                this,
+                Invocation.getter(#single),
+              ),
+              (T v) => _i2.Future<T>.value(v),
+            ) ??
+            _FakeFuture_0<T>(
+              this,
+              Invocation.getter(#single),
+            ),
+        returnValueForMissingStub: _i6.ifNotNull(
+              _i6.dummyValueOrNull<T>(
                 this,
                 Invocation.getter(#single),
               ),
@@ -131,6 +202,7 @@ class MockStream<T> extends _i1.Mock implements _i2.Stream<T> {
           },
         ),
         returnValue: _i2.Stream<T>.empty(),
+        returnValueForMissingStub: _i2.Stream<T>.empty(),
       ) as _i2.Stream<T>);
 
   @override
@@ -162,6 +234,18 @@ class MockStream<T> extends _i1.Mock implements _i2.Stream<T> {
             },
           ),
         ),
+        returnValueForMissingStub: _FakeStreamSubscription_1<T>(
+          this,
+          Invocation.method(
+            #listen,
+            [onData],
+            {
+              #onError: onError,
+              #onDone: onDone,
+              #cancelOnError: cancelOnError,
+            },
+          ),
+        ),
       ) as _i2.StreamSubscription<T>);
 
   @override
@@ -171,6 +255,7 @@ class MockStream<T> extends _i1.Mock implements _i2.Stream<T> {
           [test],
         ),
         returnValue: _i2.Stream<T>.empty(),
+        returnValueForMissingStub: _i2.Stream<T>.empty(),
       ) as _i2.Stream<T>);
 
   @override
@@ -180,6 +265,7 @@ class MockStream<T> extends _i1.Mock implements _i2.Stream<T> {
           [convert],
         ),
         returnValue: _i2.Stream<S>.empty(),
+        returnValueForMissingStub: _i2.Stream<S>.empty(),
       ) as _i2.Stream<S>);
 
   @override
@@ -190,6 +276,7 @@ class MockStream<T> extends _i1.Mock implements _i2.Stream<T> {
           [convert],
         ),
         returnValue: _i2.Stream<E>.empty(),
+        returnValueForMissingStub: _i2.Stream<E>.empty(),
       ) as _i2.Stream<E>);
 
   @override
@@ -200,6 +287,7 @@ class MockStream<T> extends _i1.Mock implements _i2.Stream<T> {
           [convert],
         ),
         returnValue: _i2.Stream<E>.empty(),
+        returnValueForMissingStub: _i2.Stream<E>.empty(),
       ) as _i2.Stream<E>);
 
   @override
@@ -214,6 +302,7 @@ class MockStream<T> extends _i1.Mock implements _i2.Stream<T> {
           {#test: test},
         ),
         returnValue: _i2.Stream<T>.empty(),
+        returnValueForMissingStub: _i2.Stream<T>.empty(),
       ) as _i2.Stream<T>);
 
   @override
@@ -224,6 +313,7 @@ class MockStream<T> extends _i1.Mock implements _i2.Stream<T> {
           [convert],
         ),
         returnValue: _i2.Stream<S>.empty(),
+        returnValueForMissingStub: _i2.Stream<S>.empty(),
       ) as _i2.Stream<S>);
 
   @override
@@ -234,6 +324,7 @@ class MockStream<T> extends _i1.Mock implements _i2.Stream<T> {
           [streamConsumer],
         ),
         returnValue: _i2.Future<dynamic>.value(),
+        returnValueForMissingStub: _i2.Future<dynamic>.value(),
       ) as _i2.Future<dynamic>);
 
   @override
@@ -244,6 +335,7 @@ class MockStream<T> extends _i1.Mock implements _i2.Stream<T> {
           [streamTransformer],
         ),
         returnValue: _i2.Stream<S>.empty(),
+        returnValueForMissingStub: _i2.Stream<S>.empty(),
       ) as _i2.Stream<S>);
 
   @override
@@ -257,8 +349,25 @@ class MockStream<T> extends _i1.Mock implements _i2.Stream<T> {
           #reduce,
           [combine],
         ),
-        returnValue: _i3.ifNotNull(
-              _i3.dummyValueOrNull<T>(
+        returnValue: _i6.ifNotNull(
+              _i6.dummyValueOrNull<T>(
+                this,
+                Invocation.method(
+                  #reduce,
+                  [combine],
+                ),
+              ),
+              (T v) => _i2.Future<T>.value(v),
+            ) ??
+            _FakeFuture_0<T>(
+              this,
+              Invocation.method(
+                #reduce,
+                [combine],
+              ),
+            ),
+        returnValueForMissingStub: _i6.ifNotNull(
+              _i6.dummyValueOrNull<T>(
                 this,
                 Invocation.method(
                   #reduce,
@@ -292,8 +401,31 @@ class MockStream<T> extends _i1.Mock implements _i2.Stream<T> {
             combine,
           ],
         ),
-        returnValue: _i3.ifNotNull(
-              _i3.dummyValueOrNull<S>(
+        returnValue: _i6.ifNotNull(
+              _i6.dummyValueOrNull<S>(
+                this,
+                Invocation.method(
+                  #fold,
+                  [
+                    initialValue,
+                    combine,
+                  ],
+                ),
+              ),
+              (S v) => _i2.Future<S>.value(v),
+            ) ??
+            _FakeFuture_0<S>(
+              this,
+              Invocation.method(
+                #fold,
+                [
+                  initialValue,
+                  combine,
+                ],
+              ),
+            ),
+        returnValueForMissingStub: _i6.ifNotNull(
+              _i6.dummyValueOrNull<S>(
                 this,
                 Invocation.method(
                   #fold,
@@ -323,7 +455,15 @@ class MockStream<T> extends _i1.Mock implements _i2.Stream<T> {
           #join,
           [separator],
         ),
-        returnValue: _i2.Future<String>.value(_i3.dummyValue<String>(
+        returnValue: _i2.Future<String>.value(_i6.dummyValue<String>(
+          this,
+          Invocation.method(
+            #join,
+            [separator],
+          ),
+        )),
+        returnValueForMissingStub:
+            _i2.Future<String>.value(_i6.dummyValue<String>(
           this,
           Invocation.method(
             #join,
@@ -339,6 +479,7 @@ class MockStream<T> extends _i1.Mock implements _i2.Stream<T> {
           [needle],
         ),
         returnValue: _i2.Future<bool>.value(false),
+        returnValueForMissingStub: _i2.Future<bool>.value(false),
       ) as _i2.Future<bool>);
 
   @override
@@ -358,6 +499,7 @@ class MockStream<T> extends _i1.Mock implements _i2.Stream<T> {
           [test],
         ),
         returnValue: _i2.Future<bool>.value(false),
+        returnValueForMissingStub: _i2.Future<bool>.value(false),
       ) as _i2.Future<bool>);
 
   @override
@@ -367,6 +509,7 @@ class MockStream<T> extends _i1.Mock implements _i2.Stream<T> {
           [test],
         ),
         returnValue: _i2.Future<bool>.value(false),
+        returnValueForMissingStub: _i2.Future<bool>.value(false),
       ) as _i2.Future<bool>);
 
   @override
@@ -376,6 +519,7 @@ class MockStream<T> extends _i1.Mock implements _i2.Stream<T> {
           [],
         ),
         returnValue: _i2.Stream<R>.empty(),
+        returnValueForMissingStub: _i2.Stream<R>.empty(),
       ) as _i2.Stream<R>);
 
   @override
@@ -385,6 +529,7 @@ class MockStream<T> extends _i1.Mock implements _i2.Stream<T> {
           [],
         ),
         returnValue: _i2.Future<List<T>>.value(<T>[]),
+        returnValueForMissingStub: _i2.Future<List<T>>.value(<T>[]),
       ) as _i2.Future<List<T>>);
 
   @override
@@ -394,6 +539,7 @@ class MockStream<T> extends _i1.Mock implements _i2.Stream<T> {
           [],
         ),
         returnValue: _i2.Future<Set<T>>.value(<T>{}),
+        returnValueForMissingStub: _i2.Future<Set<T>>.value(<T>{}),
       ) as _i2.Future<Set<T>>);
 
   @override
@@ -402,8 +548,25 @@ class MockStream<T> extends _i1.Mock implements _i2.Stream<T> {
           #drain,
           [futureValue],
         ),
-        returnValue: _i3.ifNotNull(
-              _i3.dummyValueOrNull<E>(
+        returnValue: _i6.ifNotNull(
+              _i6.dummyValueOrNull<E>(
+                this,
+                Invocation.method(
+                  #drain,
+                  [futureValue],
+                ),
+              ),
+              (E v) => _i2.Future<E>.value(v),
+            ) ??
+            _FakeFuture_0<E>(
+              this,
+              Invocation.method(
+                #drain,
+                [futureValue],
+              ),
+            ),
+        returnValueForMissingStub: _i6.ifNotNull(
+              _i6.dummyValueOrNull<E>(
                 this,
                 Invocation.method(
                   #drain,
@@ -428,6 +591,7 @@ class MockStream<T> extends _i1.Mock implements _i2.Stream<T> {
           [count],
         ),
         returnValue: _i2.Stream<T>.empty(),
+        returnValueForMissingStub: _i2.Stream<T>.empty(),
       ) as _i2.Stream<T>);
 
   @override
@@ -437,6 +601,7 @@ class MockStream<T> extends _i1.Mock implements _i2.Stream<T> {
           [test],
         ),
         returnValue: _i2.Stream<T>.empty(),
+        returnValueForMissingStub: _i2.Stream<T>.empty(),
       ) as _i2.Stream<T>);
 
   @override
@@ -446,6 +611,7 @@ class MockStream<T> extends _i1.Mock implements _i2.Stream<T> {
           [count],
         ),
         returnValue: _i2.Stream<T>.empty(),
+        returnValueForMissingStub: _i2.Stream<T>.empty(),
       ) as _i2.Stream<T>);
 
   @override
@@ -455,6 +621,7 @@ class MockStream<T> extends _i1.Mock implements _i2.Stream<T> {
           [test],
         ),
         returnValue: _i2.Stream<T>.empty(),
+        returnValueForMissingStub: _i2.Stream<T>.empty(),
       ) as _i2.Stream<T>);
 
   @override
@@ -469,6 +636,7 @@ class MockStream<T> extends _i1.Mock implements _i2.Stream<T> {
           [equals],
         ),
         returnValue: _i2.Stream<T>.empty(),
+        returnValueForMissingStub: _i2.Stream<T>.empty(),
       ) as _i2.Stream<T>);
 
   @override
@@ -482,8 +650,27 @@ class MockStream<T> extends _i1.Mock implements _i2.Stream<T> {
           [test],
           {#orElse: orElse},
         ),
-        returnValue: _i3.ifNotNull(
-              _i3.dummyValueOrNull<T>(
+        returnValue: _i6.ifNotNull(
+              _i6.dummyValueOrNull<T>(
+                this,
+                Invocation.method(
+                  #firstWhere,
+                  [test],
+                  {#orElse: orElse},
+                ),
+              ),
+              (T v) => _i2.Future<T>.value(v),
+            ) ??
+            _FakeFuture_0<T>(
+              this,
+              Invocation.method(
+                #firstWhere,
+                [test],
+                {#orElse: orElse},
+              ),
+            ),
+        returnValueForMissingStub: _i6.ifNotNull(
+              _i6.dummyValueOrNull<T>(
                 this,
                 Invocation.method(
                   #firstWhere,
@@ -514,8 +701,27 @@ class MockStream<T> extends _i1.Mock implements _i2.Stream<T> {
           [test],
           {#orElse: orElse},
         ),
-        returnValue: _i3.ifNotNull(
-              _i3.dummyValueOrNull<T>(
+        returnValue: _i6.ifNotNull(
+              _i6.dummyValueOrNull<T>(
+                this,
+                Invocation.method(
+                  #lastWhere,
+                  [test],
+                  {#orElse: orElse},
+                ),
+              ),
+              (T v) => _i2.Future<T>.value(v),
+            ) ??
+            _FakeFuture_0<T>(
+              this,
+              Invocation.method(
+                #lastWhere,
+                [test],
+                {#orElse: orElse},
+              ),
+            ),
+        returnValueForMissingStub: _i6.ifNotNull(
+              _i6.dummyValueOrNull<T>(
                 this,
                 Invocation.method(
                   #lastWhere,
@@ -546,8 +752,27 @@ class MockStream<T> extends _i1.Mock implements _i2.Stream<T> {
           [test],
           {#orElse: orElse},
         ),
-        returnValue: _i3.ifNotNull(
-              _i3.dummyValueOrNull<T>(
+        returnValue: _i6.ifNotNull(
+              _i6.dummyValueOrNull<T>(
+                this,
+                Invocation.method(
+                  #singleWhere,
+                  [test],
+                  {#orElse: orElse},
+                ),
+              ),
+              (T v) => _i2.Future<T>.value(v),
+            ) ??
+            _FakeFuture_0<T>(
+              this,
+              Invocation.method(
+                #singleWhere,
+                [test],
+                {#orElse: orElse},
+              ),
+            ),
+        returnValueForMissingStub: _i6.ifNotNull(
+              _i6.dummyValueOrNull<T>(
                 this,
                 Invocation.method(
                   #singleWhere,
@@ -573,8 +798,25 @@ class MockStream<T> extends _i1.Mock implements _i2.Stream<T> {
           #elementAt,
           [index],
         ),
-        returnValue: _i3.ifNotNull(
-              _i3.dummyValueOrNull<T>(
+        returnValue: _i6.ifNotNull(
+              _i6.dummyValueOrNull<T>(
+                this,
+                Invocation.method(
+                  #elementAt,
+                  [index],
+                ),
+              ),
+              (T v) => _i2.Future<T>.value(v),
+            ) ??
+            _FakeFuture_0<T>(
+              this,
+              Invocation.method(
+                #elementAt,
+                [index],
+              ),
+            ),
+        returnValueForMissingStub: _i6.ifNotNull(
+              _i6.dummyValueOrNull<T>(
                 this,
                 Invocation.method(
                   #elementAt,
@@ -604,5 +846,146 @@ class MockStream<T> extends _i1.Mock implements _i2.Stream<T> {
           {#onTimeout: onTimeout},
         ),
         returnValue: _i2.Stream<T>.empty(),
+        returnValueForMissingStub: _i2.Stream<T>.empty(),
       ) as _i2.Stream<T>);
+}
+
+/// A class which mocks [GetChats].
+///
+/// See the documentation for Mockito's code generation for more information.
+class MockGetChats extends _i1.Mock implements _i7.GetChats {
+  @override
+  _i3.AuthRepository get authRepository => (super.noSuchMethod(
+        Invocation.getter(#authRepository),
+        returnValue: _FakeAuthRepository_2(
+          this,
+          Invocation.getter(#authRepository),
+        ),
+        returnValueForMissingStub: _FakeAuthRepository_2(
+          this,
+          Invocation.getter(#authRepository),
+        ),
+      ) as _i3.AuthRepository);
+
+  @override
+  _i4.ChatRepository get chatRepository => (super.noSuchMethod(
+        Invocation.getter(#chatRepository),
+        returnValue: _FakeChatRepository_3(
+          this,
+          Invocation.getter(#chatRepository),
+        ),
+        returnValueForMissingStub: _FakeChatRepository_3(
+          this,
+          Invocation.getter(#chatRepository),
+        ),
+      ) as _i4.ChatRepository);
+
+  @override
+  _i2.Future<List<_i8.Chat>> call(_i7.GetChatsParams? params) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #call,
+          [params],
+        ),
+        returnValue: _i2.Future<List<_i8.Chat>>.value(<_i8.Chat>[]),
+        returnValueForMissingStub:
+            _i2.Future<List<_i8.Chat>>.value(<_i8.Chat>[]),
+      ) as _i2.Future<List<_i8.Chat>>);
+}
+
+/// A class which mocks [GetMessages].
+///
+/// See the documentation for Mockito's code generation for more information.
+class MockGetMessages extends _i1.Mock implements _i9.GetMessages {
+  @override
+  _i3.AuthRepository get authRepository => (super.noSuchMethod(
+        Invocation.getter(#authRepository),
+        returnValue: _FakeAuthRepository_2(
+          this,
+          Invocation.getter(#authRepository),
+        ),
+        returnValueForMissingStub: _FakeAuthRepository_2(
+          this,
+          Invocation.getter(#authRepository),
+        ),
+      ) as _i3.AuthRepository);
+
+  @override
+  _i4.ChatRepository get chatRepository => (super.noSuchMethod(
+        Invocation.getter(#chatRepository),
+        returnValue: _FakeChatRepository_3(
+          this,
+          Invocation.getter(#chatRepository),
+        ),
+        returnValueForMissingStub: _FakeChatRepository_3(
+          this,
+          Invocation.getter(#chatRepository),
+        ),
+      ) as _i4.ChatRepository);
+
+  @override
+  _i2.Future<List<_i5.Message>> call(_i9.GetMessagesParams? params) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #call,
+          [params],
+        ),
+        returnValue: _i2.Future<List<_i5.Message>>.value(<_i5.Message>[]),
+        returnValueForMissingStub:
+            _i2.Future<List<_i5.Message>>.value(<_i5.Message>[]),
+      ) as _i2.Future<List<_i5.Message>>);
+}
+
+/// A class which mocks [SendMessage].
+///
+/// See the documentation for Mockito's code generation for more information.
+class MockSendMessage extends _i1.Mock implements _i10.SendMessage {
+  @override
+  _i3.AuthRepository get authRepository => (super.noSuchMethod(
+        Invocation.getter(#authRepository),
+        returnValue: _FakeAuthRepository_2(
+          this,
+          Invocation.getter(#authRepository),
+        ),
+        returnValueForMissingStub: _FakeAuthRepository_2(
+          this,
+          Invocation.getter(#authRepository),
+        ),
+      ) as _i3.AuthRepository);
+
+  @override
+  _i4.ChatRepository get chatRepository => (super.noSuchMethod(
+        Invocation.getter(#chatRepository),
+        returnValue: _FakeChatRepository_3(
+          this,
+          Invocation.getter(#chatRepository),
+        ),
+        returnValueForMissingStub: _FakeChatRepository_3(
+          this,
+          Invocation.getter(#chatRepository),
+        ),
+      ) as _i4.ChatRepository);
+
+  @override
+  _i2.Future<_i5.Message> call(_i10.SendMessageParams? params) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #call,
+          [params],
+        ),
+        returnValue: _i2.Future<_i5.Message>.value(_FakeMessage_4(
+          this,
+          Invocation.method(
+            #call,
+            [params],
+          ),
+        )),
+        returnValueForMissingStub: _i2.Future<_i5.Message>.value(_FakeMessage_4(
+          this,
+          Invocation.method(
+            #call,
+            [params],
+          ),
+        )),
+      ) as _i2.Future<_i5.Message>);
 }

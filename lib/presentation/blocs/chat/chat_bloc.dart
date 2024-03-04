@@ -17,12 +17,47 @@ import 'package:teams/presentation/blocs/chat/chat_state.dart';
 
 @injectable
 class ChatBloc extends Bloc<ChatEvent, ChatState> {
-  ChatBloc._({required this.chatUpdatesStream}) : super(const ChatState()) {
+  ChatBloc._({
+    required this.chatUpdatesStream,
+    required this.getChats,
+    required this.getMessages,
+    required this.sendMessage,
+  }) : super(const ChatState()) {
     _addEventHandlers();
     chatUpdatesSubscription = chatUpdatesStream.listen((update) {
       add(ChatUpdateStreamReceived(update: update));
     });
   }
+
+  @factoryMethod
+  factory ChatBloc.fromDefaultStream() {
+    return ChatBloc._(
+      chatUpdatesStream: getIt<GetChatUpdatesStream>()(),
+      getChats: getIt<GetChats>(),
+      getMessages: getIt<GetMessages>(),
+      sendMessage: getIt<SendMessage>(),
+    );
+  }
+
+  factory ChatBloc.fromParameters({
+    required Stream<ChatUpdateStreamItem> chatUpdatesStream,
+    required GetChats getChats,
+    required GetMessages getMessages,
+    required SendMessage sendMessage,
+  }) {
+    return ChatBloc._(
+      chatUpdatesStream: chatUpdatesStream,
+      getChats: getChats,
+      getMessages: getMessages,
+      sendMessage: sendMessage,
+    );
+  }
+
+  final Stream<ChatUpdateStreamItem> chatUpdatesStream;
+  final GetChats getChats;
+  final GetMessages getMessages;
+  final SendMessage sendMessage;
+  late final StreamSubscription<ChatUpdateStreamItem> chatUpdatesSubscription;
 
   void _addEventHandlers() {
     on<ChatGetChatsRequested>(_onGetChatsRequested);
@@ -31,18 +66,6 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
     on<ChatSendMessageRequested>(_onSendMessageRequested);
     on<ChatUpdateStreamReceived>(_onUpdateStreamReceived);
   }
-
-  @factoryMethod
-  factory ChatBloc.fromDefaultStream() {
-    return ChatBloc._(chatUpdatesStream: getIt<GetChatUpdatesStream>()());
-  }
-
-  factory ChatBloc.fromStream({required Stream<ChatUpdateStreamItem> stream}) {
-    return ChatBloc._(chatUpdatesStream: stream);
-  }
-
-  final Stream<ChatUpdateStreamItem> chatUpdatesStream;
-  late final StreamSubscription<ChatUpdateStreamItem> chatUpdatesSubscription;
 
   List<String> _sortedChatIds(List<Chat> chats) {
     chats.sort((a, b) {
@@ -94,7 +117,7 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
   ) async {
     try {
       emit(state.copyWith(chatsLoadingStatus: ChatsLoadingStatus.inProgress));
-      final newChats = await getIt<GetChats>()(
+      final newChats = await getChats(
         GetChatsParams(
           beforeDateTime: event.beforeDateTime,
           beforeId: event.beforeChatId,
@@ -163,7 +186,7 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
     try {
       emit(state.copyWith(
           messagesLoadingStatus: MessagesLoadingStatus.inProgress));
-      final newMessages = await getIt<GetMessages>()(
+      final newMessages = await getMessages(
         GetMessagesParams(
           chatId: event.chatId,
           beforeDateTime: event.beforeDateTime,
@@ -209,7 +232,7 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
     if (state.isValid) {
       emit(state.copyWith(formzStatus: FormzSubmissionStatus.inProgress));
       try {
-        final sentMessage = await getIt<SendMessage>()(
+        final sentMessage = await sendMessage(
             SendMessageParams(chatId: event.chatId, message: event.message));
         final allMessagesById = {
           ...state.messagesById,
