@@ -1,9 +1,7 @@
-import 'package:bloc_test/bloc_test.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:teams/app/di/di.dart';
 import 'package:teams/core/configs/app_config.dart';
 import 'package:teams/presentation/blocs/chat/chat_bloc.dart';
-import 'package:teams/presentation/blocs/chat/chat_event.dart';
 import 'package:teams/presentation/blocs/chat/chat_state.dart';
 
 void main() {
