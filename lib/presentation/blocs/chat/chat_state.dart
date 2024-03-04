@@ -9,23 +9,26 @@ part 'chat_state.freezed.dart';
 @freezed
 class ChatState with _$ChatState {
   const factory ChatState({
+    // All chats loaded by Id.
+    @Default({}) Map<String, Chat> chatsById,
+
     // List of direct message chats, sorted by updateTime and Id (descending).
-    @Default([]) List<Chat> directMessageChats,
+    @Default([]) List<String> directMessageChats,
 
     // List of group chats, sorted by updateTime and Id (descending).
-    @Default([]) List<Chat> groupChats,
+    @Default([]) List<String> groupChats,
 
     // The last direct message chat by updateTime and Id, i.e., the earliest
     // created with the smallest Id in directMessageChats.
-    Chat? lastDirectMessageChat,
+    String? lastDirectMessageChat,
 
     // The last group chat by updateTime and Id, i.e., the earliest created
     // with the smallest Id in groupChats.
-    Chat? lastGroupChat,
+    String? lastGroupChat,
 
-    // Map from Chat Id to the last message (earliest timestamp and smallest
+    // Map from Chat Id to the ID of the last message (earliest timestamp and smallest
     // Id) for each chat.
-    @Default({}) Map<String, Message?> lastMessage,
+    @Default({}) Map<String, String?> lastMessageByChat,
 
     // The loading status of the chats on the chat page.
     @Default(ChatsLoadingStatus.complete) chatsLoadingStatus,

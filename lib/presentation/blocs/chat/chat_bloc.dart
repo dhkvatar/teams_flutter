@@ -31,7 +31,7 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
   // late final StreamSubscription<Message> _messageUploadSubscription;
   late final StreamSubscription<ChatUpdateStreamItem> _chatUpdatesSubscription;
 
-  void _sortChatsBySentTimeAndId(List<Chat> chats) {
+  List<String> _sortedChatIds(List<Chat> chats) {
     chats.sort((a, b) {
       int timeComparison = b.updateTime.compareTo(a.updateTime);
       if (timeComparison == 0) {
@@ -39,6 +39,12 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
       }
       return timeComparison;
     });
+
+    List<String> res = [];
+    for (int i = 0; i < chats.length; i++) {
+      res.add(chats.elementAt(i).id);
+    }
+    return res;
   }
 
   Future<void> _onUpdateStreamReceived(
@@ -68,30 +74,32 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
   ) async {
     try {
       emit(state.copyWith(chatsLoadingStatus: ChatsLoadingStatus.inProgress));
-      final chats = await getIt<GetChats>()(
+      final newChats = await getIt<GetChats>()(
         GetChatsParams(
           beforeDateTime: event.beforeDateTime,
           beforeId: event.beforeChatId,
           limit: event.limit,
         ),
       );
-
-      final dms = [
-        ...state.directMessageChats,
-        ...chats.where((element) => !element.isGroupChat).toList()
-      ];
-      final groupChats = [
-        ...state.groupChats,
-        ...chats.where((element) => element.isGroupChat).toList()
-      ];
-      _sortChatsBySentTimeAndId(dms);
-      _sortChatsBySentTimeAndId(groupChats);
+      final sortedDmIds = _sortedChatIds([
+        ...newChats.where((chat) => !chat.isGroupChat),
+        ...state.chatsById.values.where((chat) => !chat.isGroupChat).toList(),
+      ]);
+      final sortedGroupChatIds = _sortedChatIds([
+        ...newChats.where((chat) => chat.isGroupChat),
+        ...state.chatsById.values.where((chat) => chat.isGroupChat).toList(),
+      ]);
 
       emit(state.copyWith(
-        directMessageChats: dms,
-        groupChats: groupChats,
-        lastDirectMessageChat: dms.isNotEmpty ? dms.last : null,
-        lastGroupChat: groupChats.isNotEmpty ? groupChats.last : null,
+        chatsById: {
+          ...state.chatsById,
+          ...{for (var chat in newChats) chat.id: chat}
+        },
+        directMessageChats: sortedDmIds,
+        groupChats: sortedGroupChatIds,
+        lastDirectMessageChat: sortedDmIds.isNotEmpty ? sortedDmIds.last : null,
+        lastGroupChat:
+            sortedGroupChatIds.isNotEmpty ? sortedGroupChatIds.last : null,
         chatsLoadingStatus: ChatsLoadingStatus.complete,
       ));
     } catch (e) {
@@ -154,7 +162,9 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
           ...state.chatMessagesByDate,
           event.chatId: groupedMessages,
         },
-        lastMessage: last != null ? {last.id: last} : {},
+        lastMessageByChat: last != null
+            ? {...state.lastMessageByChat, event.chatId: last.id}
+            : state.lastMessageByChat,
         lastChatAccess: {...state.lastChatAccess, event.chatId: DateTime.now()},
         messagesLoadingStatus: MessagesLoadingStatus.complete,
       ));
