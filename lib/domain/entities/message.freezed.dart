@@ -24,7 +24,9 @@ mixin _$Message {
   String get chatId => throw _privateConstructorUsedError; // The message.
   String get message =>
       throw _privateConstructorUsedError; // The time the message was sent.
-  DateTime get sentTime => throw _privateConstructorUsedError;
+  DateTime get sentTime =>
+      throw _privateConstructorUsedError; // The upload status of the message.
+  MessageUploadStatus get uploadStatus => throw _privateConstructorUsedError;
 
   @JsonKey(ignore: true)
   $MessageCopyWith<Message> get copyWith => throw _privateConstructorUsedError;
@@ -40,7 +42,8 @@ abstract class $MessageCopyWith<$Res> {
       String senderId,
       String chatId,
       String message,
-      DateTime sentTime});
+      DateTime sentTime,
+      MessageUploadStatus uploadStatus});
 }
 
 /// @nodoc
@@ -61,6 +64,7 @@ class _$MessageCopyWithImpl<$Res, $Val extends Message>
     Object? chatId = null,
     Object? message = null,
     Object? sentTime = null,
+    Object? uploadStatus = null,
   }) {
     return _then(_value.copyWith(
       id: null == id
@@ -83,6 +87,10 @@ class _$MessageCopyWithImpl<$Res, $Val extends Message>
           ? _value.sentTime
           : sentTime // ignore: cast_nullable_to_non_nullable
               as DateTime,
+      uploadStatus: null == uploadStatus
+          ? _value.uploadStatus
+          : uploadStatus // ignore: cast_nullable_to_non_nullable
+              as MessageUploadStatus,
     ) as $Val);
   }
 }
@@ -99,7 +107,8 @@ abstract class _$$MessageImplCopyWith<$Res> implements $MessageCopyWith<$Res> {
       String senderId,
       String chatId,
       String message,
-      DateTime sentTime});
+      DateTime sentTime,
+      MessageUploadStatus uploadStatus});
 }
 
 /// @nodoc
@@ -118,6 +127,7 @@ class __$$MessageImplCopyWithImpl<$Res>
     Object? chatId = null,
     Object? message = null,
     Object? sentTime = null,
+    Object? uploadStatus = null,
   }) {
     return _then(_$MessageImpl(
       id: null == id
@@ -140,6 +150,10 @@ class __$$MessageImplCopyWithImpl<$Res>
           ? _value.sentTime
           : sentTime // ignore: cast_nullable_to_non_nullable
               as DateTime,
+      uploadStatus: null == uploadStatus
+          ? _value.uploadStatus
+          : uploadStatus // ignore: cast_nullable_to_non_nullable
+              as MessageUploadStatus,
     ));
   }
 }
@@ -152,7 +166,8 @@ class _$MessageImpl implements _Message {
       required this.senderId,
       required this.chatId,
       required this.message,
-      required this.sentTime});
+      required this.sentTime,
+      this.uploadStatus = MessageUploadStatus.success});
 
 // The unique identifier of the message.
   @override
@@ -169,10 +184,14 @@ class _$MessageImpl implements _Message {
 // The time the message was sent.
   @override
   final DateTime sentTime;
+// The upload status of the message.
+  @override
+  @JsonKey()
+  final MessageUploadStatus uploadStatus;
 
   @override
   String toString() {
-    return 'Message(id: $id, senderId: $senderId, chatId: $chatId, message: $message, sentTime: $sentTime)';
+    return 'Message(id: $id, senderId: $senderId, chatId: $chatId, message: $message, sentTime: $sentTime, uploadStatus: $uploadStatus)';
   }
 
   @override
@@ -186,12 +205,14 @@ class _$MessageImpl implements _Message {
             (identical(other.chatId, chatId) || other.chatId == chatId) &&
             (identical(other.message, message) || other.message == message) &&
             (identical(other.sentTime, sentTime) ||
-                other.sentTime == sentTime));
+                other.sentTime == sentTime) &&
+            (identical(other.uploadStatus, uploadStatus) ||
+                other.uploadStatus == uploadStatus));
   }
 
   @override
-  int get hashCode =>
-      Object.hash(runtimeType, id, senderId, chatId, message, sentTime);
+  int get hashCode => Object.hash(
+      runtimeType, id, senderId, chatId, message, sentTime, uploadStatus);
 
   @JsonKey(ignore: true)
   @override
@@ -206,7 +227,8 @@ abstract class _Message implements Message {
       required final String senderId,
       required final String chatId,
       required final String message,
-      required final DateTime sentTime}) = _$MessageImpl;
+      required final DateTime sentTime,
+      final MessageUploadStatus uploadStatus}) = _$MessageImpl;
 
   @override // The unique identifier of the message.
   String get id;
@@ -218,6 +240,8 @@ abstract class _Message implements Message {
   String get message;
   @override // The time the message was sent.
   DateTime get sentTime;
+  @override // The upload status of the message.
+  MessageUploadStatus get uploadStatus;
   @override
   @JsonKey(ignore: true)
   _$$MessageImplCopyWith<_$MessageImpl> get copyWith =>

@@ -44,7 +44,7 @@ class _GroupChatsTab extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<ChatBloc, ChatState>(
-      builder: (ctx, state) => ChatListView(chats: state.groupChats),
+      builder: (ctx, state) => ChatListView(chatIds: state.groupChats),
     );
   }
 }
@@ -63,7 +63,7 @@ class _DirectChatsTab extends StatelessWidget {
                   CircularProgressIndicator(),
                 ],
               )
-            : ChatListView(chats: state.directMessageChats);
+            : ChatListView(chatIds: state.directMessageChats);
       },
     );
   }

@@ -5,7 +5,7 @@ import 'package:teams/core/usecases/usecase.dart';
 import 'package:teams/domain/entities/user.dart';
 import 'package:teams/domain/repositories/auth_repository.dart';
 
-@lazySingleton
+@injectable
 class GetUserStream implements UseCase<Stream<User?>, NoParams?> {
   late final AuthRepository _authRepository;
 
