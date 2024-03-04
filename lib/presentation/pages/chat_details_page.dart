@@ -68,9 +68,9 @@ class _MessagesList extends StatelessWidget {
                 children: [
                   Text(dateKey.toString()),
                   Column(
-                    children: messagesByDate[dateKey]!.map((e) {
+                    children: messagesByDate[dateKey]!.map((messageId) {
                       return MessageListItem(
-                        message: e,
+                        message: state.messagesById[messageId]!,
                         userId: getIt<GetCurrentUser>()()!.id,
                       );
                     }).toList(),

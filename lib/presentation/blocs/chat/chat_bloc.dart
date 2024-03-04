@@ -110,14 +110,41 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
     }
   }
 
-  void _sortMessagesBySentTimeAndId(List<Message> messages) {
-    messages.sort((a, b) {
-      int timeComparison = a.sentTime.compareTo(b.sentTime);
-      if (timeComparison == 0) {
-        return a.id.compareTo(b.id);
-      }
-      return timeComparison;
+  Map<DateTime, List<Message>> _groupMessagesByDate(List<Message> messages) {
+    Map<DateTime, List<Message>> res = {};
+    for (var message in messages) {
+      final dateKey = DateTime(
+          message.sentTime.year, message.sentTime.month, message.sentTime.day);
+      res.putIfAbsent(dateKey, () => []);
+      res[dateKey]!.add(message);
+    }
+    return res;
+  }
+
+  Map<DateTime, List<String>> _groupAndSortMessagesByDate(
+      List<String> messageIds, Map<String, Message> messages) {
+    Map<DateTime, List<String>> res = {};
+    for (var msgId in messageIds) {
+      final message = messages[msgId]!;
+      final date = DateTime(
+          message.sentTime.year, message.sentTime.month, message.sentTime.day);
+      res.putIfAbsent(date, () => []);
+      res[date]!.add(message.id);
+    }
+
+    res.forEach((date, messagesForDate) {
+      // sort messages
+      messagesForDate.sort((a, b) {
+        final msgA = messages[a]!;
+        final msgB = messages[b]!;
+        final timeComparison = msgA.sentTime.compareTo(msgB.sentTime);
+        if (timeComparison == 0) {
+          return msgA.id.compareTo(msgB.id);
+        }
+        return timeComparison;
+      });
     });
+    return res;
   }
 
   Future<void> _onGetMessagesRequested(
@@ -127,7 +154,7 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
     try {
       emit(state.copyWith(
           messagesLoadingStatus: MessagesLoadingStatus.inProgress));
-      final messages = await getIt<GetMessages>()(
+      final newMessages = await getIt<GetMessages>()(
         GetMessagesParams(
           chatId: event.chatId,
           beforeDateTime: event.beforeDateTime,
@@ -135,36 +162,19 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
           limit: event.limit,
         ),
       );
-
-      Message? last;
-      final groupedMessages = state.chatMessagesByDate[event.chatId] ?? {};
-
-      for (final message in messages) {
-        DateTime dateKey = DateTime(message.sentTime.year,
-            message.sentTime.month, message.sentTime.day);
-        groupedMessages.putIfAbsent(dateKey, () => []);
-        groupedMessages[dateKey]!.add(message);
-
-        if (last == null) {
-          last = message;
-        } else if (last.sentTime.compareTo(message.sentTime) != 0) {
-          last = message.sentTime.isBefore(last.sentTime) ? message : last;
-        } else {
-          last = message.id.compareTo(last.id) < 0 ? message : last;
-        }
-      }
-      groupedMessages.forEach((date, messages) {
-        _sortMessagesBySentTimeAndId(messages);
-      });
+      final allMessagesById = {
+        ...state.messagesById,
+        ...{for (var msg in newMessages) msg.id: msg},
+      };
+      final sortedMessagesGroupedByDate = _groupAndSortMessagesByDate(
+          allMessagesById.keys.toList(), allMessagesById);
 
       emit(state.copyWith(
+        messagesById: allMessagesById,
         chatMessagesByDate: {
           ...state.chatMessagesByDate,
-          event.chatId: groupedMessages,
+          event.chatId: sortedMessagesGroupedByDate
         },
-        lastMessageByChat: last != null
-            ? {...state.lastMessageByChat, event.chatId: last.id}
-            : state.lastMessageByChat,
         lastChatAccess: {...state.lastChatAccess, event.chatId: DateTime.now()},
         messagesLoadingStatus: MessagesLoadingStatus.complete,
       ));
@@ -192,17 +202,15 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
       try {
         final sentMessage = await getIt<SendMessage>()(
             SendMessageParams(chatId: event.chatId, message: event.message));
-        final sentDate = DateTime(sentMessage.sentTime.year,
-            sentMessage.sentTime.month, sentMessage.sentTime.day);
-        final messagesByDate = state.chatMessagesByDate[event.chatId] ?? {};
-        messagesByDate.putIfAbsent(sentDate, () => []);
-        final sortedMessagesForDate = [
-          ...messagesByDate[sentDate]!,
-          sentMessage
-        ];
-        _sortMessagesBySentTimeAndId(sortedMessagesForDate);
+        final allMessagesById = {
+          ...state.messagesById,
+          sentMessage.id: sentMessage
+        };
+        final sortedMessagesGroupedByDate = _groupAndSortMessagesByDate(
+            allMessagesById.keys.toList(), allMessagesById);
 
         emit(state.copyWith(
+          messagesById: allMessagesById,
           chatInput: const ChatInput.pure(),
           pendingMessagesById: {
             ...state.pendingMessagesById,
@@ -213,10 +221,7 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
           },
           chatMessagesByDate: {
             ...state.chatMessagesByDate,
-            event.chatId: {
-              ...state.chatMessagesByDate[event.chatId] ?? {},
-              sentDate: sortedMessagesForDate,
-            },
+            event.chatId: sortedMessagesGroupedByDate,
           },
           formzStatus: FormzSubmissionStatus.success,
           isValid: false,

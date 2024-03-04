@@ -36,9 +36,12 @@ class ChatState with _$ChatState {
     // The loading status of the messages on the chat details page.
     @Default(MessagesLoadingStatus.complete) messagesLoadingStatus,
 
+    // All messagtes loaded by Id.
+    @Default({}) Map<String, Message> messagesById,
+
     // Map from Chat Id to a map of dates to messages of the Chat.
     // The messages Ids are sorted by sent time and ID (descending).
-    @Default({}) Map<String, Map<DateTime, List<Message>>> chatMessagesByDate,
+    @Default({}) Map<String, Map<DateTime, List<String>>> chatMessagesByDate,
 
     // The last access time of each chat during the session.
     @Default({}) Map<String, DateTime> lastChatAccess,
