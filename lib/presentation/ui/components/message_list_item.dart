@@ -69,18 +69,31 @@ class MessageListItem extends StatelessWidget {
                     // Pending message indidcator
                     BlocBuilder<ChatBloc, ChatState>(
                       buildWhen: (previous, current) =>
-                          previous.pendingMessagesById[message.chatId] !=
-                          current.pendingMessagesById[message.chatId],
+                          previous.messagesById[message.id] !=
+                          current.messagesById[message.id],
                       builder: (ctx, state) {
                         if (isMe &&
-                            (state.pendingMessagesById[message.chatId] ?? {})
-                                .containsKey(message.id)) {
+                            message.uploadStatus ==
+                                MessageUploadStatus.uploadInProgress) {
                           return const Padding(
                             padding: EdgeInsets.symmetric(horizontal: 5.0),
                             child: SizedBox(
                               width: 8,
                               height: 8,
                               child: CircularProgressIndicator(),
+                            ),
+                          );
+                        } else if (isMe &&
+                            message.uploadStatus ==
+                                MessageUploadStatus.timeout) {
+                          return const Padding(
+                            padding: EdgeInsets.symmetric(horizontal: 5.0),
+                            child: Text(
+                              'x',
+                              style: TextStyle(
+                                fontSize: 15.0,
+                                color: Colors.red,
+                              ),
                             ),
                           );
                         }

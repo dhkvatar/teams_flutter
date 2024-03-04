@@ -50,8 +50,8 @@ mixin _$ChatState {
   bool get isValid =>
       throw _privateConstructorUsedError; // Pending messages (message.uploadStatus == uploadInProgress) by Id for each chat.
 // The first key is the Chat Id, the second is the pending messages by Id.
-  Map<String, Map<String, Message>> get pendingMessagesById =>
-      throw _privateConstructorUsedError; // Error message to display after processing a ChatEvent.
+// @Default({}) Map<String, Map<String, Message>> pendingMessagesById,
+// Error message to display after processing a ChatEvent.
   String? get errorMessage => throw _privateConstructorUsedError;
 
   @JsonKey(ignore: true)
@@ -79,7 +79,6 @@ abstract class $ChatStateCopyWith<$Res> {
       ChatInput chatInput,
       FormzSubmissionStatus formzStatus,
       bool isValid,
-      Map<String, Map<String, Message>> pendingMessagesById,
       String? errorMessage});
 }
 
@@ -110,7 +109,6 @@ class _$ChatStateCopyWithImpl<$Res, $Val extends ChatState>
     Object? chatInput = null,
     Object? formzStatus = null,
     Object? isValid = null,
-    Object? pendingMessagesById = null,
     Object? errorMessage = freezed,
   }) {
     return _then(_value.copyWith(
@@ -170,10 +168,6 @@ class _$ChatStateCopyWithImpl<$Res, $Val extends ChatState>
           ? _value.isValid
           : isValid // ignore: cast_nullable_to_non_nullable
               as bool,
-      pendingMessagesById: null == pendingMessagesById
-          ? _value.pendingMessagesById
-          : pendingMessagesById // ignore: cast_nullable_to_non_nullable
-              as Map<String, Map<String, Message>>,
       errorMessage: freezed == errorMessage
           ? _value.errorMessage
           : errorMessage // ignore: cast_nullable_to_non_nullable
@@ -205,7 +199,6 @@ abstract class _$$ChatStateImplCopyWith<$Res>
       ChatInput chatInput,
       FormzSubmissionStatus formzStatus,
       bool isValid,
-      Map<String, Map<String, Message>> pendingMessagesById,
       String? errorMessage});
 }
 
@@ -234,7 +227,6 @@ class __$$ChatStateImplCopyWithImpl<$Res>
     Object? chatInput = null,
     Object? formzStatus = null,
     Object? isValid = null,
-    Object? pendingMessagesById = null,
     Object? errorMessage = freezed,
   }) {
     return _then(_$ChatStateImpl(
@@ -292,10 +284,6 @@ class __$$ChatStateImplCopyWithImpl<$Res>
           ? _value.isValid
           : isValid // ignore: cast_nullable_to_non_nullable
               as bool,
-      pendingMessagesById: null == pendingMessagesById
-          ? _value._pendingMessagesById
-          : pendingMessagesById // ignore: cast_nullable_to_non_nullable
-              as Map<String, Map<String, Message>>,
       errorMessage: freezed == errorMessage
           ? _value.errorMessage
           : errorMessage // ignore: cast_nullable_to_non_nullable
@@ -323,7 +311,6 @@ class _$ChatStateImpl implements _ChatState {
       this.chatInput = const ChatInput.pure(),
       this.formzStatus = FormzSubmissionStatus.initial,
       this.isValid = false,
-      final Map<String, Map<String, Message>> pendingMessagesById = const {},
       this.errorMessage})
       : _chatsById = chatsById,
         _directMessageChats = directMessageChats,
@@ -331,8 +318,7 @@ class _$ChatStateImpl implements _ChatState {
         _lastMessageByChat = lastMessageByChat,
         _messagesById = messagesById,
         _chatMessagesByDate = chatMessagesByDate,
-        _lastChatAccess = lastChatAccess,
-        _pendingMessagesById = pendingMessagesById;
+        _lastChatAccess = lastChatAccess;
 
 // All chats loaded by Id.
   final Map<String, Chat> _chatsById;
@@ -448,25 +434,14 @@ class _$ChatStateImpl implements _ChatState {
   final bool isValid;
 // Pending messages (message.uploadStatus == uploadInProgress) by Id for each chat.
 // The first key is the Chat Id, the second is the pending messages by Id.
-  final Map<String, Map<String, Message>> _pendingMessagesById;
-// Pending messages (message.uploadStatus == uploadInProgress) by Id for each chat.
-// The first key is the Chat Id, the second is the pending messages by Id.
-  @override
-  @JsonKey()
-  Map<String, Map<String, Message>> get pendingMessagesById {
-    if (_pendingMessagesById is EqualUnmodifiableMapView)
-      return _pendingMessagesById;
-    // ignore: implicit_dynamic_type
-    return EqualUnmodifiableMapView(_pendingMessagesById);
-  }
-
+// @Default({}) Map<String, Map<String, Message>> pendingMessagesById,
 // Error message to display after processing a ChatEvent.
   @override
   final String? errorMessage;
 
   @override
   String toString() {
-    return 'ChatState(chatsById: $chatsById, directMessageChats: $directMessageChats, groupChats: $groupChats, lastDirectMessageChat: $lastDirectMessageChat, lastGroupChat: $lastGroupChat, lastMessageByChat: $lastMessageByChat, chatsLoadingStatus: $chatsLoadingStatus, messagesLoadingStatus: $messagesLoadingStatus, messagesById: $messagesById, chatMessagesByDate: $chatMessagesByDate, lastChatAccess: $lastChatAccess, chatInput: $chatInput, formzStatus: $formzStatus, isValid: $isValid, pendingMessagesById: $pendingMessagesById, errorMessage: $errorMessage)';
+    return 'ChatState(chatsById: $chatsById, directMessageChats: $directMessageChats, groupChats: $groupChats, lastDirectMessageChat: $lastDirectMessageChat, lastGroupChat: $lastGroupChat, lastMessageByChat: $lastMessageByChat, chatsLoadingStatus: $chatsLoadingStatus, messagesLoadingStatus: $messagesLoadingStatus, messagesById: $messagesById, chatMessagesByDate: $chatMessagesByDate, lastChatAccess: $lastChatAccess, chatInput: $chatInput, formzStatus: $formzStatus, isValid: $isValid, errorMessage: $errorMessage)';
   }
 
   @override
@@ -501,8 +476,6 @@ class _$ChatStateImpl implements _ChatState {
             (identical(other.formzStatus, formzStatus) ||
                 other.formzStatus == formzStatus) &&
             (identical(other.isValid, isValid) || other.isValid == isValid) &&
-            const DeepCollectionEquality()
-                .equals(other._pendingMessagesById, _pendingMessagesById) &&
             (identical(other.errorMessage, errorMessage) ||
                 other.errorMessage == errorMessage));
   }
@@ -524,7 +497,6 @@ class _$ChatStateImpl implements _ChatState {
       chatInput,
       formzStatus,
       isValid,
-      const DeepCollectionEquality().hash(_pendingMessagesById),
       errorMessage);
 
   @JsonKey(ignore: true)
@@ -550,7 +522,6 @@ abstract class _ChatState implements ChatState {
       final ChatInput chatInput,
       final FormzSubmissionStatus formzStatus,
       final bool isValid,
-      final Map<String, Map<String, Message>> pendingMessagesById,
       final String? errorMessage}) = _$ChatStateImpl;
 
   @override // All chats loaded by Id.
@@ -587,8 +558,8 @@ abstract class _ChatState implements ChatState {
   bool get isValid;
   @override // Pending messages (message.uploadStatus == uploadInProgress) by Id for each chat.
 // The first key is the Chat Id, the second is the pending messages by Id.
-  Map<String, Map<String, Message>> get pendingMessagesById;
-  @override // Error message to display after processing a ChatEvent.
+// @Default({}) Map<String, Map<String, Message>> pendingMessagesById,
+// Error message to display after processing a ChatEvent.
   String? get errorMessage;
   @override
   @JsonKey(ignore: true)

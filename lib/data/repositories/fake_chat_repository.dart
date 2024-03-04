@@ -186,7 +186,7 @@ class FakeChatRepository implements ChatRepository, Disposable {
 
     // Schedule storing new message.
     _queue.scheduleMessageUpload(
-        newMessage, const Duration(seconds: 3), _messages);
+        newMessage, const Duration(milliseconds: 500), _messages);
     return newMessage;
   }
 
@@ -218,7 +218,9 @@ class MessageUploadQueue {
         newMessageId: toUpload.id,
       );
 
-      messageList[toUpload.id] = toUpload;
+      messageList[toUpload.id] = toUpload.copyWith(
+        uploadStatus: MessageUploadStatus.success,
+      );
       chatUpdateStreamController.add(update);
     });
   }

@@ -51,20 +51,27 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
       ChatUpdateStreamReceived event, Emitter<ChatState> emit) async {
     switch (event.update.updateType) {
       case ChatUpdateType.newMessageUploadSuccess:
-        final Map<String, Message> pendingMessagesForChat =
-            Map.from(state.pendingMessagesById[event.update.chatId] ?? {});
-        pendingMessagesForChat.remove(event.update.newMessageId ?? '');
+        final newMsgId = event.update.newMessageId!;
         emit(
           state.copyWith(
-            // Remove the acked message from the pending messages map.
-            pendingMessagesById: {
-              ...state.pendingMessagesById,
-              event.update.chatId: pendingMessagesForChat,
+            messagesById: {
+              ...state.messagesById,
+              newMsgId: state.messagesById[newMsgId]!
+                  .copyWith(uploadStatus: MessageUploadStatus.success),
             },
           ),
         );
       case ChatUpdateType.newMessageUploadFailure:
-      // TODO: Handle this case.
+        final newMsgId = event.update.newMessageId!;
+        emit(
+          state.copyWith(
+            messagesById: {
+              ...state.messagesById,
+              newMsgId: state.messagesById[newMsgId]!
+                  .copyWith(uploadStatus: MessageUploadStatus.timeout),
+            },
+          ),
+        );
     }
   }
 
@@ -193,7 +200,8 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
             SendMessageParams(chatId: event.chatId, message: event.message));
         final allMessagesById = {
           ...state.messagesById,
-          sentMessage.id: sentMessage
+          sentMessage.id: sentMessage.copyWith(
+              uploadStatus: MessageUploadStatus.uploadInProgress),
         };
         final sortedMessagesGroupedByDate =
             _groupAndSortMessageIdsByDate(allMessagesById);
@@ -201,13 +209,6 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
         emit(state.copyWith(
           messagesById: allMessagesById,
           chatInput: const ChatInput.pure(),
-          pendingMessagesById: {
-            ...state.pendingMessagesById,
-            event.chatId: {
-              ...state.pendingMessagesById[event.chatId] ?? {},
-              sentMessage.id: sentMessage,
-            }
-          },
           chatMessagesByDate: {
             ...state.chatMessagesByDate,
             event.chatId: sortedMessagesGroupedByDate,
