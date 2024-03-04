@@ -5,14 +5,22 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/annotations.dart';
 import 'package:mockito/mockito.dart';
 import 'package:teams/domain/repositories/chat_repository.dart';
+import 'package:teams/domain/usecases/chat/get_chats.dart';
+import 'package:teams/domain/usecases/chat/get_messages.dart';
+import 'package:teams/domain/usecases/chat/send_message.dart';
 // import 'package:teams/domain/usecases/chat/get_chat_updates_stream.dart';
 import 'package:teams/presentation/blocs/chat/chat_bloc.dart';
 // import 'package:teams/presentation/blocs/chat/chat_event.dart';
 import 'package:teams/presentation/blocs/chat/chat_state.dart';
 
+@GenerateNiceMocks([
+  MockSpec<Stream>(),
+  MockSpec<GetChats>(),
+  MockSpec<GetMessages>(),
+  MockSpec<SendMessage>(),
+])
 import 'chat_bloc_test.mocks.dart';
 
-@GenerateMocks([Stream])
 void main() {
   group(ChatBloc, () {
     group('initialization', () {
@@ -23,8 +31,12 @@ void main() {
           (inv) =>
               const Stream<ChatUpdateStreamItem>.empty().listen((event) {}),
         );
-        final ChatBloc chatBloc =
-            ChatBloc.fromStream(stream: mockChatUpdatesStream);
+        final ChatBloc chatBloc = ChatBloc.fromParameters(
+          chatUpdatesStream: mockChatUpdatesStream,
+          getChats: MockGetChats(),
+          getMessages: MockGetMessages(),
+          sendMessage: MockSendMessage(),
+        );
         expect(chatBloc.state, const ChatState());
       });
     });
