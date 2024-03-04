@@ -110,19 +110,9 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
     }
   }
 
-  Map<DateTime, List<Message>> _groupMessagesByDate(List<Message> messages) {
-    Map<DateTime, List<Message>> res = {};
-    for (var message in messages) {
-      final dateKey = DateTime(
-          message.sentTime.year, message.sentTime.month, message.sentTime.day);
-      res.putIfAbsent(dateKey, () => []);
-      res[dateKey]!.add(message);
-    }
-    return res;
-  }
-
-  Map<DateTime, List<String>> _groupAndSortMessagesByDate(
-      List<String> messageIds, Map<String, Message> messages) {
+  Map<DateTime, List<String>> _groupAndSortMessageIdsByDate(
+      Map<String, Message> messages) {
+    final messageIds = messages.keys.toList();
     Map<DateTime, List<String>> res = {};
     for (var msgId in messageIds) {
       final message = messages[msgId]!;
@@ -133,7 +123,6 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
     }
 
     res.forEach((date, messagesForDate) {
-      // sort messages
       messagesForDate.sort((a, b) {
         final msgA = messages[a]!;
         final msgB = messages[b]!;
@@ -166,8 +155,8 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
         ...state.messagesById,
         ...{for (var msg in newMessages) msg.id: msg},
       };
-      final sortedMessagesGroupedByDate = _groupAndSortMessagesByDate(
-          allMessagesById.keys.toList(), allMessagesById);
+      final sortedMessagesGroupedByDate =
+          _groupAndSortMessageIdsByDate(allMessagesById);
 
       emit(state.copyWith(
         messagesById: allMessagesById,
@@ -206,8 +195,8 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
           ...state.messagesById,
           sentMessage.id: sentMessage
         };
-        final sortedMessagesGroupedByDate = _groupAndSortMessagesByDate(
-            allMessagesById.keys.toList(), allMessagesById);
+        final sortedMessagesGroupedByDate =
+            _groupAndSortMessageIdsByDate(allMessagesById);
 
         emit(state.copyWith(
           messagesById: allMessagesById,
