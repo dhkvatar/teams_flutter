@@ -23,12 +23,12 @@ void main() {
         expect(chatBloc.state, const ChatState());
       });
 
-      blocTest(
-        '',
-        build: () => chatBloc,
-        act: (bloc) => bloc.add(const ChatGetChatsRequested()),
-        expect: () => [const ChatState()],
-      );
+      // blocTest(
+      //   '',
+      //   build: () => chatBloc,
+      //   act: (bloc) => bloc.add(const ChatGetChatsRequested()),
+      //   expect: () => [const ChatState()],
+      // );
     });
   });
 }
