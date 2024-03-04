@@ -9,6 +9,9 @@ part 'chat_state.freezed.dart';
 @freezed
 class ChatState with _$ChatState {
   const factory ChatState({
+    // The loading status of the chats on the chat page.
+    @Default(ChatsLoadingStatus.complete) chatsLoadingStatus,
+
     // All chats loaded by Id.
     @Default({}) Map<String, Chat> chatsById,
 
@@ -29,9 +32,6 @@ class ChatState with _$ChatState {
     // Map from Chat Id to the ID of the last message (earliest timestamp and smallest
     // Id) for each chat.
     @Default({}) Map<String, String?> lastMessageByChat,
-
-    // The loading status of the chats on the chat page.
-    @Default(ChatsLoadingStatus.complete) chatsLoadingStatus,
 
     // The loading status of the messages on the chat details page.
     @Default(MessagesLoadingStatus.complete) messagesLoadingStatus,
