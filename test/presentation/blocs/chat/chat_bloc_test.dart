@@ -1,6 +1,6 @@
 import 'dart:async';
 
-// import 'package:bloc_test/bloc_test.dart';
+import 'package:bloc_test/bloc_test.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/annotations.dart';
 import 'package:mockito/mockito.dart';
@@ -24,21 +24,24 @@ import 'chat_bloc_test.mocks.dart';
 void main() {
   group(ChatBloc, () {
     group('initialization', () {
-      test('state is default ChatState', () {
-        MockStream<ChatUpdateStreamItem> mockChatUpdatesStream =
-            MockStream<ChatUpdateStreamItem>();
-        when(mockChatUpdatesStream.listen(any)).thenAnswer(
-          (inv) =>
-              const Stream<ChatUpdateStreamItem>.empty().listen((event) {}),
-        );
-        final ChatBloc chatBloc = ChatBloc.fromParameters(
+      final mockChatUpdatesStream = MockStream<ChatUpdateStreamItem>();
+
+      blocTest(
+        'state is default ChatState',
+        setUp: () {
+          when(mockChatUpdatesStream.listen(any)).thenAnswer(
+            (inv) =>
+                const Stream<ChatUpdateStreamItem>.empty().listen((event) {}),
+          );
+        },
+        build: () => ChatBloc.fromParameters(
           chatUpdatesStream: mockChatUpdatesStream,
           getChats: MockGetChats(),
           getMessages: MockGetMessages(),
           sendMessage: MockSendMessage(),
-        );
-        expect(chatBloc.state, const ChatState());
-      });
+        ),
+        verify: (bloc) => expect(bloc.state, const ChatState()),
+      );
     });
 
     //   group(ChatGetChatsRequested, () {
