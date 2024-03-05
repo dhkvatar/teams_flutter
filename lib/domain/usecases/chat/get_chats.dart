@@ -10,6 +10,7 @@ import 'package:teams/domain/repositories/chat_repository.dart';
 
 part 'get_chats.freezed.dart';
 
+/// The [GetChats] class is a use case that retrieves a list of [Chat] objects.
 @injectable
 class GetChats implements UseCase<List<Chat>, GetChatsParams> {
   GetChats({required this.authRepository, required this.chatRepository});
@@ -17,6 +18,11 @@ class GetChats implements UseCase<List<Chat>, GetChatsParams> {
   final AuthRepository authRepository;
   final ChatRepository chatRepository;
 
+  /// Checks if the user is logged in and retrieves the current user's Id.
+  /// It queries the [ChatRepository] to get [Chat] objects within the given
+  /// constraints.
+  ///
+  /// Throws [ChatException] on failure.
   @override
   Future<List<Chat>> call(GetChatsParams params) async {
     if (!authRepository.isLoggedIn) {

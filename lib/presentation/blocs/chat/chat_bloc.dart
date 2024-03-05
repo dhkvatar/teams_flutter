@@ -4,6 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:formz/formz.dart';
 import 'package:injectable/injectable.dart';
 import 'package:teams/app/di/di.dart';
+import 'package:teams/core/exceptions/chat_exception.dart';
 import 'package:teams/core/forms/chat.dart';
 import 'package:teams/domain/entities/chat.dart';
 import 'package:teams/domain/entities/message.dart';
@@ -83,6 +84,32 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
     return res;
   }
 
+  Map<DateTime, List<String>> _groupAndSortMessageIdsByDate(
+      Map<String, Message> messages) {
+    final messageIds = messages.keys.toList();
+    Map<DateTime, List<String>> res = {};
+    for (var msgId in messageIds) {
+      final message = messages[msgId]!;
+      final date = DateTime(
+          message.sentTime.year, message.sentTime.month, message.sentTime.day);
+      res.putIfAbsent(date, () => []);
+      res[date]!.add(message.id);
+    }
+
+    res.forEach((date, messagesForDate) {
+      messagesForDate.sort((a, b) {
+        final msgA = messages[a]!;
+        final msgB = messages[b]!;
+        final timeComparison = msgA.sentTime.compareTo(msgB.sentTime);
+        if (timeComparison == 0) {
+          return msgA.id.compareTo(msgB.id);
+        }
+        return timeComparison;
+      });
+    });
+    return res;
+  }
+
   Future<void> _onUpdateStreamReceived(
       ChatUpdateStreamReceived event, Emitter<ChatState> emit) async {
     switch (event.update.updateType) {
@@ -145,38 +172,12 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
             sortedGroupChatIds.isNotEmpty ? sortedGroupChatIds.last : null,
         chatsLoadingStatus: ChatsLoadingStatus.complete,
       ));
-    } catch (e) {
+    } on ChatException catch (e) {
       emit(state.copyWith(
-        chatsLoadingStatus: ChatsLoadingStatus.complete,
+        chatsLoadingStatus: ChatsLoadingStatus.failed,
         errorMessage: 'Error fetching Chats: ${e.toString()}',
       ));
     }
-  }
-
-  Map<DateTime, List<String>> _groupAndSortMessageIdsByDate(
-      Map<String, Message> messages) {
-    final messageIds = messages.keys.toList();
-    Map<DateTime, List<String>> res = {};
-    for (var msgId in messageIds) {
-      final message = messages[msgId]!;
-      final date = DateTime(
-          message.sentTime.year, message.sentTime.month, message.sentTime.day);
-      res.putIfAbsent(date, () => []);
-      res[date]!.add(message.id);
-    }
-
-    res.forEach((date, messagesForDate) {
-      messagesForDate.sort((a, b) {
-        final msgA = messages[a]!;
-        final msgB = messages[b]!;
-        final timeComparison = msgA.sentTime.compareTo(msgB.sentTime);
-        if (timeComparison == 0) {
-          return msgA.id.compareTo(msgB.id);
-        }
-        return timeComparison;
-      });
-    });
-    return res;
   }
 
   Future<void> _onGetMessagesRequested(

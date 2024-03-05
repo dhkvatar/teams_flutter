@@ -63,6 +63,7 @@ class ChatState with _$ChatState {
 enum ChatsLoadingStatus {
   inProgress,
   complete,
+  failed,
 }
 
 enum MessagesLoadingStatus {
