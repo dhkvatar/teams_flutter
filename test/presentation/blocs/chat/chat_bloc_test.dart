@@ -89,10 +89,170 @@ void main() {
       );
     });
 
+    group(ChatGetMessagesRequested, () {
+      late MockStream<ChatUpdateStreamItem> mockChatUpdatesStream;
+      late MockGetMessages mockGetMessages;
+      late ChatState seedState;
+      final chat = Chat(
+          id: 'chat_id_1',
+          userIds: ['user_id_1', 'user_id_2'],
+          name: 'Chat1',
+          createTime: DateTime(2022, 2, 1),
+          updateTime: DateTime(2022, 2, 2),
+          isGroupChat: false);
+      final msg1 = Message(
+          id: 'msg_id_1',
+          senderId: 'user_id_1',
+          chatId: 'chat_id_1',
+          message: 'message_1',
+          sentTime: DateTime(2022, 2, 2, 1));
+      final msg2 = Message(
+          id: 'msg_id_2',
+          senderId: 'user_id_1',
+          chatId: 'chat_id_1',
+          message: 'message_2',
+          sentTime: DateTime(2022, 2, 2, 2));
+      final msg3 = Message(
+          id: 'msg_id_3',
+          senderId: 'user_id_1',
+          chatId: 'chat_id_1',
+          message: 'message_3',
+          sentTime: DateTime(2022, 2, 1, 1));
+      final msg4 = Message(
+          id: 'msg_id_4',
+          senderId: 'user_id_1',
+          chatId: 'chat_id_1',
+          message: 'message_4',
+          sentTime: DateTime(2022, 2, 1, 2));
+
+      setUp(() {
+        mockChatUpdatesStream = MockStream<ChatUpdateStreamItem>();
+        when(mockChatUpdatesStream.listen(any)).thenAnswer((realInvocation) {
+          return const Stream<ChatUpdateStreamItem>.empty().listen((event) {});
+        });
+      });
+      group('success', () {
+        blocTest(
+          'state changes from init state with no messages loaded',
+          setUp: () {
+            mockGetMessages = MockGetMessages();
+            when(mockGetMessages.call(any))
+                .thenAnswer((realInvocation) async => [msg2, msg1]);
+            seedState = ChatState(
+              chatsById: {'chat_id_1': chat},
+              directMessageChats: ['chat_id_1'],
+              lastDirectMessageChat: 'chat_id_1',
+            );
+          },
+          build: () => ChatBloc.fromParameters(
+            chatUpdatesStream: mockChatUpdatesStream,
+            getChats: MockGetChats(),
+            getMessages: mockGetMessages,
+            sendMessage: MockSendMessage(),
+          ),
+          seed: () => seedState,
+          act: (bloc) => bloc.add(
+            const ChatGetMessagesRequested(chatId: 'chat_id_1'),
+          ),
+          verify: (bloc) {
+            expect(
+                bloc.state.messagesById, {'msg_id_2': msg2, 'msg_id_1': msg1});
+            expect(bloc.state.chatMessagesByDate, {
+              'chat_id_1': {
+                DateTime(2022, 2, 2): ['msg_id_1', 'msg_id_2']
+              }
+            });
+            expect(bloc.state.lastChatAccess['chat_id_1'], isNotNull);
+            expect(bloc.state.messagesLoadingStatus,
+                MessagesLoadingStatus.complete);
+            expect(bloc.state.lastMessageByChat, {'chat_id_1': 'msg_id_1'});
+          },
+        );
+        blocTest(
+          'state changes from init state with existing messages loaded',
+          setUp: () {
+            mockGetMessages = MockGetMessages();
+            when(mockGetMessages.call(any))
+                .thenAnswer((realInvocation) async => [msg2, msg1]);
+            seedState = ChatState(
+              chatsById: {'chat_id_1': chat},
+              directMessageChats: ['chat_id_1'],
+              lastDirectMessageChat: 'chat_id_1',
+              lastMessageByChat: {'chat_id_1': 'msg_id_3'},
+              messagesById: {'msg_id_3': msg3, 'msg_id_4': msg4},
+              chatMessagesByDate: {
+                'chat_id_1': {
+                  DateTime(2022, 2, 1): ['msg_id_3', 'msg_id_4'],
+                },
+              },
+              lastChatAccess: {'chat_id_1': DateTime(2022, 2, 1)},
+            );
+          },
+          build: () => ChatBloc.fromParameters(
+            chatUpdatesStream: mockChatUpdatesStream,
+            getChats: MockGetChats(),
+            getMessages: mockGetMessages,
+            sendMessage: MockSendMessage(),
+          ),
+          seed: () => seedState,
+          act: (bloc) => bloc.add(
+            const ChatGetMessagesRequested(chatId: 'chat_id_1'),
+          ),
+          verify: (bloc) {
+            expect(bloc.state.messagesById, {
+              'msg_id_3': msg3,
+              'msg_id_4': msg4,
+              'msg_id_2': msg2,
+              'msg_id_1': msg1
+            });
+            expect(bloc.state.chatMessagesByDate, {
+              'chat_id_1': {
+                DateTime(2022, 2, 1): ['msg_id_3', 'msg_id_4'],
+                DateTime(2022, 2, 2): ['msg_id_1', 'msg_id_2']
+              }
+            });
+            expect(bloc.state.lastChatAccess['chat_id_1'], isNotNull);
+            expect(bloc.state.messagesLoadingStatus,
+                MessagesLoadingStatus.complete);
+            expect(bloc.state.lastMessageByChat, {'chat_id_1': 'msg_id_3'});
+          },
+        );
+      });
+      group('failure', () {
+        blocTest(
+          'GetMessages ChatException state changes',
+          setUp: () {
+            mockGetMessages = MockGetMessages();
+            when(mockGetMessages.call(any)).thenThrow(
+                const ChatException(type: ChatExceptionType.unauthenticated));
+            seedState = ChatState(
+              chatsById: {'chat_id_1': chat},
+              directMessageChats: ['chat_id_1'],
+              lastDirectMessageChat: 'chat_id_1',
+            );
+          },
+          build: () => ChatBloc.fromParameters(
+            chatUpdatesStream: mockChatUpdatesStream,
+            getChats: MockGetChats(),
+            getMessages: mockGetMessages,
+            sendMessage: MockSendMessage(),
+          ),
+          seed: () => seedState,
+          act: (bloc) =>
+              bloc.add(const ChatGetMessagesRequested(chatId: 'chat_id_1')),
+          verify: (bloc) {
+            expect(
+                bloc.state.messagesLoadingStatus, MessagesLoadingStatus.failed);
+            expect(bloc.state.errorMessage, isNotNull);
+          },
+        );
+      });
+    });
+
     group(ChatSendMessageRequested, () {
       late MockStream<ChatUpdateStreamItem> mockChatUpdatesStream;
       late MockSendMessage mockSendMessage;
-      late ChatState initState;
+      late ChatState seedState;
       final chat = Chat(
         id: 'chat_id_1',
         userIds: ['user_id_1', 'user_id_2'],
@@ -122,7 +282,7 @@ void main() {
         blocTest(
           'SendMessage ChatException state changes',
           setUp: () {
-            initState = ChatState(
+            seedState = ChatState(
               chatsById: {'chat_id_1': chat},
               directMessageChats: ['chat_id_1'],
               lastDirectMessageChat: 'chat_id_1',
@@ -142,7 +302,7 @@ void main() {
               getChats: MockGetChats(),
               getMessages: MockGetMessages(),
               sendMessage: mockSendMessage),
-          seed: () => initState,
+          seed: () => seedState,
           act: (bloc) => bloc.add(const ChatSendMessageRequested(
               chatId: 'chat_id_1', message: 'new_message')),
           verify: (bloc) {
@@ -159,7 +319,7 @@ void main() {
           setUp: () {
             // The init state assumes the user is part of 'chat_id_1' without
             // any previous messages.
-            initState = ChatState(
+            seedState = ChatState(
               chatsById: {'chat_id_1': chat},
               directMessageChats: ['chat_id_1'],
               lastDirectMessageChat: 'chat_id_1',
@@ -179,14 +339,14 @@ void main() {
             getMessages: MockGetMessages(),
             sendMessage: mockSendMessage,
           ),
-          seed: () => initState,
+          seed: () => seedState,
           act: (bloc) => bloc.add(ChatSendMessageRequested(
               chatId: toSendMsg.chatId, message: toSendMsg.message)),
           expect: () => [
-            initState.copyWith(
+            seedState.copyWith(
               formzStatus: FormzSubmissionStatus.inProgress,
             ),
-            initState.copyWith(
+            seedState.copyWith(
               lastMessageByChat: {toSendMsg.chatId: toSendMsg.id},
               messagesById: {
                 toSendMsg.id: toSendMsg.copyWith(
@@ -214,7 +374,7 @@ void main() {
               message: 'previous message',
               sentTime: DateTime(2022, 2, 1),
             );
-            initState = ChatState(
+            seedState = ChatState(
               chatsById: {'chat_id_1': chat},
               directMessageChats: ['chat_id_1'],
               lastDirectMessageChat: 'chat_id_1',
@@ -241,14 +401,14 @@ void main() {
             getMessages: MockGetMessages(),
             sendMessage: mockSendMessage,
           ),
-          seed: () => initState,
+          seed: () => seedState,
           act: (bloc) => bloc.add(ChatSendMessageRequested(
               chatId: toSendMsg.chatId, message: toSendMsg.message)),
           expect: () => [
-            initState.copyWith(
+            seedState.copyWith(
               formzStatus: FormzSubmissionStatus.inProgress,
             ),
-            initState.copyWith(
+            seedState.copyWith(
               lastMessageByChat: {'chat_id_1': 'prev_msg_id'},
               messagesById: {
                 'prev_msg_id': prevMsg,
@@ -274,7 +434,7 @@ void main() {
     group(ChatGetChatsRequested, () {
       late MockStream<ChatUpdateStreamItem> mockChatUpdatesStream;
       late MockGetChats mockGetChats;
-      late ChatState initState;
+      late ChatState seedState;
 
       setUp(() {
         mockChatUpdatesStream = MockStream<ChatUpdateStreamItem>();
@@ -282,7 +442,7 @@ void main() {
           (inv) =>
               const Stream<ChatUpdateStreamItem>.empty().listen((event) {}),
         );
-        initState = const ChatState();
+        seedState = const ChatState();
         mockGetChats = MockGetChats();
       });
       group('failure', () {
@@ -323,9 +483,9 @@ void main() {
           // Skip the first state emitted that changes ust the chatsLoadingStatus
           verify: (bloc) => verify(mockGetChats.call(any)).called(1),
           expect: () => [
-            initState.copyWith(
+            seedState.copyWith(
                 chatsLoadingStatus: ChatsLoadingStatus.inProgress),
-            initState.copyWith(
+            seedState.copyWith(
               chatsById: {for (var chat in chats) chat.id: chat},
               directMessageChats: ['chat_id_2', 'chat_id_1'],
               groupChats: ['chat_id_5', 'chat_id_4', 'chat_id_3'],

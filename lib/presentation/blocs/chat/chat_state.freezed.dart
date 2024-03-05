@@ -41,7 +41,7 @@ mixin _$ChatState {
 // The messages Ids are sorted by sent time and ID (descending).
   Map<String, Map<DateTime, List<String>>> get chatMessagesByDate =>
       throw _privateConstructorUsedError; // The last access time of each chat during the session.
-  Map<String, DateTime> get lastChatAccess =>
+  Map<String, DateTime?> get lastChatAccess =>
       throw _privateConstructorUsedError; // The chat input state.
   ChatInput get chatInput =>
       throw _privateConstructorUsedError; // The status of chat input submission.
@@ -72,7 +72,7 @@ abstract class $ChatStateCopyWith<$Res> {
       dynamic messagesLoadingStatus,
       Map<String, Message> messagesById,
       Map<String, Map<DateTime, List<String>>> chatMessagesByDate,
-      Map<String, DateTime> lastChatAccess,
+      Map<String, DateTime?> lastChatAccess,
       ChatInput chatInput,
       FormzSubmissionStatus formzStatus,
       bool isValid,
@@ -152,7 +152,7 @@ class _$ChatStateCopyWithImpl<$Res, $Val extends ChatState>
       lastChatAccess: null == lastChatAccess
           ? _value.lastChatAccess
           : lastChatAccess // ignore: cast_nullable_to_non_nullable
-              as Map<String, DateTime>,
+              as Map<String, DateTime?>,
       chatInput: null == chatInput
           ? _value.chatInput
           : chatInput // ignore: cast_nullable_to_non_nullable
@@ -192,7 +192,7 @@ abstract class _$$ChatStateImplCopyWith<$Res>
       dynamic messagesLoadingStatus,
       Map<String, Message> messagesById,
       Map<String, Map<DateTime, List<String>>> chatMessagesByDate,
-      Map<String, DateTime> lastChatAccess,
+      Map<String, DateTime?> lastChatAccess,
       ChatInput chatInput,
       FormzSubmissionStatus formzStatus,
       bool isValid,
@@ -268,7 +268,7 @@ class __$$ChatStateImplCopyWithImpl<$Res>
       lastChatAccess: null == lastChatAccess
           ? _value._lastChatAccess
           : lastChatAccess // ignore: cast_nullable_to_non_nullable
-              as Map<String, DateTime>,
+              as Map<String, DateTime?>,
       chatInput: null == chatInput
           ? _value.chatInput
           : chatInput // ignore: cast_nullable_to_non_nullable
@@ -304,7 +304,7 @@ class _$ChatStateImpl implements _ChatState {
       final Map<String, Message> messagesById = const {},
       final Map<String, Map<DateTime, List<String>>> chatMessagesByDate =
           const {},
-      final Map<String, DateTime> lastChatAccess = const {},
+      final Map<String, DateTime?> lastChatAccess = const {},
       this.chatInput = const ChatInput.pure(),
       this.formzStatus = FormzSubmissionStatus.initial,
       this.isValid = false,
@@ -407,11 +407,11 @@ class _$ChatStateImpl implements _ChatState {
   }
 
 // The last access time of each chat during the session.
-  final Map<String, DateTime> _lastChatAccess;
+  final Map<String, DateTime?> _lastChatAccess;
 // The last access time of each chat during the session.
   @override
   @JsonKey()
-  Map<String, DateTime> get lastChatAccess {
+  Map<String, DateTime?> get lastChatAccess {
     if (_lastChatAccess is EqualUnmodifiableMapView) return _lastChatAccess;
     // ignore: implicit_dynamic_type
     return EqualUnmodifiableMapView(_lastChatAccess);
@@ -512,7 +512,7 @@ abstract class _ChatState implements ChatState {
       final dynamic messagesLoadingStatus,
       final Map<String, Message> messagesById,
       final Map<String, Map<DateTime, List<String>>> chatMessagesByDate,
-      final Map<String, DateTime> lastChatAccess,
+      final Map<String, DateTime?> lastChatAccess,
       final ChatInput chatInput,
       final FormzSubmissionStatus formzStatus,
       final bool isValid,
@@ -543,7 +543,7 @@ abstract class _ChatState implements ChatState {
 // The messages Ids are sorted by sent time and ID (descending).
   Map<String, Map<DateTime, List<String>>> get chatMessagesByDate;
   @override // The last access time of each chat during the session.
-  Map<String, DateTime> get lastChatAccess;
+  Map<String, DateTime?> get lastChatAccess;
   @override // The chat input state.
   ChatInput get chatInput;
   @override // The status of chat input submission.

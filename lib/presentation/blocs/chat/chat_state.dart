@@ -44,7 +44,7 @@ class ChatState with _$ChatState {
     @Default({}) Map<String, Map<DateTime, List<String>>> chatMessagesByDate,
 
     // The last access time of each chat during the session.
-    @Default({}) Map<String, DateTime> lastChatAccess,
+    @Default({}) Map<String, DateTime?> lastChatAccess,
 
     // The chat input state.
     @Default(ChatInput.pure()) ChatInput chatInput,
@@ -69,4 +69,5 @@ enum ChatsLoadingStatus {
 enum MessagesLoadingStatus {
   inProgress,
   complete,
+  failed,
 }
