@@ -174,7 +174,7 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
             sortedGroupChatIds.isNotEmpty ? sortedGroupChatIds.last : null,
         chatsLoadingStatus: ChatsLoadingStatus.complete,
       ));
-    } on ChatException catch (e) {
+    } catch (e) {
       // Signal to UI that loading of new chats has fialed.
       emit(state.copyWith(
         chatsLoadingStatus: ChatsLoadingStatus.failed,
@@ -252,6 +252,10 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
           chatMessagesByDate: {
             ...state.chatMessagesByDate,
             event.chatId: sortedMessagesGroupedByDate,
+          },
+          lastMessageByChat: {
+            event.chatId:
+                state.lastMessageByChat[event.chatId] ?? sentMessage.id
           },
           formzStatus: FormzSubmissionStatus.success,
           isValid: false,
