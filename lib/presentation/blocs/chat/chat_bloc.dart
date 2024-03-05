@@ -259,8 +259,13 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
           formzStatus: FormzSubmissionStatus.success,
           isValid: false,
         ));
-      } catch (_) {
-        emit(state.copyWith(formzStatus: FormzSubmissionStatus.failure));
+      } catch (e) {
+        emit(state.copyWith(
+          formzStatus: FormzSubmissionStatus.failure,
+          chatInput: const ChatInput.pure(),
+          isValid: false,
+          errorMessage: 'Error sending message: ${e.toString()}',
+        ));
       }
     }
   }

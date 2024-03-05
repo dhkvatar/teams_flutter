@@ -109,13 +109,48 @@ void main() {
         sentTime: DateTime(2022, 2, 2),
       );
       // The new message that will be sent.
-      late Message msg, prevMsg;
+      late Message toSendMsg, prevMsg;
 
       setUp(() {
         mockChatUpdatesStream = MockStream<ChatUpdateStreamItem>();
         when(mockChatUpdatesStream.listen(any)).thenAnswer(
           (inv) =>
               const Stream<ChatUpdateStreamItem>.empty().listen((event) {}),
+        );
+      });
+      group('failure', () {
+        blocTest(
+          'SendMessage ChatException state changes',
+          setUp: () {
+            initState = ChatState(
+              chatsById: {'chat_id_1': chat},
+              directMessageChats: ['chat_id_1'],
+              lastDirectMessageChat: 'chat_id_1',
+              chatInput: const ChatInput.dirty('new_message'),
+              isValid: true,
+            );
+            toSendMsg =
+                msgTempl.copyWith(chatId: 'chat_id_1', message: 'new_message');
+            mockSendMessage = MockSendMessage();
+            when(mockSendMessage.call(any)).thenAnswer((invocation) async {
+              throw const ChatException(
+                  type: ChatExceptionType.unauthenticated);
+            });
+          },
+          build: () => ChatBloc.fromParameters(
+              chatUpdatesStream: mockChatUpdatesStream,
+              getChats: MockGetChats(),
+              getMessages: MockGetMessages(),
+              sendMessage: mockSendMessage),
+          seed: () => initState,
+          act: (bloc) => bloc.add(const ChatSendMessageRequested(
+              chatId: 'chat_id_1', message: 'new_message')),
+          verify: (bloc) {
+            expect(bloc.state.formzStatus, FormzSubmissionStatus.failure);
+            expect(bloc.state.chatInput, const ChatInput.pure());
+            expect(bloc.state.isValid, false);
+            expect(bloc.state.errorMessage, isNotNull);
+          },
         );
       });
       group('success', () {
@@ -131,11 +166,11 @@ void main() {
               chatInput: const ChatInput.dirty('new_message'),
               isValid: true,
             );
-            msg =
+            toSendMsg =
                 msgTempl.copyWith(chatId: 'chat_id_1', message: 'new_message');
             mockSendMessage = MockSendMessage();
             when(mockSendMessage.call(any)).thenAnswer((invocation) async {
-              return msg;
+              return toSendMsg;
             });
           },
           build: () => ChatBloc.fromParameters(
@@ -146,21 +181,21 @@ void main() {
           ),
           seed: () => initState,
           act: (bloc) => bloc.add(ChatSendMessageRequested(
-              chatId: msg.chatId, message: msg.message)),
+              chatId: toSendMsg.chatId, message: toSendMsg.message)),
           expect: () => [
             initState.copyWith(
               formzStatus: FormzSubmissionStatus.inProgress,
             ),
             initState.copyWith(
-              lastMessageByChat: {msg.chatId: msg.id},
+              lastMessageByChat: {toSendMsg.chatId: toSendMsg.id},
               messagesById: {
-                msg.id: msg.copyWith(
+                toSendMsg.id: toSendMsg.copyWith(
                     uploadStatus: MessageUploadStatus.uploadInProgress),
               },
               chatMessagesByDate: {
-                msg.chatId: {
-                  DateTime(msg.sentTime.year, msg.sentTime.month,
-                      msg.sentTime.day): [msg.id]
+                toSendMsg.chatId: {
+                  DateTime(toSendMsg.sentTime.year, toSendMsg.sentTime.month,
+                      toSendMsg.sentTime.day): [toSendMsg.id]
                 },
               },
               isValid: false,
@@ -193,11 +228,11 @@ void main() {
               chatInput: const ChatInput.dirty('new_message'),
               isValid: true,
             );
-            msg =
+            toSendMsg =
                 msgTempl.copyWith(chatId: 'chat_id_1', message: 'new_message');
             mockSendMessage = MockSendMessage();
             when(mockSendMessage.call(any)).thenAnswer((invocation) async {
-              return msg;
+              return toSendMsg;
             });
           },
           build: () => ChatBloc.fromParameters(
@@ -208,7 +243,7 @@ void main() {
           ),
           seed: () => initState,
           act: (bloc) => bloc.add(ChatSendMessageRequested(
-              chatId: msg.chatId, message: msg.message)),
+              chatId: toSendMsg.chatId, message: toSendMsg.message)),
           expect: () => [
             initState.copyWith(
               formzStatus: FormzSubmissionStatus.inProgress,
@@ -217,14 +252,14 @@ void main() {
               lastMessageByChat: {'chat_id_1': 'prev_msg_id'},
               messagesById: {
                 'prev_msg_id': prevMsg,
-                msg.id: msg.copyWith(
+                toSendMsg.id: toSendMsg.copyWith(
                     uploadStatus: MessageUploadStatus.uploadInProgress),
               },
               chatMessagesByDate: {
-                msg.chatId: {
+                toSendMsg.chatId: {
                   DateTime(2022, 2, 1): [prevMsg.id],
-                  DateTime(msg.sentTime.year, msg.sentTime.month,
-                      msg.sentTime.day): [msg.id]
+                  DateTime(toSendMsg.sentTime.year, toSendMsg.sentTime.month,
+                      toSendMsg.sentTime.day): [toSendMsg.id]
                 },
               },
               isValid: false,
