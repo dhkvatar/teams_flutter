@@ -2,10 +2,13 @@ import 'dart:async';
 
 import 'package:bloc_test/bloc_test.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:formz/formz.dart';
 import 'package:mockito/annotations.dart';
 import 'package:mockito/mockito.dart';
 import 'package:teams/core/exceptions/chat_exception.dart';
+import 'package:teams/core/forms/chat.dart';
 import 'package:teams/domain/entities/chat.dart';
+import 'package:teams/domain/entities/message.dart';
 import 'package:teams/domain/repositories/chat_repository.dart';
 import 'package:teams/domain/usecases/chat/get_chats.dart';
 import 'package:teams/domain/usecases/chat/get_messages.dart';
@@ -21,6 +24,47 @@ import 'package:teams/presentation/blocs/chat/chat_state.dart';
   MockSpec<SendMessage>(),
 ])
 import 'chat_bloc_test.mocks.dart';
+
+List<Chat> chats = [
+  Chat(
+      id: 'chat_id_1',
+      userIds: ['user_id_1', 'user_id_2'],
+      name: 'test_chat_1',
+      createTime: DateTime(2022, 2, 1),
+      updateTime: DateTime(2022, 2, 1),
+      isGroupChat: false),
+  Chat(
+      id: 'chat_id_2',
+      userIds: ['user_id_1', 'user_id_2'],
+      name: 'test_chat_2',
+      createTime: DateTime(2022, 2, 1),
+      updateTime: DateTime(2022, 2, 1),
+      isGroupChat: false),
+  Chat(
+    id: 'chat_id_3',
+    userIds: ['user_id_1', 'user_id_2', 'user_id_3'],
+    name: 'test_chat_3',
+    createTime: DateTime(2022, 2, 2),
+    updateTime: DateTime(2022, 2, 2),
+    isGroupChat: true,
+  ),
+  Chat(
+    id: 'chat_id_4',
+    userIds: ['user_id_1', 'user_id_2', 'user_id_3'],
+    name: 'test_chat_4',
+    createTime: DateTime(2022, 2, 2),
+    updateTime: DateTime(2022, 2, 2),
+    isGroupChat: true,
+  ),
+  Chat(
+    id: 'chat_id_5',
+    userIds: ['user_id_1', 'user_id_2', 'user_id_3'],
+    name: 'test_chat_5',
+    createTime: DateTime(2022, 2, 3),
+    updateTime: DateTime(2022, 2, 3),
+    isGroupChat: true,
+  ),
+];
 
 void main() {
   group(ChatBloc, () {
@@ -45,50 +89,193 @@ void main() {
       );
     });
 
+    group(ChatSendMessageRequested, () {
+      late MockStream<ChatUpdateStreamItem> mockChatUpdatesStream;
+      late MockSendMessage mockSendMessage;
+      late ChatState initState;
+      final chat = Chat(
+        id: 'chat_id_1',
+        userIds: ['user_id_1', 'user_id_2'],
+        name: 'Chat1',
+        createTime: DateTime(2022, 2, 1),
+        updateTime: DateTime(2022, 2, 2),
+        isGroupChat: false,
+      );
+      final msgTempl = Message(
+        id: 'msg_id_1',
+        chatId: '',
+        senderId: 'user_id_1',
+        message: '',
+        sentTime: DateTime(2022, 2, 2),
+      );
+      // The new message that will be sent.
+      late Message toSendMsg, prevMsg;
+
+      setUp(() {
+        mockChatUpdatesStream = MockStream<ChatUpdateStreamItem>();
+        when(mockChatUpdatesStream.listen(any)).thenAnswer(
+          (inv) =>
+              const Stream<ChatUpdateStreamItem>.empty().listen((event) {}),
+        );
+      });
+      group('failure', () {
+        blocTest(
+          'SendMessage ChatException state changes',
+          setUp: () {
+            initState = ChatState(
+              chatsById: {'chat_id_1': chat},
+              directMessageChats: ['chat_id_1'],
+              lastDirectMessageChat: 'chat_id_1',
+              chatInput: const ChatInput.dirty('new_message'),
+              isValid: true,
+            );
+            toSendMsg =
+                msgTempl.copyWith(chatId: 'chat_id_1', message: 'new_message');
+            mockSendMessage = MockSendMessage();
+            when(mockSendMessage.call(any)).thenAnswer((invocation) async {
+              throw const ChatException(
+                  type: ChatExceptionType.unauthenticated);
+            });
+          },
+          build: () => ChatBloc.fromParameters(
+              chatUpdatesStream: mockChatUpdatesStream,
+              getChats: MockGetChats(),
+              getMessages: MockGetMessages(),
+              sendMessage: mockSendMessage),
+          seed: () => initState,
+          act: (bloc) => bloc.add(const ChatSendMessageRequested(
+              chatId: 'chat_id_1', message: 'new_message')),
+          verify: (bloc) {
+            expect(bloc.state.formzStatus, FormzSubmissionStatus.failure);
+            expect(bloc.state.chatInput, const ChatInput.pure());
+            expect(bloc.state.isValid, false);
+            expect(bloc.state.errorMessage, isNotNull);
+          },
+        );
+      });
+      group('success', () {
+        blocTest(
+          'state changes from initial state with chat created previously but no messages',
+          setUp: () {
+            // The init state assumes the user is part of 'chat_id_1' without
+            // any previous messages.
+            initState = ChatState(
+              chatsById: {'chat_id_1': chat},
+              directMessageChats: ['chat_id_1'],
+              lastDirectMessageChat: 'chat_id_1',
+              chatInput: const ChatInput.dirty('new_message'),
+              isValid: true,
+            );
+            toSendMsg =
+                msgTempl.copyWith(chatId: 'chat_id_1', message: 'new_message');
+            mockSendMessage = MockSendMessage();
+            when(mockSendMessage.call(any)).thenAnswer((invocation) async {
+              return toSendMsg;
+            });
+          },
+          build: () => ChatBloc.fromParameters(
+            chatUpdatesStream: mockChatUpdatesStream,
+            getChats: MockGetChats(),
+            getMessages: MockGetMessages(),
+            sendMessage: mockSendMessage,
+          ),
+          seed: () => initState,
+          act: (bloc) => bloc.add(ChatSendMessageRequested(
+              chatId: toSendMsg.chatId, message: toSendMsg.message)),
+          expect: () => [
+            initState.copyWith(
+              formzStatus: FormzSubmissionStatus.inProgress,
+            ),
+            initState.copyWith(
+              lastMessageByChat: {toSendMsg.chatId: toSendMsg.id},
+              messagesById: {
+                toSendMsg.id: toSendMsg.copyWith(
+                    uploadStatus: MessageUploadStatus.uploadInProgress),
+              },
+              chatMessagesByDate: {
+                toSendMsg.chatId: {
+                  DateTime(toSendMsg.sentTime.year, toSendMsg.sentTime.month,
+                      toSendMsg.sentTime.day): [toSendMsg.id]
+                },
+              },
+              isValid: false,
+              chatInput: const ChatInput.pure(),
+              formzStatus: FormzSubmissionStatus.success,
+            ),
+          ],
+        );
+        blocTest(
+          'state changes from initial state with chat and messages previously created',
+          setUp: () {
+            prevMsg = Message(
+              id: 'prev_msg_id',
+              senderId: 'user_id_1',
+              chatId: 'chat_id_1',
+              message: 'previous message',
+              sentTime: DateTime(2022, 2, 1),
+            );
+            initState = ChatState(
+              chatsById: {'chat_id_1': chat},
+              directMessageChats: ['chat_id_1'],
+              lastDirectMessageChat: 'chat_id_1',
+              lastMessageByChat: {'chat_id_1': 'prev_msg_id'},
+              messagesById: {'prev_msg_id': prevMsg},
+              chatMessagesByDate: {
+                'chat_id_1': {
+                  DateTime(2022, 2, 1): ['prev_msg_id']
+                }
+              },
+              chatInput: const ChatInput.dirty('new_message'),
+              isValid: true,
+            );
+            toSendMsg =
+                msgTempl.copyWith(chatId: 'chat_id_1', message: 'new_message');
+            mockSendMessage = MockSendMessage();
+            when(mockSendMessage.call(any)).thenAnswer((invocation) async {
+              return toSendMsg;
+            });
+          },
+          build: () => ChatBloc.fromParameters(
+            chatUpdatesStream: mockChatUpdatesStream,
+            getChats: MockGetChats(),
+            getMessages: MockGetMessages(),
+            sendMessage: mockSendMessage,
+          ),
+          seed: () => initState,
+          act: (bloc) => bloc.add(ChatSendMessageRequested(
+              chatId: toSendMsg.chatId, message: toSendMsg.message)),
+          expect: () => [
+            initState.copyWith(
+              formzStatus: FormzSubmissionStatus.inProgress,
+            ),
+            initState.copyWith(
+              lastMessageByChat: {'chat_id_1': 'prev_msg_id'},
+              messagesById: {
+                'prev_msg_id': prevMsg,
+                toSendMsg.id: toSendMsg.copyWith(
+                    uploadStatus: MessageUploadStatus.uploadInProgress),
+              },
+              chatMessagesByDate: {
+                toSendMsg.chatId: {
+                  DateTime(2022, 2, 1): [prevMsg.id],
+                  DateTime(toSendMsg.sentTime.year, toSendMsg.sentTime.month,
+                      toSendMsg.sentTime.day): [toSendMsg.id]
+                },
+              },
+              isValid: false,
+              chatInput: const ChatInput.pure(),
+              formzStatus: FormzSubmissionStatus.success,
+            ),
+          ],
+        );
+      });
+    });
+
     group(ChatGetChatsRequested, () {
       late MockStream<ChatUpdateStreamItem> mockChatUpdatesStream;
       late MockGetChats mockGetChats;
       late ChatState initState;
-      List<Chat> chats = [
-        Chat(
-            id: 'chat_id_1',
-            userIds: ['user_id_1', 'user_id_2'],
-            name: 'test_chat_1',
-            createTime: DateTime(2022, 2, 1),
-            updateTime: DateTime(2022, 2, 1),
-            isGroupChat: false),
-        Chat(
-            id: 'chat_id_2',
-            userIds: ['user_id_1', 'user_id_2'],
-            name: 'test_chat_2',
-            createTime: DateTime(2022, 2, 1),
-            updateTime: DateTime(2022, 2, 1),
-            isGroupChat: false),
-        Chat(
-          id: 'chat_id_3',
-          userIds: ['user_id_1', 'user_id_2', 'user_id_3'],
-          name: 'test_chat_3',
-          createTime: DateTime(2022, 2, 2),
-          updateTime: DateTime(2022, 2, 2),
-          isGroupChat: true,
-        ),
-        Chat(
-          id: 'chat_id_4',
-          userIds: ['user_id_1', 'user_id_2', 'user_id_3'],
-          name: 'test_chat_4',
-          createTime: DateTime(2022, 2, 2),
-          updateTime: DateTime(2022, 2, 2),
-          isGroupChat: true,
-        ),
-        Chat(
-          id: 'chat_id_5',
-          userIds: ['user_id_1', 'user_id_2', 'user_id_3'],
-          name: 'test_chat_5',
-          createTime: DateTime(2022, 2, 3),
-          updateTime: DateTime(2022, 2, 3),
-          isGroupChat: true,
-        ),
-      ];
+
       setUp(() {
         mockChatUpdatesStream = MockStream<ChatUpdateStreamItem>();
         when(mockChatUpdatesStream.listen(any)).thenAnswer(

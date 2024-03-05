@@ -4,7 +4,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:formz/formz.dart';
 import 'package:injectable/injectable.dart';
 import 'package:teams/app/di/di.dart';
-import 'package:teams/core/exceptions/chat_exception.dart';
 import 'package:teams/core/forms/chat.dart';
 import 'package:teams/domain/entities/chat.dart';
 import 'package:teams/domain/entities/message.dart';
@@ -143,6 +142,7 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
     Emitter<ChatState> emit,
   ) async {
     try {
+      // Signal to UI that loading of new chats is in-progress.
       emit(state.copyWith(chatsLoadingStatus: ChatsLoadingStatus.inProgress));
       final newChats = await getChats(
         GetChatsParams(
@@ -151,6 +151,7 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
           limit: event.limit,
         ),
       );
+      // Combine new chats with existing and sort by update time and Id.
       final sortedDmIds = _sortedChatIds([
         ...newChats.where((chat) => !chat.isGroupChat),
         ...state.chatsById.values.where((chat) => !chat.isGroupChat).toList(),
@@ -159,7 +160,7 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
         ...newChats.where((chat) => chat.isGroupChat),
         ...state.chatsById.values.where((chat) => chat.isGroupChat).toList(),
       ]);
-
+      // Emit new state with additionally loaded chats.
       emit(state.copyWith(
         chatsById: {
           ...state.chatsById,
@@ -172,7 +173,8 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
             sortedGroupChatIds.isNotEmpty ? sortedGroupChatIds.last : null,
         chatsLoadingStatus: ChatsLoadingStatus.complete,
       ));
-    } on ChatException catch (e) {
+    } catch (e) {
+      // Signal to UI that loading of new chats has fialed.
       emit(state.copyWith(
         chatsLoadingStatus: ChatsLoadingStatus.failed,
         errorMessage: 'Error fetching Chats: ${e.toString()}',
@@ -250,11 +252,20 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
             ...state.chatMessagesByDate,
             event.chatId: sortedMessagesGroupedByDate,
           },
+          lastMessageByChat: {
+            event.chatId:
+                state.lastMessageByChat[event.chatId] ?? sentMessage.id
+          },
           formzStatus: FormzSubmissionStatus.success,
           isValid: false,
         ));
-      } catch (_) {
-        emit(state.copyWith(formzStatus: FormzSubmissionStatus.failure));
+      } catch (e) {
+        emit(state.copyWith(
+          formzStatus: FormzSubmissionStatus.failure,
+          chatInput: const ChatInput.pure(),
+          isValid: false,
+          errorMessage: 'Error sending message: ${e.toString()}',
+        ));
       }
     }
   }
