@@ -68,17 +68,19 @@ List<Chat> chats = [
 
 void main() {
   group(ChatBloc, () {
+    late MockStream<ChatUpdateStreamItem> mockChatUpdatesStream;
+    setUp(() {
+      mockChatUpdatesStream = MockStream<ChatUpdateStreamItem>();
+      when(mockChatUpdatesStream.listen(any)).thenAnswer(
+        (inv) => const Stream<ChatUpdateStreamItem>.empty().listen((event) {}),
+      );
+    });
+
     group('initialization', () {
-      final mockChatUpdatesStream = MockStream<ChatUpdateStreamItem>();
+      // final mockChatUpdatesStream = MockStream<ChatUpdateStreamItem>();
 
       blocTest(
         'state is default ChatState',
-        setUp: () {
-          when(mockChatUpdatesStream.listen(any)).thenAnswer(
-            (inv) =>
-                const Stream<ChatUpdateStreamItem>.empty().listen((event) {}),
-          );
-        },
         build: () => ChatBloc.fromParameters(
           chatUpdatesStream: mockChatUpdatesStream,
           getChats: MockGetChats(),
@@ -90,7 +92,6 @@ void main() {
     });
 
     group(ChatGetMessagesRequested, () {
-      late MockStream<ChatUpdateStreamItem> mockChatUpdatesStream;
       late MockGetMessages mockGetMessages;
       late ChatState seedState;
       final chat = Chat(
@@ -125,12 +126,6 @@ void main() {
           message: 'message_4',
           sentTime: DateTime(2022, 2, 1, 2));
 
-      setUp(() {
-        mockChatUpdatesStream = MockStream<ChatUpdateStreamItem>();
-        when(mockChatUpdatesStream.listen(any)).thenAnswer((realInvocation) {
-          return const Stream<ChatUpdateStreamItem>.empty().listen((event) {});
-        });
-      });
       group('success', () {
         blocTest(
           'state changes from init state with no messages loaded',
@@ -250,7 +245,6 @@ void main() {
     });
 
     group(ChatSendMessageRequested, () {
-      late MockStream<ChatUpdateStreamItem> mockChatUpdatesStream;
       late MockSendMessage mockSendMessage;
       late ChatState seedState;
       final chat = Chat(
@@ -271,13 +265,6 @@ void main() {
       // The new message that will be sent.
       late Message toSendMsg, prevMsg;
 
-      setUp(() {
-        mockChatUpdatesStream = MockStream<ChatUpdateStreamItem>();
-        when(mockChatUpdatesStream.listen(any)).thenAnswer(
-          (inv) =>
-              const Stream<ChatUpdateStreamItem>.empty().listen((event) {}),
-        );
-      });
       group('failure', () {
         blocTest(
           'SendMessage ChatException state changes',
@@ -431,17 +418,81 @@ void main() {
       });
     });
 
+    group(ChatUpdateStreamReceived, () {
+      const updateSuccess = ChatUpdateStreamItem(
+        chatId: 'chat_id_1',
+        updateType: ChatUpdateType.newMessageUploadSuccess,
+        newMessageId: 'msg_id_1',
+      );
+      const updateFailure = ChatUpdateStreamItem(
+        chatId: 'chat_id_1',
+        updateType: ChatUpdateType.newMessageUploadFailure,
+        newMessageId: 'msg_id_1',
+      );
+      final msg = Message(
+        id: 'msg_id_1',
+        senderId: 'user_id_1',
+        chatId: 'chat_id_1',
+        message: 'message',
+        sentTime: DateTime(2022, 2, 2),
+        uploadStatus: MessageUploadStatus.uploadInProgress,
+      );
+
+      late ChatState seedState;
+
+      group(ChatUpdateType.newMessageUploadSuccess, () {
+        blocTest(
+          'status changes',
+          setUp: () {
+            seedState = ChatState(messagesById: {'msg_id_1': msg});
+          },
+          build: () => ChatBloc.fromParameters(
+            chatUpdatesStream: mockChatUpdatesStream,
+            getChats: MockGetChats(),
+            getMessages: MockGetMessages(),
+            sendMessage: MockSendMessage(),
+          ),
+          seed: () => seedState,
+          act: (bloc) =>
+              bloc.add(const ChatUpdateStreamReceived(update: updateSuccess)),
+          expect: () => [
+            seedState.copyWith(messagesById: {
+              'msg_id_1':
+                  msg.copyWith(uploadStatus: MessageUploadStatus.success)
+            })
+          ],
+        );
+      });
+      group(ChatUpdateType.newMessageUploadFailure, () {
+        blocTest(
+          'status changes',
+          setUp: () {
+            seedState = ChatState(messagesById: {'msg_id_1': msg});
+          },
+          build: () => ChatBloc.fromParameters(
+            chatUpdatesStream: mockChatUpdatesStream,
+            getChats: MockGetChats(),
+            getMessages: MockGetMessages(),
+            sendMessage: MockSendMessage(),
+          ),
+          seed: () => seedState,
+          act: (bloc) =>
+              bloc.add(const ChatUpdateStreamReceived(update: updateFailure)),
+          expect: () => [
+            seedState.copyWith(messagesById: {
+              'msg_id_1':
+                  msg.copyWith(uploadStatus: MessageUploadStatus.timeout)
+            })
+          ],
+        );
+      });
+    });
+
     group(ChatGetChatsRequested, () {
-      late MockStream<ChatUpdateStreamItem> mockChatUpdatesStream;
       late MockGetChats mockGetChats;
       late ChatState seedState;
 
       setUp(() {
-        mockChatUpdatesStream = MockStream<ChatUpdateStreamItem>();
-        when(mockChatUpdatesStream.listen(any)).thenAnswer(
-          (inv) =>
-              const Stream<ChatUpdateStreamItem>.empty().listen((event) {}),
-        );
         seedState = const ChatState();
         mockGetChats = MockGetChats();
       });
