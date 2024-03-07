@@ -85,11 +85,14 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
   }
 
   Map<DateTime, List<String>> _groupAndSortMessageIdsByDateTime(
-      Map<String, Message> messages) {
+      Map<String, Message> messages, String? chatId) {
     final messageIds = messages.keys.toList();
     Map<DateTime, List<String>> res = {};
     for (var msgId in messageIds) {
       final message = messages[msgId]!;
+      if (chatId != null && message.chatId != chatId) {
+        continue;
+      }
       final dateTime = getDateHourMin(message.sentTime);
       // DateTime(message.sentTime.year, message.sentTime.month,
       //     message.sentTime.day, message.sentTime.hour, message.sentTime.minute);
@@ -211,7 +214,7 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
         ...{for (var msg in newMessages) msg.id: msg},
       };
       final sortedMessagesGroupedByDateTime =
-          _groupAndSortMessageIdsByDateTime(allMessagesById);
+          _groupAndSortMessageIdsByDateTime(allMessagesById, event.chatId);
 
       emit(state.copyWith(
         messagesById: allMessagesById,
@@ -259,7 +262,7 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
               uploadStatus: MessageUploadStatus.uploadInProgress),
         };
         final sortedMessagesGroupedByDate =
-            _groupAndSortMessageIdsByDateTime(allMessagesById);
+            _groupAndSortMessageIdsByDateTime(allMessagesById, event.chatId);
 
         emit(state.copyWith(
           messagesById: allMessagesById,
