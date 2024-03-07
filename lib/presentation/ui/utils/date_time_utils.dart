@@ -19,6 +19,18 @@ String getDayOfWeek(DateTime dt) {
   }
 }
 
+DateTime getYMD(DateTime dt) {
+  return DateTime(dt.year, dt.month, dt.day);
+}
+
+DateTime getYMDhm(DateTime dt) {
+  return DateTime(dt.year, dt.month, dt.day, dt.hour, dt.minute);
+}
+
+DateTime getDateHourMin(DateTime dt) {
+  return DateTime(dt.year, dt.month, dt.day, dt.hour, dt.minute);
+}
+
 String getMonth(DateTime dt) {
   switch (dt.month) {
     case 1:

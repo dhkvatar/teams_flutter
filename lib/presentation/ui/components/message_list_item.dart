@@ -9,10 +9,12 @@ class MessageListItem extends StatelessWidget {
     super.key,
     required this.message,
     required this.userId,
+    this.printTime = false,
   });
 
   final Message message;
   final String userId;
+  final bool printTime;
 
   @override
   Widget build(BuildContext context) {
@@ -39,7 +41,6 @@ class MessageListItem extends StatelessWidget {
               crossAxisAlignment:
                   isMe ? CrossAxisAlignment.end : CrossAxisAlignment.start,
               children: [
-                // Message bubble
                 Container(
                   padding: const EdgeInsets.all(8.0),
                   decoration: BoxDecoration(
@@ -50,21 +51,20 @@ class MessageListItem extends StatelessWidget {
                     style: const TextStyle(color: Colors.white),
                   ),
                 ),
-
                 const SizedBox(height: 4.0),
-
                 Row(
                   mainAxisAlignment:
                       isMe ? MainAxisAlignment.end : MainAxisAlignment.start,
                   children: [
                     // Message sent time
-                    Text(
-                      _formatDateTime(message.sentTime),
-                      style: const TextStyle(
-                        fontSize: 12.0,
-                        color: Colors.grey,
+                    if (printTime)
+                      Text(
+                        _formatDateTime(message.sentTime),
+                        style: const TextStyle(
+                          fontSize: 12.0,
+                          color: Colors.grey,
+                        ),
                       ),
-                    ),
 
                     // Pending message indidcator
                     BlocBuilder<ChatBloc, ChatState>(

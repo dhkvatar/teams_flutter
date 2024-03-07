@@ -41,7 +41,8 @@ class ChatState with _$ChatState {
 
     // Map from Chat Id to a map of dates to messages of the Chat.
     // The messages Ids are sorted by sent time and ID (descending).
-    @Default({}) Map<String, Map<DateTime, List<String>>> chatMessagesByDate,
+    @Default({})
+    Map<String, Map<DateTime, List<String>>> chatMessagesByDateTime,
 
     // The last access time of each chat during the session.
     @Default({}) Map<String, DateTime?> lastChatAccess,
