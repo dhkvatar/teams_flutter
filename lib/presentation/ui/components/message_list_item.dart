@@ -111,7 +111,7 @@ class MessageListItem extends StatelessWidget {
   }
 
   String _formatTwoDigit(int value) {
-    return value.toString().padLeft(2, '0');
+    return (value % 12).toString().padLeft(2, '0');
   }
 
   String _getAmPm(DateTime dateTime) {
