@@ -6,6 +6,7 @@ import 'package:teams/presentation/blocs/chat/chat_bloc.dart';
 import 'package:teams/presentation/blocs/chat/chat_event.dart';
 import 'package:teams/presentation/blocs/chat/chat_state.dart';
 import 'package:teams/presentation/ui/components/message_list_item.dart';
+import 'package:teams/presentation/ui/utils/date_time_utils.dart';
 
 class ChatDetailsPage extends StatelessWidget {
   ChatDetailsPage({super.key, required this.chatId});
@@ -66,7 +67,11 @@ class _MessagesList extends StatelessWidget {
               final dateKey = dateKeys.elementAt(index);
               return Column(
                 children: [
-                  Text(dateKey.toString()),
+                  // Day and date
+                  Text(
+                      '${getDayOfWeek(dateKey)}, ${dateKey.year}-${dateKey.month.toString().padLeft(2, '0')}-${dateKey.day}'),
+
+                  // Messages for date
                   Column(
                     children: messagesByDate[dateKey]!.map((messageId) {
                       return MessageListItem(
