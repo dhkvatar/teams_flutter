@@ -152,9 +152,10 @@ void main() {
           verify: (bloc) {
             expect(
                 bloc.state.messagesById, {'msg_id_2': msg2, 'msg_id_1': msg1});
-            expect(bloc.state.chatMessagesByDate, {
+            expect(bloc.state.chatMessagesByDateTime, {
               'chat_id_1': {
-                DateTime(2022, 2, 2): ['msg_id_1', 'msg_id_2']
+                DateTime(2022, 2, 2, 1): ['msg_id_1'],
+                DateTime(2022, 2, 2, 2): ['msg_id_2']
               }
             });
             expect(bloc.state.lastChatAccess['chat_id_1'], isNotNull);
@@ -175,7 +176,7 @@ void main() {
               lastDirectMessageChat: 'chat_id_1',
               lastMessageByChat: {'chat_id_1': 'msg_id_3'},
               messagesById: {'msg_id_3': msg3, 'msg_id_4': msg4},
-              chatMessagesByDate: {
+              chatMessagesByDateTime: {
                 'chat_id_1': {
                   DateTime(2022, 2, 1): ['msg_id_3', 'msg_id_4'],
                 },
@@ -200,10 +201,12 @@ void main() {
               'msg_id_2': msg2,
               'msg_id_1': msg1
             });
-            expect(bloc.state.chatMessagesByDate, {
+            expect(bloc.state.chatMessagesByDateTime, {
               'chat_id_1': {
-                DateTime(2022, 2, 1): ['msg_id_3', 'msg_id_4'],
-                DateTime(2022, 2, 2): ['msg_id_1', 'msg_id_2']
+                DateTime(2022, 2, 1, 1): ['msg_id_3'],
+                DateTime(2022, 2, 1, 2): ['msg_id_4'],
+                DateTime(2022, 2, 2, 1): ['msg_id_1'],
+                DateTime(2022, 2, 2, 2): ['msg_id_2'],
               }
             });
             expect(bloc.state.lastChatAccess['chat_id_1'], isNotNull);
@@ -339,7 +342,7 @@ void main() {
                 toSendMsg.id: toSendMsg.copyWith(
                     uploadStatus: MessageUploadStatus.uploadInProgress),
               },
-              chatMessagesByDate: {
+              chatMessagesByDateTime: {
                 toSendMsg.chatId: {
                   DateTime(toSendMsg.sentTime.year, toSendMsg.sentTime.month,
                       toSendMsg.sentTime.day): [toSendMsg.id]
@@ -367,7 +370,7 @@ void main() {
               lastDirectMessageChat: 'chat_id_1',
               lastMessageByChat: {'chat_id_1': 'prev_msg_id'},
               messagesById: {'prev_msg_id': prevMsg},
-              chatMessagesByDate: {
+              chatMessagesByDateTime: {
                 'chat_id_1': {
                   DateTime(2022, 2, 1): ['prev_msg_id']
                 }
@@ -402,7 +405,7 @@ void main() {
                 toSendMsg.id: toSendMsg.copyWith(
                     uploadStatus: MessageUploadStatus.uploadInProgress),
               },
-              chatMessagesByDate: {
+              chatMessagesByDateTime: {
                 toSendMsg.chatId: {
                   DateTime(2022, 2, 1): [prevMsg.id],
                   DateTime(toSendMsg.sentTime.year, toSendMsg.sentTime.month,

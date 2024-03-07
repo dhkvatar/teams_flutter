@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:intl/intl.dart';
 import 'package:teams/app/di/di.dart';
 import 'package:teams/domain/usecases/authentication/get_current_user.dart';
 import 'package:teams/presentation/blocs/chat/chat_bloc.dart';
@@ -48,42 +49,58 @@ class _MessagesList extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocBuilder<ChatBloc, ChatState>(
       builder: (ctx, state) {
-        final messagesByDate =
-            context.read<ChatBloc>().state.chatMessagesByDate[chatId] ?? {};
+        final messagesByDateTime =
+            context.read<ChatBloc>().state.chatMessagesByDateTime[chatId] ?? {};
 
         if (state.messagesLoadingStatus == MessagesLoadingStatus.inProgress) {
           return const CircularProgressIndicator();
         }
-
-        final dateKeys = messagesByDate.keys.toList();
+        // Get all dates for messages
+        final dateKeys =
+            Set.from(messagesByDateTime.keys.map((dt) => getYMD(dt))).toList();
         dateKeys.sort((a, b) => b.compareTo(a));
+        // Get all keys of messagesByDateTime grouped by dates
+        final timeKeysByDate = {
+          for (var dateKey in dateKeys)
+            dateKey: messagesByDateTime.keys
+                .where((dt) => getYMD(dt) == dateKey)
+                .toList(),
+        };
+        for (var timeKeys in timeKeysByDate.values) {
+          timeKeys.sort((a, b) => b.compareTo(a));
+        }
 
         return Expanded(
+          // Messages grouped by date
           child: ListView.builder(
             reverse: true,
-            scrollDirection: Axis.vertical,
-            itemBuilder: (ctx, index) {
-              // final dateKey = state.sortedDates[chatId]!.elementAt(index);
-              final dateKey = dateKeys.elementAt(index);
+            itemBuilder: (ctx, dateIndex) {
+              final dateKey = dateKeys.elementAt(dateIndex);
+              final timeKeys = timeKeysByDate[dateKey] ?? [];
               return Column(
                 children: [
-                  // Day and date
-                  Text(
-                      '${getDayOfWeek(dateKey)}, ${dateKey.year}-${dateKey.month.toString().padLeft(2, '0')}-${dateKey.day}'),
-
-                  // Messages for date
-                  Column(
-                    children: messagesByDate[dateKey]!.map((messageId) {
-                      return MessageListItem(
-                        message: state.messagesById[messageId]!,
-                        userId: getIt<GetCurrentUser>()()!.id,
+                  Text(DateFormat('EEEE, yyyy-MM-dd').format(dateKey)),
+                  ListView.builder(
+                    shrinkWrap: true,
+                    physics: const NeverScrollableScrollPhysics(),
+                    itemBuilder: (ctx, timeIndex) {
+                      final timeKey = timeKeys.elementAt(timeIndex);
+                      return Column(
+                        children: messagesByDateTime[timeKey]!.map((messageId) {
+                          return MessageListItem(
+                              message: state.messagesById[messageId]!,
+                              userId: getIt<GetCurrentUser>()()!.id,
+                              printTime: messageId ==
+                                  messagesByDateTime[timeKey]!.last);
+                        }).toList(),
                       );
-                    }).toList(),
-                  )
+                    },
+                    itemCount: timeKeys.length,
+                  ),
                 ],
               );
             },
-            itemCount: messagesByDate.length,
+            itemCount: dateKeys.length,
           ),
         );
       },
