@@ -44,7 +44,9 @@ class _GroupChatsTab extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<ChatBloc, ChatState>(
-      builder: (ctx, state) => ChatListView(chatIds: state.groupChats),
+      builder: (ctx, state) => ChatListView(
+        chatIds: state.groupChats,
+      ),
     );
   }
 }
