@@ -155,7 +155,7 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
   ) async {
     try {
       // Signal to UI that loading of new chats is in-progress.
-      emit(state.copyWith(chatsLoadingStatus: ChatsLoadingStatus.inProgress));
+      // emit(state.copyWith(chatsLoadingStatus: ChatsLoadingStatus.inProgress));
       final newChats = await getChats(
         GetChatsParams(
           groupChats: event.groupChats,
@@ -201,12 +201,12 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
       // Emit new state with additionally loaded chats.
       emit(state.copyWith(
         chatsById: updatedChatsById,
-        chatsLoadingStatus: ChatsLoadingStatus.complete,
+        // chatsLoadingStatus: ChatsLoadingStatus.complete,
       ));
     } catch (e) {
       // Signal to UI that loading of new chats has fialed.
       emit(state.copyWith(
-        chatsLoadingStatus: ChatsLoadingStatus.failed,
+        // chatsLoadingStatus: ChatsLoadingStatus.failed,
         errorMessage: 'Error fetching Chats: ${e.toString()}',
       ));
     }

@@ -9,17 +9,8 @@ part 'chat_state.freezed.dart';
 @freezed
 class ChatState with _$ChatState {
   const factory ChatState({
-    // The loading status of the chats on the chat page.
-    @Default(ChatsLoadingStatus.complete) chatsLoadingStatus,
-
     // All chats loaded by Id.
     @Default({}) Map<String, Chat> chatsById,
-
-    // List of direct message chats, sorted by updateTime and Id (descending).
-    // @Default([]) List<String> directMessageChats,
-
-    // List of group chats, sorted by updateTime and Id (descending).
-    // @Default([]) List<String> groupChats,
 
     // Map from Chat Id to the ID of the last message (earliest timestamp and smallest
     // Id) for each chat.
@@ -76,12 +67,6 @@ class ChatsPagingState with _$ChatsPagingState {
     // Whether the current oldestGroupChatId is the oldest group chat.
     @Default(false) bool isOldestGroupChat,
   }) = _ChatsPagingState;
-}
-
-enum ChatsLoadingStatus {
-  inProgress,
-  complete,
-  failed,
 }
 
 enum MessagesLoadingStatus {
