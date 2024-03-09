@@ -12,7 +12,10 @@ import 'package:teams/presentation/ui/utils/date_time_utils.dart';
 class ChatDetailsPage extends StatelessWidget {
   ChatDetailsPage({super.key, required this.chatId});
 
+  // The Id of the Chat the page displays.
   final String chatId;
+
+  // The controller for message text input.
   final _chatInputController = TextEditingController();
 
   @override
@@ -25,11 +28,12 @@ class ChatDetailsPage extends StatelessWidget {
         body: Column(
           mainAxisAlignment: MainAxisAlignment.end,
           children: [
+            // The list of messages.
             _MessagesList(chatId),
             const SizedBox(height: 10),
 
-            // Bottom chat input
-            _ChatInput(
+            // Bottom message input text field.
+            _MessageInput(
               chatId: chatId,
               chatInputController: _chatInputController,
             ),
@@ -108,8 +112,8 @@ class _MessagesList extends StatelessWidget {
   }
 }
 
-class _ChatInput extends StatelessWidget {
-  const _ChatInput({
+class _MessageInput extends StatelessWidget {
+  const _MessageInput({
     required this.chatId,
     required this.chatInputController,
   });
