@@ -21,15 +21,9 @@ mixin _$ChatState {
       throw _privateConstructorUsedError; // All chats loaded by Id.
   Map<String, Chat> get chatsById =>
       throw _privateConstructorUsedError; // List of direct message chats, sorted by updateTime and Id (descending).
-  List<String> get directMessageChats =>
-      throw _privateConstructorUsedError; // List of group chats, sorted by updateTime and Id (descending).
-  List<String> get groupChats =>
-      throw _privateConstructorUsedError; // The last direct message chat by updateTime and Id, i.e., the earliest
-// created with the smallest Id in directMessageChats.
-// String? lastDirectMessageChat,
-// The last group chat by updateTime and Id, i.e., the earliest created
-// with the smallest Id in groupChats.
-// String? lastGroupChat,
+// @Default([]) List<String> directMessageChats,
+// List of group chats, sorted by updateTime and Id (descending).
+// @Default([]) List<String> groupChats,
 // Map from Chat Id to the ID of the last message (earliest timestamp and smallest
 // Id) for each chat.
   Map<String, String?> get lastMessageByChat =>
@@ -64,8 +58,6 @@ abstract class $ChatStateCopyWith<$Res> {
   $Res call(
       {dynamic chatsLoadingStatus,
       Map<String, Chat> chatsById,
-      List<String> directMessageChats,
-      List<String> groupChats,
       Map<String, String?> lastMessageByChat,
       dynamic messagesLoadingStatus,
       Map<String, Message> messagesById,
@@ -92,8 +84,6 @@ class _$ChatStateCopyWithImpl<$Res, $Val extends ChatState>
   $Res call({
     Object? chatsLoadingStatus = freezed,
     Object? chatsById = null,
-    Object? directMessageChats = null,
-    Object? groupChats = null,
     Object? lastMessageByChat = null,
     Object? messagesLoadingStatus = freezed,
     Object? messagesById = null,
@@ -113,14 +103,6 @@ class _$ChatStateCopyWithImpl<$Res, $Val extends ChatState>
           ? _value.chatsById
           : chatsById // ignore: cast_nullable_to_non_nullable
               as Map<String, Chat>,
-      directMessageChats: null == directMessageChats
-          ? _value.directMessageChats
-          : directMessageChats // ignore: cast_nullable_to_non_nullable
-              as List<String>,
-      groupChats: null == groupChats
-          ? _value.groupChats
-          : groupChats // ignore: cast_nullable_to_non_nullable
-              as List<String>,
       lastMessageByChat: null == lastMessageByChat
           ? _value.lastMessageByChat
           : lastMessageByChat // ignore: cast_nullable_to_non_nullable
@@ -172,8 +154,6 @@ abstract class _$$ChatStateImplCopyWith<$Res>
   $Res call(
       {dynamic chatsLoadingStatus,
       Map<String, Chat> chatsById,
-      List<String> directMessageChats,
-      List<String> groupChats,
       Map<String, String?> lastMessageByChat,
       dynamic messagesLoadingStatus,
       Map<String, Message> messagesById,
@@ -198,8 +178,6 @@ class __$$ChatStateImplCopyWithImpl<$Res>
   $Res call({
     Object? chatsLoadingStatus = freezed,
     Object? chatsById = null,
-    Object? directMessageChats = null,
-    Object? groupChats = null,
     Object? lastMessageByChat = null,
     Object? messagesLoadingStatus = freezed,
     Object? messagesById = null,
@@ -218,14 +196,6 @@ class __$$ChatStateImplCopyWithImpl<$Res>
           ? _value._chatsById
           : chatsById // ignore: cast_nullable_to_non_nullable
               as Map<String, Chat>,
-      directMessageChats: null == directMessageChats
-          ? _value._directMessageChats
-          : directMessageChats // ignore: cast_nullable_to_non_nullable
-              as List<String>,
-      groupChats: null == groupChats
-          ? _value._groupChats
-          : groupChats // ignore: cast_nullable_to_non_nullable
-              as List<String>,
       lastMessageByChat: null == lastMessageByChat
           ? _value._lastMessageByChat
           : lastMessageByChat // ignore: cast_nullable_to_non_nullable
@@ -271,8 +241,6 @@ class _$ChatStateImpl implements _ChatState {
   const _$ChatStateImpl(
       {this.chatsLoadingStatus = ChatsLoadingStatus.complete,
       final Map<String, Chat> chatsById = const {},
-      final List<String> directMessageChats = const [],
-      final List<String> groupChats = const [],
       final Map<String, String?> lastMessageByChat = const {},
       this.messagesLoadingStatus = MessagesLoadingStatus.complete,
       final Map<String, Message> messagesById = const {},
@@ -284,8 +252,6 @@ class _$ChatStateImpl implements _ChatState {
       this.isValid = false,
       this.errorMessage})
       : _chatsById = chatsById,
-        _directMessageChats = directMessageChats,
-        _groupChats = groupChats,
         _lastMessageByChat = lastMessageByChat,
         _messagesById = messagesById,
         _chatMessagesByDateTime = chatMessagesByDateTime,
@@ -307,43 +273,16 @@ class _$ChatStateImpl implements _ChatState {
   }
 
 // List of direct message chats, sorted by updateTime and Id (descending).
-  final List<String> _directMessageChats;
-// List of direct message chats, sorted by updateTime and Id (descending).
-  @override
-  @JsonKey()
-  List<String> get directMessageChats {
-    if (_directMessageChats is EqualUnmodifiableListView)
-      return _directMessageChats;
-    // ignore: implicit_dynamic_type
-    return EqualUnmodifiableListView(_directMessageChats);
-  }
-
+// @Default([]) List<String> directMessageChats,
 // List of group chats, sorted by updateTime and Id (descending).
-  final List<String> _groupChats;
-// List of group chats, sorted by updateTime and Id (descending).
-  @override
-  @JsonKey()
-  List<String> get groupChats {
-    if (_groupChats is EqualUnmodifiableListView) return _groupChats;
-    // ignore: implicit_dynamic_type
-    return EqualUnmodifiableListView(_groupChats);
-  }
-
-// The last direct message chat by updateTime and Id, i.e., the earliest
-// created with the smallest Id in directMessageChats.
-// String? lastDirectMessageChat,
-// The last group chat by updateTime and Id, i.e., the earliest created
-// with the smallest Id in groupChats.
-// String? lastGroupChat,
+// @Default([]) List<String> groupChats,
 // Map from Chat Id to the ID of the last message (earliest timestamp and smallest
 // Id) for each chat.
   final Map<String, String?> _lastMessageByChat;
-// The last direct message chat by updateTime and Id, i.e., the earliest
-// created with the smallest Id in directMessageChats.
-// String? lastDirectMessageChat,
-// The last group chat by updateTime and Id, i.e., the earliest created
-// with the smallest Id in groupChats.
-// String? lastGroupChat,
+// List of direct message chats, sorted by updateTime and Id (descending).
+// @Default([]) List<String> directMessageChats,
+// List of group chats, sorted by updateTime and Id (descending).
+// @Default([]) List<String> groupChats,
 // Map from Chat Id to the ID of the last message (earliest timestamp and smallest
 // Id) for each chat.
   @override
@@ -413,7 +352,7 @@ class _$ChatStateImpl implements _ChatState {
 
   @override
   String toString() {
-    return 'ChatState(chatsLoadingStatus: $chatsLoadingStatus, chatsById: $chatsById, directMessageChats: $directMessageChats, groupChats: $groupChats, lastMessageByChat: $lastMessageByChat, messagesLoadingStatus: $messagesLoadingStatus, messagesById: $messagesById, chatMessagesByDateTime: $chatMessagesByDateTime, lastChatAccess: $lastChatAccess, chatInput: $chatInput, formzStatus: $formzStatus, isValid: $isValid, errorMessage: $errorMessage)';
+    return 'ChatState(chatsLoadingStatus: $chatsLoadingStatus, chatsById: $chatsById, lastMessageByChat: $lastMessageByChat, messagesLoadingStatus: $messagesLoadingStatus, messagesById: $messagesById, chatMessagesByDateTime: $chatMessagesByDateTime, lastChatAccess: $lastChatAccess, chatInput: $chatInput, formzStatus: $formzStatus, isValid: $isValid, errorMessage: $errorMessage)';
   }
 
   @override
@@ -425,10 +364,6 @@ class _$ChatStateImpl implements _ChatState {
                 .equals(other.chatsLoadingStatus, chatsLoadingStatus) &&
             const DeepCollectionEquality()
                 .equals(other._chatsById, _chatsById) &&
-            const DeepCollectionEquality()
-                .equals(other._directMessageChats, _directMessageChats) &&
-            const DeepCollectionEquality()
-                .equals(other._groupChats, _groupChats) &&
             const DeepCollectionEquality()
                 .equals(other._lastMessageByChat, _lastMessageByChat) &&
             const DeepCollectionEquality()
@@ -453,8 +388,6 @@ class _$ChatStateImpl implements _ChatState {
       runtimeType,
       const DeepCollectionEquality().hash(chatsLoadingStatus),
       const DeepCollectionEquality().hash(_chatsById),
-      const DeepCollectionEquality().hash(_directMessageChats),
-      const DeepCollectionEquality().hash(_groupChats),
       const DeepCollectionEquality().hash(_lastMessageByChat),
       const DeepCollectionEquality().hash(messagesLoadingStatus),
       const DeepCollectionEquality().hash(_messagesById),
@@ -476,8 +409,6 @@ abstract class _ChatState implements ChatState {
   const factory _ChatState(
       {final dynamic chatsLoadingStatus,
       final Map<String, Chat> chatsById,
-      final List<String> directMessageChats,
-      final List<String> groupChats,
       final Map<String, String?> lastMessageByChat,
       final dynamic messagesLoadingStatus,
       final Map<String, Message> messagesById,
@@ -493,15 +424,9 @@ abstract class _ChatState implements ChatState {
   @override // All chats loaded by Id.
   Map<String, Chat> get chatsById;
   @override // List of direct message chats, sorted by updateTime and Id (descending).
-  List<String> get directMessageChats;
-  @override // List of group chats, sorted by updateTime and Id (descending).
-  List<String> get groupChats;
-  @override // The last direct message chat by updateTime and Id, i.e., the earliest
-// created with the smallest Id in directMessageChats.
-// String? lastDirectMessageChat,
-// The last group chat by updateTime and Id, i.e., the earliest created
-// with the smallest Id in groupChats.
-// String? lastGroupChat,
+// @Default([]) List<String> directMessageChats,
+// List of group chats, sorted by updateTime and Id (descending).
+// @Default([]) List<String> groupChats,
 // Map from Chat Id to the ID of the last message (earliest timestamp and smallest
 // Id) for each chat.
   Map<String, String?> get lastMessageByChat;

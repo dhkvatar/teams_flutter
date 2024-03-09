@@ -48,7 +48,10 @@ class _GroupChatsTab extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocBuilder<ChatBloc, ChatState>(
       builder: (ctx, state) => ChatListView(
-        chatIds: state.groupChats,
+        chatIds: state.chatsById.values
+            .where((chat) => chat.isGroupChat)
+            .map((chat) => chat.id)
+            .toList(),
         isGroupChat: true,
       ),
     );
@@ -63,7 +66,10 @@ class _DirectChatsTab extends StatelessWidget {
     return BlocBuilder<ChatBloc, ChatState>(
       builder: (ctx, state) {
         return ChatListView(
-          chatIds: state.directMessageChats,
+          chatIds: state.chatsById.values
+              .where((chat) => !chat.isGroupChat)
+              .map((chat) => chat.id)
+              .toList(),
           isGroupChat: false,
         );
       },

@@ -103,8 +103,6 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
         continue;
       }
       final dateTime = getDateHourMin(message.sentTime);
-      // DateTime(message.sentTime.year, message.sentTime.month,
-      //     message.sentTime.day, message.sentTime.hour, message.sentTime.minute);
       res.putIfAbsent(dateTime, () => []);
       res[dateTime]!.add(message.id);
     }
@@ -174,16 +172,6 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
             .toList(),
       ]);
 
-      // Combine new chats with existing and sort by update time and Id.
-      // final sortedDmIds = _sortedChatIds([
-      //   ...newChats.where((chat) => !chat.isGroupChat),
-      //   ...state.chatsById.values.where((chat) => !chat.isGroupChat).toList(),
-      // ]);
-      // final sortedGroupChatIds = _sortedChatIds([
-      //   ...newChats.where((chat) => chat.isGroupChat),
-      //   ...state.chatsById.values.where((chat) => chat.isGroupChat).toList(),
-      // ]);
-
       final updatedChatsById = {
         ...state.chatsById,
         ...{for (var chat in newChats) chat.id: chat}
@@ -213,12 +201,6 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
       // Emit new state with additionally loaded chats.
       emit(state.copyWith(
         chatsById: updatedChatsById,
-        directMessageChats:
-            event.groupChats ? state.directMessageChats : sortedChatIds,
-        groupChats: event.groupChats ? sortedChatIds : state.groupChats,
-        // lastDirectMessageChat: sortedDmIds.isNotEmpty ? sortedDmIds.last : null,
-        // lastGroupChat:
-        //     sortedGroupChatIds.isNotEmpty ? sortedGroupChatIds.last : null,
         chatsLoadingStatus: ChatsLoadingStatus.complete,
       ));
     } catch (e) {
