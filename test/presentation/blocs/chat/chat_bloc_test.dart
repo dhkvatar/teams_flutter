@@ -134,7 +134,6 @@ void main() {
             seedState = ChatState(
               chatsById: {'chat_id_1': chat},
               directMessageChats: ['chat_id_1'],
-              lastDirectMessageChat: 'chat_id_1',
             );
           },
           build: () => ChatBloc.fromParameters(
@@ -171,7 +170,6 @@ void main() {
             seedState = ChatState(
               chatsById: {'chat_id_1': chat},
               directMessageChats: ['chat_id_1'],
-              lastDirectMessageChat: 'chat_id_1',
               lastMessageByChat: {'chat_id_1': 'msg_id_3'},
               messagesById: {'msg_id_3': msg3, 'msg_id_4': msg4},
               chatMessagesByDateTime: {
@@ -224,7 +222,6 @@ void main() {
             seedState = ChatState(
               chatsById: {'chat_id_1': chat},
               directMessageChats: ['chat_id_1'],
-              lastDirectMessageChat: 'chat_id_1',
             );
           },
           build: () => ChatBloc.fromParameters(
@@ -273,7 +270,6 @@ void main() {
             seedState = ChatState(
               chatsById: {'chat_id_1': chat},
               directMessageChats: ['chat_id_1'],
-              lastDirectMessageChat: 'chat_id_1',
               chatInput: const ChatInput.dirty('new_message'),
               isValid: true,
             );
@@ -310,7 +306,6 @@ void main() {
             seedState = ChatState(
               chatsById: {'chat_id_1': chat},
               directMessageChats: ['chat_id_1'],
-              lastDirectMessageChat: 'chat_id_1',
               chatInput: const ChatInput.dirty('new_message'),
               isValid: true,
             );
@@ -365,7 +360,6 @@ void main() {
             seedState = ChatState(
               chatsById: {'chat_id_1': chat},
               directMessageChats: ['chat_id_1'],
-              lastDirectMessageChat: 'chat_id_1',
               lastMessageByChat: {'chat_id_1': 'prev_msg_id'},
               messagesById: {'prev_msg_id': prevMsg},
               chatMessagesByDateTime: {
@@ -510,7 +504,8 @@ void main() {
             getMessages: MockGetMessages(),
             sendMessage: MockSendMessage(),
           ),
-          act: (bloc) => bloc.add(const ChatGetChatsRequested()),
+          act: (bloc) =>
+              bloc.add(const ChatGetChatsRequested(groupChats: false)),
           verify: (bloc) {
             expect(bloc.state.chatsLoadingStatus, ChatsLoadingStatus.failed);
             expect(bloc.state.errorMessage, isNotNull);
@@ -531,7 +526,8 @@ void main() {
             getMessages: MockGetMessages(),
             sendMessage: MockSendMessage(),
           ),
-          act: (bloc) => bloc.add(const ChatGetChatsRequested()),
+          act: (bloc) =>
+              bloc.add(const ChatGetChatsRequested(groupChats: false)),
           // Skip the first state emitted that changes ust the chatsLoadingStatus
           verify: (bloc) => verify(mockGetChats.call(any)).called(1),
           expect: () => [
@@ -541,8 +537,6 @@ void main() {
               chatsById: {for (var chat in chats) chat.id: chat},
               directMessageChats: ['chat_id_2', 'chat_id_1'],
               groupChats: ['chat_id_5', 'chat_id_4', 'chat_id_3'],
-              lastDirectMessageChat: 'chat_id_1',
-              lastGroupChat: 'chat_id_3',
               chatsLoadingStatus: ChatsLoadingStatus.complete,
             )
           ],

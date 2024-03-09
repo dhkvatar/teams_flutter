@@ -23,11 +23,11 @@ class ChatState with _$ChatState {
 
     // The last direct message chat by updateTime and Id, i.e., the earliest
     // created with the smallest Id in directMessageChats.
-    String? lastDirectMessageChat,
+    // String? lastDirectMessageChat,
 
     // The last group chat by updateTime and Id, i.e., the earliest created
     // with the smallest Id in groupChats.
-    String? lastGroupChat,
+    // String? lastGroupChat,
 
     // Map from Chat Id to the ID of the last message (earliest timestamp and smallest
     // Id) for each chat.
