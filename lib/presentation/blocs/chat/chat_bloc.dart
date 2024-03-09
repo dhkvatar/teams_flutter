@@ -56,17 +56,27 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
     );
   }
 
+  // Stream of updates sent from the repository.
   final Stream<ChatUpdateStreamItem> chatUpdatesStream;
+
+  // GetChats use case to retrieve chats from the chat repository.
   final GetChats getChats;
+
+  // GetMessages use case to retrieve messages from the chat repository.
   final GetMessages getMessages;
+
+  // SendMessage use case to send messages (upload) to the chat repository.
   final SendMessage sendMessage;
 
-  // Subscription to the chatUpdatesStream
+  // Subscription to the chatUpdatesStream to update bloc state from updates
+  // sent from the chat repository.
   late final StreamSubscription<ChatUpdateStreamItem> chatUpdatesSubscription;
 
   final _chatsListingController =
       BehaviorSubject<ChatsPagingState>.seeded(const ChatsPagingState());
-  Stream<ChatsPagingState> get chatListingsStream =>
+
+  // Stream of ChatPagingState for the UI to load paginated Chats.
+  Stream<ChatsPagingState> get chatsPagingStateStream =>
       _chatsListingController.stream;
 
   void _addEventHandlers() {

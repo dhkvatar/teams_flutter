@@ -48,7 +48,7 @@ class _ChatListViewState extends State<ChatListView> {
     // Subscription on stream on ChatsPagingState computed by bloc to update
     // UI with new chats and the next paging state to be requested.
     _blocChatListingSubscription =
-        bloc.chatListingsStream.listen((chatsPagingState) {
+        bloc.chatsPagingStateStream.listen((chatsPagingState) {
       _pagingController.value = PagingState(
         nextPageKey: widget.isGroupChat
             ? (!chatsPagingState.isOldestGroupChat ? chatsPagingState : null)

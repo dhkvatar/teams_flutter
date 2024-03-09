@@ -664,3 +664,198 @@ abstract class _ChatsPagingState implements ChatsPagingState {
   _$$ChatsPagingStateImplCopyWith<_$ChatsPagingStateImpl> get copyWith =>
       throw _privateConstructorUsedError;
 }
+
+/// @nodoc
+mixin _$MessagesPagingState {
+// The Id of the Chat that the state represents.
+  String get chatId =>
+      throw _privateConstructorUsedError; // The Id of the oldest message for the chat currently loaded.
+  String? get oldestMessageId =>
+      throw _privateConstructorUsedError; // The sent time of the oldest message for the chat.
+  DateTime? get oldestMessageSentTime =>
+      throw _privateConstructorUsedError; // Whether the current oldestMessageId is the oldest message in the chat.
+  bool get isOldestMessage => throw _privateConstructorUsedError;
+
+  @JsonKey(ignore: true)
+  $MessagesPagingStateCopyWith<MessagesPagingState> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+
+/// @nodoc
+abstract class $MessagesPagingStateCopyWith<$Res> {
+  factory $MessagesPagingStateCopyWith(
+          MessagesPagingState value, $Res Function(MessagesPagingState) then) =
+      _$MessagesPagingStateCopyWithImpl<$Res, MessagesPagingState>;
+  @useResult
+  $Res call(
+      {String chatId,
+      String? oldestMessageId,
+      DateTime? oldestMessageSentTime,
+      bool isOldestMessage});
+}
+
+/// @nodoc
+class _$MessagesPagingStateCopyWithImpl<$Res, $Val extends MessagesPagingState>
+    implements $MessagesPagingStateCopyWith<$Res> {
+  _$MessagesPagingStateCopyWithImpl(this._value, this._then);
+
+  // ignore: unused_field
+  final $Val _value;
+  // ignore: unused_field
+  final $Res Function($Val) _then;
+
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? chatId = null,
+    Object? oldestMessageId = freezed,
+    Object? oldestMessageSentTime = freezed,
+    Object? isOldestMessage = null,
+  }) {
+    return _then(_value.copyWith(
+      chatId: null == chatId
+          ? _value.chatId
+          : chatId // ignore: cast_nullable_to_non_nullable
+              as String,
+      oldestMessageId: freezed == oldestMessageId
+          ? _value.oldestMessageId
+          : oldestMessageId // ignore: cast_nullable_to_non_nullable
+              as String?,
+      oldestMessageSentTime: freezed == oldestMessageSentTime
+          ? _value.oldestMessageSentTime
+          : oldestMessageSentTime // ignore: cast_nullable_to_non_nullable
+              as DateTime?,
+      isOldestMessage: null == isOldestMessage
+          ? _value.isOldestMessage
+          : isOldestMessage // ignore: cast_nullable_to_non_nullable
+              as bool,
+    ) as $Val);
+  }
+}
+
+/// @nodoc
+abstract class _$$MessagesPagingStateImplCopyWith<$Res>
+    implements $MessagesPagingStateCopyWith<$Res> {
+  factory _$$MessagesPagingStateImplCopyWith(_$MessagesPagingStateImpl value,
+          $Res Function(_$MessagesPagingStateImpl) then) =
+      __$$MessagesPagingStateImplCopyWithImpl<$Res>;
+  @override
+  @useResult
+  $Res call(
+      {String chatId,
+      String? oldestMessageId,
+      DateTime? oldestMessageSentTime,
+      bool isOldestMessage});
+}
+
+/// @nodoc
+class __$$MessagesPagingStateImplCopyWithImpl<$Res>
+    extends _$MessagesPagingStateCopyWithImpl<$Res, _$MessagesPagingStateImpl>
+    implements _$$MessagesPagingStateImplCopyWith<$Res> {
+  __$$MessagesPagingStateImplCopyWithImpl(_$MessagesPagingStateImpl _value,
+      $Res Function(_$MessagesPagingStateImpl) _then)
+      : super(_value, _then);
+
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? chatId = null,
+    Object? oldestMessageId = freezed,
+    Object? oldestMessageSentTime = freezed,
+    Object? isOldestMessage = null,
+  }) {
+    return _then(_$MessagesPagingStateImpl(
+      chatId: null == chatId
+          ? _value.chatId
+          : chatId // ignore: cast_nullable_to_non_nullable
+              as String,
+      oldestMessageId: freezed == oldestMessageId
+          ? _value.oldestMessageId
+          : oldestMessageId // ignore: cast_nullable_to_non_nullable
+              as String?,
+      oldestMessageSentTime: freezed == oldestMessageSentTime
+          ? _value.oldestMessageSentTime
+          : oldestMessageSentTime // ignore: cast_nullable_to_non_nullable
+              as DateTime?,
+      isOldestMessage: null == isOldestMessage
+          ? _value.isOldestMessage
+          : isOldestMessage // ignore: cast_nullable_to_non_nullable
+              as bool,
+    ));
+  }
+}
+
+/// @nodoc
+
+class _$MessagesPagingStateImpl implements _MessagesPagingState {
+  const _$MessagesPagingStateImpl(
+      {required this.chatId,
+      this.oldestMessageId,
+      this.oldestMessageSentTime,
+      this.isOldestMessage = false});
+
+// The Id of the Chat that the state represents.
+  @override
+  final String chatId;
+// The Id of the oldest message for the chat currently loaded.
+  @override
+  final String? oldestMessageId;
+// The sent time of the oldest message for the chat.
+  @override
+  final DateTime? oldestMessageSentTime;
+// Whether the current oldestMessageId is the oldest message in the chat.
+  @override
+  @JsonKey()
+  final bool isOldestMessage;
+
+  @override
+  String toString() {
+    return 'MessagesPagingState(chatId: $chatId, oldestMessageId: $oldestMessageId, oldestMessageSentTime: $oldestMessageSentTime, isOldestMessage: $isOldestMessage)';
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _$MessagesPagingStateImpl &&
+            (identical(other.chatId, chatId) || other.chatId == chatId) &&
+            (identical(other.oldestMessageId, oldestMessageId) ||
+                other.oldestMessageId == oldestMessageId) &&
+            (identical(other.oldestMessageSentTime, oldestMessageSentTime) ||
+                other.oldestMessageSentTime == oldestMessageSentTime) &&
+            (identical(other.isOldestMessage, isOldestMessage) ||
+                other.isOldestMessage == isOldestMessage));
+  }
+
+  @override
+  int get hashCode => Object.hash(runtimeType, chatId, oldestMessageId,
+      oldestMessageSentTime, isOldestMessage);
+
+  @JsonKey(ignore: true)
+  @override
+  @pragma('vm:prefer-inline')
+  _$$MessagesPagingStateImplCopyWith<_$MessagesPagingStateImpl> get copyWith =>
+      __$$MessagesPagingStateImplCopyWithImpl<_$MessagesPagingStateImpl>(
+          this, _$identity);
+}
+
+abstract class _MessagesPagingState implements MessagesPagingState {
+  const factory _MessagesPagingState(
+      {required final String chatId,
+      final String? oldestMessageId,
+      final DateTime? oldestMessageSentTime,
+      final bool isOldestMessage}) = _$MessagesPagingStateImpl;
+
+  @override // The Id of the Chat that the state represents.
+  String get chatId;
+  @override // The Id of the oldest message for the chat currently loaded.
+  String? get oldestMessageId;
+  @override // The sent time of the oldest message for the chat.
+  DateTime? get oldestMessageSentTime;
+  @override // Whether the current oldestMessageId is the oldest message in the chat.
+  bool get isOldestMessage;
+  @override
+  @JsonKey(ignore: true)
+  _$$MessagesPagingStateImplCopyWith<_$MessagesPagingStateImpl> get copyWith =>
+      throw _privateConstructorUsedError;
+}
