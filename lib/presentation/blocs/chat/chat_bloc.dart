@@ -72,12 +72,28 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
   // sent from the chat repository.
   late final StreamSubscription<ChatUpdateStreamItem> chatUpdatesSubscription;
 
+  // Used to manage yielded ChatsPagingState in the chatsPagingStateStream.
   final _chatsListingController =
       BehaviorSubject<ChatsPagingState>.seeded(const ChatsPagingState());
 
   // Stream of ChatPagingState for the UI to load paginated Chats.
   Stream<ChatsPagingState> get chatsPagingStateStream =>
       _chatsListingController.stream;
+
+  // Stores the MessagesPagingState for each of the chatId's previously loaded.
+  final Map<String, MessagesPagingState> _messagesPagingStateByChatId = {};
+
+  // Used to manage yielded MessagesPagingState in the streams returned by
+  // getMessagesPagingStateStream.
+  final _messagesListingController = BehaviorSubject<MessagesPagingState>();
+
+  // Stream of MessagesPagingState's for the UI to load paginated Message's.
+  Stream<MessagesPagingState> getMessagesPagingStateStreamForChat(
+      String chatId) {
+    _messagesListingController.add(_messagesPagingStateByChatId[chatId] ??
+        MessagesPagingState(chatId: chatId));
+    return _messagesListingController.stream;
+  }
 
   void _addEventHandlers() {
     on<ChatGetChatsRequested>(_onGetChatsRequested);
@@ -251,6 +267,24 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
       final sortedMessagesGroupedByDateTime =
           _groupAndSortMessageIdsByDateTime(allMessagesById, event.chatId);
 
+      // get paging here
+      final messagesForChat = allMessagesById.values
+          .where((msg) => msg.chatId == event.chatId)
+          .toList();
+      messagesForChat.sort((a, b) => a.sentTime.compareTo(b.sentTime));
+
+      final newPagingState = MessagesPagingState(
+        chatId: event.chatId,
+        oldestMessageId: messagesForChat.first.id,
+        oldestMessageSentTime: messagesForChat.first.sentTime,
+        isOldestMessage:
+            newMessages.length < (event.limit ?? ChatConstants.chatPageSize),
+      );
+
+      // Yield new paging state.
+      _messagesListingController.add(newPagingState);
+
+      // Emit new ChatState.
       emit(state.copyWith(
         messagesById: allMessagesById,
         chatMessagesByDateTime: {
