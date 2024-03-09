@@ -26,6 +26,7 @@ abstract class ChatRepository {
   /// Get chats that a user is part of.
   Future<List<Chat>?> getChats(
       {required String userId,
+      required bool groupChats,
       DateTime? beforeDateTime,
       String? beforeId,
       int? limit});

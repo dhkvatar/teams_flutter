@@ -7,11 +7,13 @@ sealed class ChatEvent {
 // Request for chats.
 final class ChatGetChatsRequested extends ChatEvent {
   const ChatGetChatsRequested({
+    required this.groupChats,
     this.beforeDateTime,
     this.beforeChatId,
     this.limit,
   });
 
+  final bool groupChats;
   final DateTime? beforeDateTime;
   final String? beforeChatId;
   final int? limit;

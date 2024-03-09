@@ -3,7 +3,9 @@ import 'dart:async';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:formz/formz.dart';
 import 'package:injectable/injectable.dart';
+import 'package:rxdart/subjects.dart';
 import 'package:teams/app/di/di.dart';
+import 'package:teams/core/constants/chat_constants.dart';
 import 'package:teams/core/forms/chat.dart';
 import 'package:teams/domain/entities/chat.dart';
 import 'package:teams/domain/entities/message.dart';
@@ -58,7 +60,14 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
   final GetChats getChats;
   final GetMessages getMessages;
   final SendMessage sendMessage;
+
+  // Subscription to the chatUpdatesStream
   late final StreamSubscription<ChatUpdateStreamItem> chatUpdatesSubscription;
+
+  final _chatsListingController =
+      BehaviorSubject<ChatsPagingState>.seeded(const ChatsPagingState());
+  Stream<ChatsPagingState> get chatListingsStream =>
+      _chatsListingController.stream;
 
   void _addEventHandlers() {
     on<ChatGetChatsRequested>(_onGetChatsRequested);
@@ -151,11 +160,20 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
       emit(state.copyWith(chatsLoadingStatus: ChatsLoadingStatus.inProgress));
       final newChats = await getChats(
         GetChatsParams(
+          groupChats: event.groupChats,
           beforeDateTime: event.beforeDateTime,
           beforeId: event.beforeChatId,
           limit: event.limit,
         ),
       );
+
+      final sortedChatIds = _sortedChatIds([
+        ...newChats.where((chat) => chat.isGroupChat == event.groupChats),
+        ...state.chatsById.values
+            .where((chat) => chat.isGroupChat == event.groupChats)
+            .toList(),
+      ]);
+
       // Combine new chats with existing and sort by update time and Id.
       final sortedDmIds = _sortedChatIds([
         ...newChats.where((chat) => !chat.isGroupChat),
@@ -165,17 +183,75 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
         ...newChats.where((chat) => chat.isGroupChat),
         ...state.chatsById.values.where((chat) => chat.isGroupChat).toList(),
       ]);
+
+      final updatedChatsById = {
+        ...state.chatsById,
+        ...{for (var chat in newChats) chat.id: chat}
+      };
+
+      final oldestChat = sortedChatIds.isNotEmpty
+          ? updatedChatsById[sortedChatIds.last]
+          : null;
+
+      // final oldestDirectChat =
+      //     sortedDmIds.isNotEmpty ? updatedChatsById[sortedDmIds.last] : null;
+      // final oldestGroupChat = sortedGroupChatIds.isNotEmpty
+      //     ? updatedChatsById[sortedGroupChatIds.last]
+      //     : null;
+
+      // Emit chat listing update to stream
+      _chatsListingController.add(
+        state.chatsPagingState.copyWith(
+          oldestDirectChatId: event.groupChats
+              ? state.chatsPagingState.oldestDirectChatId
+              : oldestChat?.id,
+          oldestDirectChatUpdateTime: event.groupChats
+              ? state.chatsPagingState.oldestDirectChatUpdateTime
+              : oldestChat?.updateTime,
+          oldestGroupChatId: event.groupChats
+              ? oldestChat?.id
+              : state.chatsPagingState.oldestGroupChatId,
+          oldestGroupChatDateTime: event.groupChats
+              ? oldestChat?.updateTime
+              : state.chatsPagingState.oldestGroupChatDateTime,
+          isOldestDirectChat: event.groupChats
+              ? state.chatsPagingState.isOldestDirectChat
+              : newChats.length < (event.limit ?? ChatConstants.chatPageSize),
+          isOldestGroupChat: event.groupChats
+              ? newChats.length < (event.limit ?? ChatConstants.chatPageSize)
+              : state.chatsPagingState.isOldestGroupChat,
+        ),
+      );
+
       // Emit new state with additionally loaded chats.
       emit(state.copyWith(
-        chatsById: {
-          ...state.chatsById,
-          ...{for (var chat in newChats) chat.id: chat}
-        },
-        directMessageChats: sortedDmIds,
-        groupChats: sortedGroupChatIds,
+        chatsById: updatedChatsById,
+        directMessageChats:
+            event.groupChats ? state.directMessageChats : sortedChatIds,
+        groupChats: event.groupChats ? sortedChatIds : state.groupChats,
         lastDirectMessageChat: sortedDmIds.isNotEmpty ? sortedDmIds.last : null,
         lastGroupChat:
             sortedGroupChatIds.isNotEmpty ? sortedGroupChatIds.last : null,
+        // chatsPagingState: state.chatsPagingState.copyWith(
+        //   oldestDirectChatId: event.groupChats
+        //       ? state.chatsPagingState.oldestDirectChatId
+        //       : oldestChat?.id,
+        //   oldestDirectChatUpdateTime: event.groupChats
+        //       ? state.chatsPagingState.oldestDirectChatUpdateTime
+        //       : oldestChat?.updateTime,
+        //   oldestGroupChatId: event.groupChats
+        //       ? oldestChat?.id
+        //       : state.chatsPagingState.oldestGroupChatId,
+        //   oldestGroupChatDateTime: event.groupChats
+        //       ? oldestChat?.updateTime
+        //       : state.chatsPagingState.oldestGroupChatDateTime,
+        //   isOldestDirectChat: event.groupChats
+        //       ? state.chatsPagingState.isOldestDirectChat
+        //       : newChats.length < (event.limit ?? ChatConstants.chatPageSize),
+        //   isOldestGroupChat: event.groupChats
+        //       ? newChats.length < (event.limit ?? ChatConstants.chatPageSize)
+        //       : state.chatsPagingState.isOldestGroupChat,
+        // ),
         chatsLoadingStatus: ChatsLoadingStatus.complete,
       ));
     } catch (e) {

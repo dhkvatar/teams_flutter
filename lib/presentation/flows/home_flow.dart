@@ -31,7 +31,7 @@ class HomeFlow extends RoutingFlow {
         return BlocProvider(
             create: (_) => getIt<ChatBloc>()
               ..add(const ChatGetChatsRequested(
-                  limit: ChatConstants.chatPageSize)),
+                  groupChats: false, limit: ChatConstants.chatPageSize)),
             child: Scaffold(body: body));
       },
       routes: [

@@ -46,6 +46,7 @@ class _GroupChatsTab extends StatelessWidget {
     return BlocBuilder<ChatBloc, ChatState>(
       builder: (ctx, state) => ChatListView(
         chatIds: state.groupChats,
+        isGroupChat: true,
       ),
     );
   }
@@ -58,14 +59,18 @@ class _DirectChatsTab extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocBuilder<ChatBloc, ChatState>(
       builder: (ctx, state) {
-        return state.chatsLoadingStatus == ChatsLoadingStatus.inProgress
-            ? const Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  CircularProgressIndicator(),
-                ],
-              )
-            : ChatListView(chatIds: state.directMessageChats);
+        return ChatListView(
+          chatIds: state.directMessageChats,
+          isGroupChat: false,
+        );
+        // return state.chatsLoadingStatus == ChatsLoadingStatus.inProgress
+        //     ? const Column(
+        //         mainAxisAlignment: MainAxisAlignment.center,
+        //         children: [
+        //           CircularProgressIndicator(),
+        //         ],
+        //       )
+        // : ChatListView(chatIds: state.directMessageChats);
       },
     );
   }

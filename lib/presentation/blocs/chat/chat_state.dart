@@ -29,6 +29,10 @@ class ChatState with _$ChatState {
     // with the smallest Id in groupChats.
     String? lastGroupChat,
 
+    // The paging state of loaded chats - the oldest chats retrieved for each
+    // direct and group chat.
+    @Default(ChatsPagingState()) ChatsPagingState chatsPagingState,
+
     // Map from Chat Id to the ID of the last message (earliest timestamp and smallest
     // Id) for each chat.
     @Default({}) Map<String, String?> lastMessageByChat,
@@ -59,6 +63,29 @@ class ChatState with _$ChatState {
     // Error message to display after processing a ChatEvent.
     String? errorMessage,
   }) = _ChatState;
+}
+
+@freezed
+class ChatsPagingState with _$ChatsPagingState {
+  const factory ChatsPagingState({
+    // The DM chat with the oldest updateTime that's currently loaded.
+    String? oldestDirectChatId,
+
+    // The update time of the oldest direct message chat.
+    DateTime? oldestDirectChatUpdateTime,
+
+    // The group chat with the oldest updateTime that's currently loaded.
+    String? oldestGroupChatId,
+
+    // The update time of the oldest group chat.
+    DateTime? oldestGroupChatDateTime,
+
+    // Whether the current oldestDirectChatId is the oldest direct chat.
+    @Default(false) bool isOldestDirectChat,
+
+    // Whether the current oldestGroupChatId is the oldest group chat.
+    @Default(false) bool isOldestGroupChat,
+  }) = _ChatsPagingState;
 }
 
 enum ChatsLoadingStatus {
