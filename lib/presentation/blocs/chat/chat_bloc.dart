@@ -193,12 +193,6 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
           ? updatedChatsById[sortedChatIds.last]
           : null;
 
-      // final oldestDirectChat =
-      //     sortedDmIds.isNotEmpty ? updatedChatsById[sortedDmIds.last] : null;
-      // final oldestGroupChat = sortedGroupChatIds.isNotEmpty
-      //     ? updatedChatsById[sortedGroupChatIds.last]
-      //     : null;
-
       // Emit chat listing update to stream
       _chatsListingController.add(
         state.chatsPagingState.copyWith(
@@ -232,26 +226,6 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
         lastDirectMessageChat: sortedDmIds.isNotEmpty ? sortedDmIds.last : null,
         lastGroupChat:
             sortedGroupChatIds.isNotEmpty ? sortedGroupChatIds.last : null,
-        // chatsPagingState: state.chatsPagingState.copyWith(
-        //   oldestDirectChatId: event.groupChats
-        //       ? state.chatsPagingState.oldestDirectChatId
-        //       : oldestChat?.id,
-        //   oldestDirectChatUpdateTime: event.groupChats
-        //       ? state.chatsPagingState.oldestDirectChatUpdateTime
-        //       : oldestChat?.updateTime,
-        //   oldestGroupChatId: event.groupChats
-        //       ? oldestChat?.id
-        //       : state.chatsPagingState.oldestGroupChatId,
-        //   oldestGroupChatDateTime: event.groupChats
-        //       ? oldestChat?.updateTime
-        //       : state.chatsPagingState.oldestGroupChatDateTime,
-        //   isOldestDirectChat: event.groupChats
-        //       ? state.chatsPagingState.isOldestDirectChat
-        //       : newChats.length < (event.limit ?? ChatConstants.chatPageSize),
-        //   isOldestGroupChat: event.groupChats
-        //       ? newChats.length < (event.limit ?? ChatConstants.chatPageSize)
-        //       : state.chatsPagingState.isOldestGroupChat,
-        // ),
         chatsLoadingStatus: ChatsLoadingStatus.complete,
       ));
     } catch (e) {

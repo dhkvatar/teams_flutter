@@ -28,7 +28,10 @@ class ChatPage extends StatelessWidget {
         ),
         body: const TabBarView(
           children: [
+            // Tab for direct messages with other users.
             _DirectChatsTab(),
+
+            // Tab for group chat between multiple users.
             _GroupChatsTab(),
           ],
         ),
@@ -63,14 +66,6 @@ class _DirectChatsTab extends StatelessWidget {
           chatIds: state.directMessageChats,
           isGroupChat: false,
         );
-        // return state.chatsLoadingStatus == ChatsLoadingStatus.inProgress
-        //     ? const Column(
-        //         mainAxisAlignment: MainAxisAlignment.center,
-        //         children: [
-        //           CircularProgressIndicator(),
-        //         ],
-        //       )
-        // : ChatListView(chatIds: state.directMessageChats);
       },
     );
   }

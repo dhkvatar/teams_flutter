@@ -22,8 +22,11 @@ class ChatListView extends StatefulWidget {
 }
 
 class _ChatListViewState extends State<ChatListView> {
+  // Controller for scrolling and pagination of the list of chats.
   final PagingController<ChatsPagingState, Chat> _pagingController =
       PagingController(firstPageKey: const ChatsPagingState());
+
+  // Subscription to ChatsPagingState stream exposed by ChatBloc.
   late StreamSubscription _blocChatListingSubscription;
 
   @override
@@ -42,29 +45,14 @@ class _ChatListViewState extends State<ChatListView> {
         limit: ChatConstants.chatPageSize,
       ));
     });
-    // Subscription on stream on list of chats loaded.
+    // Subscription on stream on ChatsPagingState computed by bloc to update
+    // UI with new chats and the next paging state to be requested.
     _blocChatListingSubscription =
         bloc.chatListingsStream.listen((chatsPagingState) {
-      // final chats = chatsListing
-      //     .where((chat) => chat.isGroupChat == widget.isGroupChat)
-      //     .toList();
-      // chats.sort((a, b) => b.updateTime.compareTo(a.updateTime));
-      // final oldestChat = chats.isNotEmpty ? chats.last : null;
-
       _pagingController.value = PagingState(
         nextPageKey: widget.isGroupChat
             ? (!chatsPagingState.isOldestGroupChat ? chatsPagingState : null)
             : (!chatsPagingState.isOldestDirectChat ? chatsPagingState : null),
-        // widget.isGroupChat
-        //     ? bloc.state.chatsPagingState.copyWith(
-        //         oldestGroupChatId: chatsPagingState.oldestGroupChatId,
-        //         oldestGroupChatDateTime: oldestChat?.updateTime,
-        //         isOldestGroupChat:
-        //       )
-        //     : bloc.state.chatsPagingState.copyWith(
-        //         oldestDirectChatId: oldestChat?.id,
-        //         oldestDirectChatUpdateTime: oldestChat?.updateTime,
-        //       ),
         itemList: bloc.state.chatsById.values
             .where((chat) => chat.isGroupChat == widget.isGroupChat)
             .toList(),
