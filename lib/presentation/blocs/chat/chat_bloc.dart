@@ -3,7 +3,9 @@ import 'dart:async';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:formz/formz.dart';
 import 'package:injectable/injectable.dart';
+import 'package:rxdart/subjects.dart';
 import 'package:teams/app/di/di.dart';
+import 'package:teams/core/constants/chat_constants.dart';
 import 'package:teams/core/forms/chat.dart';
 import 'package:teams/domain/entities/chat.dart';
 import 'package:teams/domain/entities/message.dart';
@@ -58,7 +60,14 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
   final GetChats getChats;
   final GetMessages getMessages;
   final SendMessage sendMessage;
+
+  // Subscription to the chatUpdatesStream
   late final StreamSubscription<ChatUpdateStreamItem> chatUpdatesSubscription;
+
+  final _chatsListingController =
+      BehaviorSubject<ChatsPagingState>.seeded(const ChatsPagingState());
+  Stream<ChatsPagingState> get chatListingsStream =>
+      _chatsListingController.stream;
 
   void _addEventHandlers() {
     on<ChatGetChatsRequested>(_onGetChatsRequested);
@@ -85,14 +94,15 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
   }
 
   Map<DateTime, List<String>> _groupAndSortMessageIdsByDateTime(
-      Map<String, Message> messages) {
+      Map<String, Message> messages, String? chatId) {
     final messageIds = messages.keys.toList();
     Map<DateTime, List<String>> res = {};
     for (var msgId in messageIds) {
       final message = messages[msgId]!;
+      if (chatId != null && message.chatId != chatId) {
+        continue;
+      }
       final dateTime = getDateHourMin(message.sentTime);
-      // DateTime(message.sentTime.year, message.sentTime.month,
-      //     message.sentTime.day, message.sentTime.hour, message.sentTime.minute);
       res.putIfAbsent(dateTime, () => []);
       res[dateTime]!.add(message.id);
     }
@@ -145,40 +155,58 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
   ) async {
     try {
       // Signal to UI that loading of new chats is in-progress.
-      emit(state.copyWith(chatsLoadingStatus: ChatsLoadingStatus.inProgress));
+      // emit(state.copyWith(chatsLoadingStatus: ChatsLoadingStatus.inProgress));
       final newChats = await getChats(
         GetChatsParams(
+          groupChats: event.groupChats,
           beforeDateTime: event.beforeDateTime,
           beforeId: event.beforeChatId,
           limit: event.limit,
         ),
       );
-      // Combine new chats with existing and sort by update time and Id.
-      final sortedDmIds = _sortedChatIds([
-        ...newChats.where((chat) => !chat.isGroupChat),
-        ...state.chatsById.values.where((chat) => !chat.isGroupChat).toList(),
+
+      final sortedChatIds = _sortedChatIds([
+        ...newChats.where((chat) => chat.isGroupChat == event.groupChats),
+        ...state.chatsById.values
+            .where((chat) => chat.isGroupChat == event.groupChats)
+            .toList(),
       ]);
-      final sortedGroupChatIds = _sortedChatIds([
-        ...newChats.where((chat) => chat.isGroupChat),
-        ...state.chatsById.values.where((chat) => chat.isGroupChat).toList(),
-      ]);
+
+      final updatedChatsById = {
+        ...state.chatsById,
+        ...{for (var chat in newChats) chat.id: chat}
+      };
+
+      final oldestChat = sortedChatIds.isNotEmpty
+          ? updatedChatsById[sortedChatIds.last]
+          : null;
+
+      final newPagingState = event.groupChats
+          ? ChatsPagingState(
+              oldestGroupChatId: oldestChat?.id,
+              oldestGroupChatDateTime: oldestChat?.updateTime,
+              isOldestGroupChat:
+                  newChats.length < (event.limit ?? ChatConstants.chatPageSize),
+            )
+          : ChatsPagingState(
+              oldestDirectChatId: oldestChat?.id,
+              oldestDirectChatUpdateTime: oldestChat?.updateTime,
+              isOldestDirectChat:
+                  newChats.length < (event.limit ?? ChatConstants.chatPageSize),
+            );
+
+      // Emit chat listing update to stream
+      _chatsListingController.add(newPagingState);
+
       // Emit new state with additionally loaded chats.
       emit(state.copyWith(
-        chatsById: {
-          ...state.chatsById,
-          ...{for (var chat in newChats) chat.id: chat}
-        },
-        directMessageChats: sortedDmIds,
-        groupChats: sortedGroupChatIds,
-        lastDirectMessageChat: sortedDmIds.isNotEmpty ? sortedDmIds.last : null,
-        lastGroupChat:
-            sortedGroupChatIds.isNotEmpty ? sortedGroupChatIds.last : null,
-        chatsLoadingStatus: ChatsLoadingStatus.complete,
+        chatsById: updatedChatsById,
+        // chatsLoadingStatus: ChatsLoadingStatus.complete,
       ));
     } catch (e) {
       // Signal to UI that loading of new chats has fialed.
       emit(state.copyWith(
-        chatsLoadingStatus: ChatsLoadingStatus.failed,
+        // chatsLoadingStatus: ChatsLoadingStatus.failed,
         errorMessage: 'Error fetching Chats: ${e.toString()}',
       ));
     }
@@ -211,7 +239,7 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
         ...{for (var msg in newMessages) msg.id: msg},
       };
       final sortedMessagesGroupedByDateTime =
-          _groupAndSortMessageIdsByDateTime(allMessagesById);
+          _groupAndSortMessageIdsByDateTime(allMessagesById, event.chatId);
 
       emit(state.copyWith(
         messagesById: allMessagesById,
@@ -259,7 +287,7 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
               uploadStatus: MessageUploadStatus.uploadInProgress),
         };
         final sortedMessagesGroupedByDate =
-            _groupAndSortMessageIdsByDateTime(allMessagesById);
+            _groupAndSortMessageIdsByDateTime(allMessagesById, event.chatId);
 
         emit(state.copyWith(
           messagesById: allMessagesById,

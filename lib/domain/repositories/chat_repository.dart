@@ -23,9 +23,10 @@ abstract class ChatRepository {
     required String message,
   });
 
-  /// Get chats that a user is part of.
+  /// Get either the direct chats or the group chats that a user is part of.
   Future<List<Chat>?> getChats(
       {required String userId,
+      required bool groupChats,
       DateTime? beforeDateTime,
       String? beforeId,
       int? limit});
@@ -38,6 +39,12 @@ abstract class ChatRepository {
       int? limit});
 }
 
+/// The items yielded by a stream with updates on existing messages from the
+/// backend.
+/// For example, a message requested to be uploaded to the server with the
+/// uploadStatus set to uploadInProgress may be acked by the server after the
+/// updload, in which case the message held by the UI can be updated to have
+/// uploadStatus set to success.
 @freezed
 class ChatUpdateStreamItem with _$ChatUpdateStreamItem {
   const factory ChatUpdateStreamItem({
@@ -54,6 +61,11 @@ class ChatUpdateStreamItem with _$ChatUpdateStreamItem {
 }
 
 enum ChatUpdateType {
+  // Notifies that a new message requested to be uploaded has been successfully
+  // uploaded to the backend.
   newMessageUploadSuccess,
+
+  // Notifies that a new message requested to be uploaded has failed to
+  // upload to the backend.
   newMessageUploadFailure,
 }

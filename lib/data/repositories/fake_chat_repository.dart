@@ -18,10 +18,10 @@ Map<String, Chat> _generateChatsBetweenUsers(
     res[id] = Chat(
       id: id,
       userIds: userIds,
-      name: 'Chat$i',
+      name: userIds.length < 3 ? 'Chat$i' : 'GroupChat$i',
       createTime: DateTime(2022, 2, 1, 0, 0, 0, 0),
       updateTime: DateTime(2022, 2, 1, 0, 0, 0, i),
-      isGroupChat: false,
+      isGroupChat: userIds.length > 2,
     );
   }
   return res;
@@ -47,10 +47,20 @@ Map<String, Message> _generateMessagesInChats(
   return res;
 }
 
-Map<String, Chat> testChats = _generateChatsBetweenUsers(
-  ['nU7rIBOgJIQGcjVwleEedggSQEz1', 'GQR5MKaA1tN57YHZKJFhU98jXco1'],
-  100,
-);
+Map<String, Chat> testChats = {
+  ..._generateChatsBetweenUsers(
+    ['nU7rIBOgJIQGcjVwleEedggSQEz1', 'GQR5MKaA1tN57YHZKJFhU98jXco1'],
+    100,
+  ),
+  ..._generateChatsBetweenUsers(
+    [
+      'nU7rIBOgJIQGcjVwleEedggSQEz1',
+      'GQR5MKaA1tN57YHZKJFhU98jXco1',
+      'ORtAX6QeBrdCoHKF1bUeMjQWPIv1'
+    ],
+    100,
+  ),
+};
 Map<String, Message> testMessages = _generateMessagesInChats(testChats, 50);
 
 @LazySingleton(as: ChatRepository)
@@ -100,6 +110,7 @@ class FakeChatRepository implements ChatRepository, Disposable {
   @override
   Future<List<Chat>?> getChats({
     required String userId,
+    required bool groupChats,
     DateTime? beforeDateTime,
     String? beforeId,
     int? limit,
@@ -110,6 +121,9 @@ class FakeChatRepository implements ChatRepository, Disposable {
     if (userChats.isEmpty) {
       throw const ChatException(type: ChatExceptionType.userNotFound);
     }
+
+    // Filter by group or direct message chats.
+    userChats.retainWhere((element) => element.isGroupChat == groupChats);
 
     // Fliter by beforeDateTime
     if (beforeDateTime != null) {

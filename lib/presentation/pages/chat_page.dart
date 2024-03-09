@@ -28,7 +28,10 @@ class ChatPage extends StatelessWidget {
         ),
         body: const TabBarView(
           children: [
+            // Tab for direct messages with other users.
             _DirectChatsTab(),
+
+            // Tab for group chat between multiple users.
             _GroupChatsTab(),
           ],
         ),
@@ -44,7 +47,13 @@ class _GroupChatsTab extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<ChatBloc, ChatState>(
-      builder: (ctx, state) => ChatListView(chatIds: state.groupChats),
+      builder: (ctx, state) => ChatListView(
+        chatIds: state.chatsById.values
+            .where((chat) => chat.isGroupChat)
+            .map((chat) => chat.id)
+            .toList(),
+        isGroupChat: true,
+      ),
     );
   }
 }
@@ -56,14 +65,13 @@ class _DirectChatsTab extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocBuilder<ChatBloc, ChatState>(
       builder: (ctx, state) {
-        return state.chatsLoadingStatus == ChatsLoadingStatus.inProgress
-            ? const Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  CircularProgressIndicator(),
-                ],
-              )
-            : ChatListView(chatIds: state.directMessageChats);
+        return ChatListView(
+          chatIds: state.chatsById.values
+              .where((chat) => !chat.isGroupChat)
+              .map((chat) => chat.id)
+              .toList(),
+          isGroupChat: false,
+        );
       },
     );
   }
