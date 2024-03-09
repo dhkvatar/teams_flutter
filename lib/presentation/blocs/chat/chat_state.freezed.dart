@@ -32,8 +32,8 @@ mixin _$ChatState {
   String? get lastGroupChat =>
       throw _privateConstructorUsedError; // The paging state of loaded chats - the oldest chats retrieved for each
 // direct and group chat.
-  ChatsPagingState get chatsPagingState =>
-      throw _privateConstructorUsedError; // Map from Chat Id to the ID of the last message (earliest timestamp and smallest
+// @Default(ChatsPagingState()) ChatsPagingState chatsPagingState,
+// Map from Chat Id to the ID of the last message (earliest timestamp and smallest
 // Id) for each chat.
   Map<String, String?> get lastMessageByChat =>
       throw _privateConstructorUsedError; // The loading status of the messages on the chat details page.
@@ -71,7 +71,6 @@ abstract class $ChatStateCopyWith<$Res> {
       List<String> groupChats,
       String? lastDirectMessageChat,
       String? lastGroupChat,
-      ChatsPagingState chatsPagingState,
       Map<String, String?> lastMessageByChat,
       dynamic messagesLoadingStatus,
       Map<String, Message> messagesById,
@@ -81,8 +80,6 @@ abstract class $ChatStateCopyWith<$Res> {
       FormzSubmissionStatus formzStatus,
       bool isValid,
       String? errorMessage});
-
-  $ChatsPagingStateCopyWith<$Res> get chatsPagingState;
 }
 
 /// @nodoc
@@ -104,7 +101,6 @@ class _$ChatStateCopyWithImpl<$Res, $Val extends ChatState>
     Object? groupChats = null,
     Object? lastDirectMessageChat = freezed,
     Object? lastGroupChat = freezed,
-    Object? chatsPagingState = null,
     Object? lastMessageByChat = null,
     Object? messagesLoadingStatus = freezed,
     Object? messagesById = null,
@@ -140,10 +136,6 @@ class _$ChatStateCopyWithImpl<$Res, $Val extends ChatState>
           ? _value.lastGroupChat
           : lastGroupChat // ignore: cast_nullable_to_non_nullable
               as String?,
-      chatsPagingState: null == chatsPagingState
-          ? _value.chatsPagingState
-          : chatsPagingState // ignore: cast_nullable_to_non_nullable
-              as ChatsPagingState,
       lastMessageByChat: null == lastMessageByChat
           ? _value.lastMessageByChat
           : lastMessageByChat // ignore: cast_nullable_to_non_nullable
@@ -182,14 +174,6 @@ class _$ChatStateCopyWithImpl<$Res, $Val extends ChatState>
               as String?,
     ) as $Val);
   }
-
-  @override
-  @pragma('vm:prefer-inline')
-  $ChatsPagingStateCopyWith<$Res> get chatsPagingState {
-    return $ChatsPagingStateCopyWith<$Res>(_value.chatsPagingState, (value) {
-      return _then(_value.copyWith(chatsPagingState: value) as $Val);
-    });
-  }
 }
 
 /// @nodoc
@@ -207,7 +191,6 @@ abstract class _$$ChatStateImplCopyWith<$Res>
       List<String> groupChats,
       String? lastDirectMessageChat,
       String? lastGroupChat,
-      ChatsPagingState chatsPagingState,
       Map<String, String?> lastMessageByChat,
       dynamic messagesLoadingStatus,
       Map<String, Message> messagesById,
@@ -217,9 +200,6 @@ abstract class _$$ChatStateImplCopyWith<$Res>
       FormzSubmissionStatus formzStatus,
       bool isValid,
       String? errorMessage});
-
-  @override
-  $ChatsPagingStateCopyWith<$Res> get chatsPagingState;
 }
 
 /// @nodoc
@@ -239,7 +219,6 @@ class __$$ChatStateImplCopyWithImpl<$Res>
     Object? groupChats = null,
     Object? lastDirectMessageChat = freezed,
     Object? lastGroupChat = freezed,
-    Object? chatsPagingState = null,
     Object? lastMessageByChat = null,
     Object? messagesLoadingStatus = freezed,
     Object? messagesById = null,
@@ -274,10 +253,6 @@ class __$$ChatStateImplCopyWithImpl<$Res>
           ? _value.lastGroupChat
           : lastGroupChat // ignore: cast_nullable_to_non_nullable
               as String?,
-      chatsPagingState: null == chatsPagingState
-          ? _value.chatsPagingState
-          : chatsPagingState // ignore: cast_nullable_to_non_nullable
-              as ChatsPagingState,
       lastMessageByChat: null == lastMessageByChat
           ? _value._lastMessageByChat
           : lastMessageByChat // ignore: cast_nullable_to_non_nullable
@@ -327,7 +302,6 @@ class _$ChatStateImpl implements _ChatState {
       final List<String> groupChats = const [],
       this.lastDirectMessageChat,
       this.lastGroupChat,
-      this.chatsPagingState = const ChatsPagingState(),
       final Map<String, String?> lastMessageByChat = const {},
       this.messagesLoadingStatus = MessagesLoadingStatus.complete,
       final Map<String, Message> messagesById = const {},
@@ -394,12 +368,13 @@ class _$ChatStateImpl implements _ChatState {
   final String? lastGroupChat;
 // The paging state of loaded chats - the oldest chats retrieved for each
 // direct and group chat.
-  @override
-  @JsonKey()
-  final ChatsPagingState chatsPagingState;
+// @Default(ChatsPagingState()) ChatsPagingState chatsPagingState,
 // Map from Chat Id to the ID of the last message (earliest timestamp and smallest
 // Id) for each chat.
   final Map<String, String?> _lastMessageByChat;
+// The paging state of loaded chats - the oldest chats retrieved for each
+// direct and group chat.
+// @Default(ChatsPagingState()) ChatsPagingState chatsPagingState,
 // Map from Chat Id to the ID of the last message (earliest timestamp and smallest
 // Id) for each chat.
   @override
@@ -469,7 +444,7 @@ class _$ChatStateImpl implements _ChatState {
 
   @override
   String toString() {
-    return 'ChatState(chatsLoadingStatus: $chatsLoadingStatus, chatsById: $chatsById, directMessageChats: $directMessageChats, groupChats: $groupChats, lastDirectMessageChat: $lastDirectMessageChat, lastGroupChat: $lastGroupChat, chatsPagingState: $chatsPagingState, lastMessageByChat: $lastMessageByChat, messagesLoadingStatus: $messagesLoadingStatus, messagesById: $messagesById, chatMessagesByDateTime: $chatMessagesByDateTime, lastChatAccess: $lastChatAccess, chatInput: $chatInput, formzStatus: $formzStatus, isValid: $isValid, errorMessage: $errorMessage)';
+    return 'ChatState(chatsLoadingStatus: $chatsLoadingStatus, chatsById: $chatsById, directMessageChats: $directMessageChats, groupChats: $groupChats, lastDirectMessageChat: $lastDirectMessageChat, lastGroupChat: $lastGroupChat, lastMessageByChat: $lastMessageByChat, messagesLoadingStatus: $messagesLoadingStatus, messagesById: $messagesById, chatMessagesByDateTime: $chatMessagesByDateTime, lastChatAccess: $lastChatAccess, chatInput: $chatInput, formzStatus: $formzStatus, isValid: $isValid, errorMessage: $errorMessage)';
   }
 
   @override
@@ -489,8 +464,6 @@ class _$ChatStateImpl implements _ChatState {
                 other.lastDirectMessageChat == lastDirectMessageChat) &&
             (identical(other.lastGroupChat, lastGroupChat) ||
                 other.lastGroupChat == lastGroupChat) &&
-            (identical(other.chatsPagingState, chatsPagingState) ||
-                other.chatsPagingState == chatsPagingState) &&
             const DeepCollectionEquality()
                 .equals(other._lastMessageByChat, _lastMessageByChat) &&
             const DeepCollectionEquality()
@@ -519,7 +492,6 @@ class _$ChatStateImpl implements _ChatState {
       const DeepCollectionEquality().hash(_groupChats),
       lastDirectMessageChat,
       lastGroupChat,
-      chatsPagingState,
       const DeepCollectionEquality().hash(_lastMessageByChat),
       const DeepCollectionEquality().hash(messagesLoadingStatus),
       const DeepCollectionEquality().hash(_messagesById),
@@ -545,7 +517,6 @@ abstract class _ChatState implements ChatState {
       final List<String> groupChats,
       final String? lastDirectMessageChat,
       final String? lastGroupChat,
-      final ChatsPagingState chatsPagingState,
       final Map<String, String?> lastMessageByChat,
       final dynamic messagesLoadingStatus,
       final Map<String, Message> messagesById,
@@ -572,8 +543,8 @@ abstract class _ChatState implements ChatState {
   String? get lastGroupChat;
   @override // The paging state of loaded chats - the oldest chats retrieved for each
 // direct and group chat.
-  ChatsPagingState get chatsPagingState;
-  @override // Map from Chat Id to the ID of the last message (earliest timestamp and smallest
+// @Default(ChatsPagingState()) ChatsPagingState chatsPagingState,
+// Map from Chat Id to the ID of the last message (earliest timestamp and smallest
 // Id) for each chat.
   Map<String, String?> get lastMessageByChat;
   @override // The loading status of the messages on the chat details page.

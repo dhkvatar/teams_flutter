@@ -193,29 +193,43 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
           ? updatedChatsById[sortedChatIds.last]
           : null;
 
+      final newPagingState = event.groupChats
+          ? ChatsPagingState(
+              oldestGroupChatId: oldestChat?.id,
+              oldestGroupChatDateTime: oldestChat?.updateTime,
+              isOldestGroupChat:
+                  newChats.length < (event.limit ?? ChatConstants.chatPageSize),
+            )
+          : ChatsPagingState(
+              oldestDirectChatId: oldestChat?.id,
+              oldestDirectChatUpdateTime: oldestChat?.updateTime,
+              isOldestDirectChat:
+                  newChats.length < (event.limit ?? ChatConstants.chatPageSize),
+            );
+
       // Emit chat listing update to stream
-      _chatsListingController.add(
-        state.chatsPagingState.copyWith(
-          oldestDirectChatId: event.groupChats
-              ? state.chatsPagingState.oldestDirectChatId
-              : oldestChat?.id,
-          oldestDirectChatUpdateTime: event.groupChats
-              ? state.chatsPagingState.oldestDirectChatUpdateTime
-              : oldestChat?.updateTime,
-          oldestGroupChatId: event.groupChats
-              ? oldestChat?.id
-              : state.chatsPagingState.oldestGroupChatId,
-          oldestGroupChatDateTime: event.groupChats
-              ? oldestChat?.updateTime
-              : state.chatsPagingState.oldestGroupChatDateTime,
-          isOldestDirectChat: event.groupChats
-              ? state.chatsPagingState.isOldestDirectChat
-              : newChats.length < (event.limit ?? ChatConstants.chatPageSize),
-          isOldestGroupChat: event.groupChats
-              ? newChats.length < (event.limit ?? ChatConstants.chatPageSize)
-              : state.chatsPagingState.isOldestGroupChat,
-        ),
-      );
+      _chatsListingController.add(newPagingState
+          // state.chatsPagingState.copyWith(
+          //   oldestDirectChatId: event.groupChats
+          //       ? state.chatsPagingState.oldestDirectChatId
+          //       : oldestChat?.id,
+          //   oldestDirectChatUpdateTime: event.groupChats
+          //       ? state.chatsPagingState.oldestDirectChatUpdateTime
+          //       : oldestChat?.updateTime,
+          //   oldestGroupChatId: event.groupChats
+          //       ? oldestChat?.id
+          //       : state.chatsPagingState.oldestGroupChatId,
+          //   oldestGroupChatDateTime: event.groupChats
+          //       ? oldestChat?.updateTime
+          //       : state.chatsPagingState.oldestGroupChatDateTime,
+          //   isOldestDirectChat: event.groupChats
+          //       ? state.chatsPagingState.isOldestDirectChat
+          //       : newChats.length < (event.limit ?? ChatConstants.chatPageSize),
+          //   isOldestGroupChat: event.groupChats
+          //       ? newChats.length < (event.limit ?? ChatConstants.chatPageSize)
+          //       : state.chatsPagingState.isOldestGroupChat,
+          // ),
+          );
 
       // Emit new state with additionally loaded chats.
       emit(state.copyWith(

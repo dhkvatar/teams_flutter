@@ -29,10 +29,6 @@ class ChatState with _$ChatState {
     // with the smallest Id in groupChats.
     String? lastGroupChat,
 
-    // The paging state of loaded chats - the oldest chats retrieved for each
-    // direct and group chat.
-    @Default(ChatsPagingState()) ChatsPagingState chatsPagingState,
-
     // Map from Chat Id to the ID of the last message (earliest timestamp and smallest
     // Id) for each chat.
     @Default({}) Map<String, String?> lastMessageByChat,
@@ -65,6 +61,8 @@ class ChatState with _$ChatState {
   }) = _ChatState;
 }
 
+// The paging state of loaded chats - the oldest chats retrieved for each
+// direct and group chat.
 @freezed
 class ChatsPagingState with _$ChatsPagingState {
   const factory ChatsPagingState({
