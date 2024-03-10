@@ -16,7 +16,6 @@ import 'package:teams/domain/usecases/chat/get_messages.dart';
 import 'package:teams/domain/usecases/chat/send_message.dart';
 import 'package:teams/presentation/blocs/chat/chat_event.dart';
 import 'package:teams/presentation/blocs/chat/chat_state.dart';
-import 'package:teams/presentation/ui/utils/date_time_utils.dart';
 
 @injectable
 class ChatBloc extends Bloc<ChatEvent, ChatState> {
@@ -101,34 +100,6 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
     on<ChatMessageInputChanged>(_onMessageInputChanged);
     on<ChatSendMessageRequested>(_onSendMessageRequested);
     on<ChatUpdateStreamReceived>(_onUpdateStreamReceived);
-  }
-
-  Map<DateTime, List<String>> _groupAndSortMessageIdsByDateTime(
-      Map<String, Message> messages, String? chatId) {
-    final messageIds = messages.keys.toList();
-    Map<DateTime, List<String>> res = {};
-    for (var msgId in messageIds) {
-      final message = messages[msgId]!;
-      if (chatId != null && message.chatId != chatId) {
-        continue;
-      }
-      final dateTime = getDateHourMin(message.sentTime);
-      res.putIfAbsent(dateTime, () => []);
-      res[dateTime]!.add(message.id);
-    }
-
-    res.forEach((dateTime, messagesForDateTime) {
-      messagesForDateTime.sort((a, b) {
-        final msgA = messages[a]!;
-        final msgB = messages[b]!;
-        final timeComparison = msgA.sentTime.compareTo(msgB.sentTime);
-        if (timeComparison == 0) {
-          return msgA.id.compareTo(msgB.id);
-        }
-        return timeComparison;
-      });
-    });
-    return res;
   }
 
   Future<void> _onUpdateStreamReceived(
@@ -253,8 +224,6 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
         ...state.messagesById,
         ...{for (var msg in newMessages) msg.id: msg},
       };
-      final sortedMessagesGroupedByDateTime =
-          _groupAndSortMessageIdsByDateTime(allMessagesById, event.chatId);
 
       // get paging here
       final messagesForChat = allMessagesById.values
@@ -280,10 +249,6 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
       // Emit new ChatState.
       emit(state.copyWith(
         messagesById: allMessagesById,
-        chatMessagesByDateTime: {
-          ...state.chatMessagesByDateTime,
-          event.chatId: sortedMessagesGroupedByDateTime
-        },
         lastChatAccess: {...state.lastChatAccess, event.chatId: DateTime.now()},
       ));
     } catch (e) {
@@ -314,16 +279,10 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
           sentMessage.id: sentMessage.copyWith(
               uploadStatus: MessageUploadStatus.uploadInProgress),
         };
-        final sortedMessagesGroupedByDate =
-            _groupAndSortMessageIdsByDateTime(allMessagesById, event.chatId);
 
         emit(state.copyWith(
           messagesById: allMessagesById,
           chatInput: const ChatInput.pure(),
-          chatMessagesByDateTime: {
-            ...state.chatMessagesByDateTime,
-            event.chatId: sortedMessagesGroupedByDate,
-          },
           formzStatus: FormzSubmissionStatus.success,
           isValid: false,
         ));
