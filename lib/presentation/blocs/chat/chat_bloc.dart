@@ -100,6 +100,7 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
     on<ChatMessageInputChanged>(_onMessageInputChanged);
     on<ChatSendMessageRequested>(_onSendMessageRequested);
     on<ChatUpdateStreamReceived>(_onUpdateStreamReceived);
+    on<ChatResetChatInputRequested>(_onResetChatInputRequested);
   }
 
   Future<void> _onUpdateStreamReceived(
@@ -158,7 +159,6 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
   ) async {
     try {
       // Signal to UI that loading of new chats is in-progress.
-      // emit(state.copyWith(chatsLoadingStatus: ChatsLoadingStatus.inProgress));
       final newChats = await getChats(
         GetChatsParams(
           groupChats: event.groupChats,
@@ -305,5 +305,14 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
   Future<void> close() {
     chatUpdatesSubscription.cancel();
     return super.close();
+  }
+
+  Future<void> _onResetChatInputRequested(
+      ChatResetChatInputRequested event, Emitter<ChatState> emit) async {
+    emit(state.copyWith(
+      chatInput: const ChatInput.pure(),
+      formzStatus: FormzSubmissionStatus.initial,
+      isValid: false,
+    ));
   }
 }
