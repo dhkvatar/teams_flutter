@@ -223,12 +223,12 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
         ...{for (var msg in newMessages) msg.id: msg},
       };
 
-      // get paging here
       final messagesForChat = allMessagesById.values
           .where((msg) => msg.chatId == event.chatId)
           .toList();
       messagesForChat.sort((a, b) => a.sentTime.compareTo(b.sentTime));
 
+      // Update the paging state.
       final newPagingState = MessagesPagingState(
         chatId: event.chatId,
         oldestMessageId: messagesForChat.first.id,
@@ -237,10 +237,7 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
             newMessages.length < (event.limit ?? ChatConstants.chatPageSize),
         messages: {for (var msg in messagesForChat) msg.id: msg},
       );
-
-      // Yield new paging state.
       _messagesListingController.add(newPagingState);
-      // Store the paging state.
       _messagesPagingStateByChatId[event.chatId] = newPagingState;
 
       // Emit new ChatState.
