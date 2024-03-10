@@ -88,6 +88,7 @@ class _ChatDetailsPageState extends State<ChatDetailsPage> {
                 reverse: true,
                 pagingController: _pagingController,
                 builderDelegate: PagedChildBuilderDelegate<Message>(
+                  animateTransitions: true,
                   itemBuilder: (context, item, index) {
                     final numItems = _pagingController.itemList?.length ?? 0;
                     final nextDateTime = (index + 1 < numItems)

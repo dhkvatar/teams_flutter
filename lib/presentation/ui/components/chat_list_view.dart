@@ -69,6 +69,7 @@ class _ChatListViewState extends State<ChatListView> {
     return PagedListView(
       pagingController: _pagingController,
       builderDelegate: PagedChildBuilderDelegate<Chat>(
+        animateTransitions: true,
         itemBuilder: (context, item, index) => ChatListItem(chatId: item.id),
       ),
     );
