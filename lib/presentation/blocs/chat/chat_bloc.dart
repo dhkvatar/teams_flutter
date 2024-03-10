@@ -103,22 +103,6 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
     on<ChatUpdateStreamReceived>(_onUpdateStreamReceived);
   }
 
-  List<String> _sortedChatIds(List<Chat> chats) {
-    chats.sort((a, b) {
-      int timeComparison = b.updateTime.compareTo(a.updateTime);
-      if (timeComparison == 0) {
-        return b.id.compareTo(a.id);
-      }
-      return timeComparison;
-    });
-
-    List<String> res = [];
-    for (int i = 0; i < chats.length; i++) {
-      res.add(chats.elementAt(i).id);
-    }
-    return res;
-  }
-
   Map<DateTime, List<String>> _groupAndSortMessageIdsByDateTime(
       Map<String, Message> messages, String? chatId) {
     final messageIds = messages.keys.toList();
@@ -149,30 +133,52 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
 
   Future<void> _onUpdateStreamReceived(
       ChatUpdateStreamReceived event, Emitter<ChatState> emit) async {
+    final newMsgId = event.update.newMessageId!;
+    final msg = state.messagesById[newMsgId]!;
+    Message newMsg;
+
     switch (event.update.updateType) {
       case ChatUpdateType.newMessageUploadSuccess:
-        final newMsgId = event.update.newMessageId!;
+        newMsg = msg.copyWith(uploadStatus: MessageUploadStatus.success);
         emit(
           state.copyWith(
-            messagesById: {
-              ...state.messagesById,
-              newMsgId: state.messagesById[newMsgId]!
-                  .copyWith(uploadStatus: MessageUploadStatus.success),
-            },
+            messagesById: {...state.messagesById, newMsgId: newMsg},
           ),
         );
+
       case ChatUpdateType.newMessageUploadFailure:
-        final newMsgId = event.update.newMessageId!;
+        newMsg = msg.copyWith(uploadStatus: MessageUploadStatus.timeout);
         emit(
           state.copyWith(
             messagesById: {
               ...state.messagesById,
-              newMsgId: state.messagesById[newMsgId]!
-                  .copyWith(uploadStatus: MessageUploadStatus.timeout),
+              newMsgId: newMsg,
             },
           ),
         );
     }
+    final curMessagePagingState =
+        _messagesPagingStateByChatId[event.update.chatId]!;
+    final newMessagePagingState = curMessagePagingState.copyWith(
+      messages: {
+        ...curMessagePagingState.messages,
+        newMsgId: newMsg,
+      },
+    );
+    _messagesListingController.add(newMessagePagingState);
+    _messagesPagingStateByChatId[event.update.chatId] = newMessagePagingState;
+  }
+
+  Chat? _getOldestChatWithSmallestId(List<Chat> chats) {
+    if (chats.isEmpty) {
+      return null;
+    }
+    chats.sort((a, b) => a.updateTime.compareTo(b.updateTime));
+    final oldestDateTime = chats.first.updateTime;
+    final oldestChats =
+        chats.where((chat) => chat.updateTime == oldestDateTime).toList();
+    oldestChats.sort((a, b) => a.id.compareTo(b.id));
+    return oldestChats.first;
   }
 
   Future<void> _onGetChatsRequested(
@@ -191,21 +197,13 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
         ),
       );
 
-      final sortedChatIds = _sortedChatIds([
-        ...newChats.where((chat) => chat.isGroupChat == event.groupChats),
-        ...state.chatsById.values
-            .where((chat) => chat.isGroupChat == event.groupChats)
-            .toList(),
-      ]);
-
       final updatedChatsById = {
         ...state.chatsById,
         ...{for (var chat in newChats) chat.id: chat}
       };
 
-      final oldestChat = sortedChatIds.isNotEmpty
-          ? updatedChatsById[sortedChatIds.last]
-          : null;
+      final oldestChat =
+          _getOldestChatWithSmallestId(updatedChatsById.values.toList());
 
       final newPagingState = event.groupChats
           ? ChatsPagingState(
@@ -279,10 +277,14 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
         oldestMessageSentTime: messagesForChat.first.sentTime,
         isOldestMessage:
             newMessages.length < (event.limit ?? ChatConstants.chatPageSize),
+        messages: {for (var msg in messagesForChat) msg.id: msg},
+        // messages: messagesForChat,
       );
 
       // Yield new paging state.
       _messagesListingController.add(newPagingState);
+      // Store the paging state.
+      _messagesPagingStateByChatId[event.chatId] = newPagingState;
 
       // Emit new ChatState.
       emit(state.copyWith(
@@ -347,6 +349,17 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
           formzStatus: FormzSubmissionStatus.success,
           isValid: false,
         ));
+
+        // Update paging state.
+        final newPagingState =
+            _messagesPagingStateByChatId[event.chatId]!.copyWith(
+          messages: {
+            ..._messagesPagingStateByChatId[event.chatId]!.messages,
+            sentMessage.id: sentMessage,
+          },
+        );
+        _messagesListingController.add(newPagingState);
+        _messagesPagingStateByChatId[event.chatId] = newPagingState;
       } catch (e) {
         emit(state.copyWith(
           formzStatus: FormzSubmissionStatus.failure,

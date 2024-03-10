@@ -32,6 +32,7 @@ class _ChatListViewState extends State<ChatListView> {
   @override
   void initState() {
     final bloc = context.read<ChatBloc>();
+
     // New paging requests sent to the ChatBloc.
     _pagingController.addPageRequestListener((pageKey) {
       bloc.add(ChatGetChatsRequested(
@@ -45,6 +46,7 @@ class _ChatListViewState extends State<ChatListView> {
         limit: ChatConstants.chatPageSize,
       ));
     });
+
     // Subscription on stream on ChatsPagingState computed by bloc to update
     // UI with new chats and the next paging state to be requested.
     _blocChatListingSubscription =

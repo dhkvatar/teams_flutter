@@ -1,7 +1,12 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
 import 'package:intl/intl.dart';
 import 'package:teams/app/di/di.dart';
+import 'package:teams/core/constants/chat_constants.dart';
+import 'package:teams/domain/entities/message.dart';
 import 'package:teams/domain/usecases/authentication/get_current_user.dart';
 import 'package:teams/presentation/blocs/chat/chat_bloc.dart';
 import 'package:teams/presentation/blocs/chat/chat_event.dart';
@@ -9,32 +14,113 @@ import 'package:teams/presentation/blocs/chat/chat_state.dart';
 import 'package:teams/presentation/ui/components/message_list_item.dart';
 import 'package:teams/presentation/ui/utils/date_time_utils.dart';
 
-class ChatDetailsPage extends StatelessWidget {
-  ChatDetailsPage({super.key, required this.chatId});
+class ChatDetailsPage extends StatefulWidget {
+  const ChatDetailsPage({super.key, required this.chatId});
 
   // The Id of the Chat the page displays.
   final String chatId;
 
+  @override
+  State<ChatDetailsPage> createState() => _ChatDetailsPageState();
+}
+
+class _ChatDetailsPageState extends State<ChatDetailsPage> {
   // The controller for message text input.
   final _chatInputController = TextEditingController();
+
+  // Controller for scrolling and pagination of the list of messages.
+  late final PagingController<MessagesPagingState, Message> _pagingController;
+
+  // Subscription to MessagesPagingState stream exposed by ChatBloc.
+  late StreamSubscription _blocMessagesPagingStateSubscription;
+
+  @override
+  void initState() {
+    final bloc = context.read<ChatBloc>();
+    _pagingController = PagingController(
+        firstPageKey: MessagesPagingState(chatId: widget.chatId));
+    _pagingController.addPageRequestListener((pageKey) {
+      // New paging requests sent to the ChatBloc.
+      bloc.add(ChatGetMessagesRequested(
+        chatId: widget.chatId,
+        beforeMessageId: pageKey.oldestMessageId,
+        beforeDateTime: pageKey.oldestMessageSentTime,
+        limit: ChatConstants.messagePageSize,
+      ));
+    });
+
+    // Subscription on stream on MessagesPagingState computed by bloc to update
+    // UI with new messages and the next paging state to be requested.
+    _blocMessagesPagingStateSubscription = bloc
+        .getMessagesPagingStateStreamForChat(widget.chatId)
+        .listen((messagesPagingState) {
+      final newItemList = messagesPagingState.messages.values.toList();
+      newItemList.sort((a, b) => b.sentTime.compareTo(a.sentTime));
+      _pagingController.value = PagingState(
+        nextPageKey:
+            messagesPagingState.isOldestMessage ? null : messagesPagingState,
+        itemList: newItemList,
+      );
+    });
+
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
     return SafeArea(
       child: Scaffold(
         appBar: AppBar(
-          title: Text('ChatDetailsPage: $chatId'),
+          title: Text('ChatDetailsPage: ${widget.chatId}'),
         ),
         body: Column(
           mainAxisAlignment: MainAxisAlignment.end,
           children: [
             // The list of messages.
-            _MessagesList(chatId),
+            // _MessagesList(widget.chatId),
+            Expanded(
+              child: PagedListView(
+                reverse: true,
+                pagingController: _pagingController,
+                builderDelegate: PagedChildBuilderDelegate<Message>(
+                  itemBuilder: (context, item, index) {
+                    final numItems = _pagingController.itemList?.length ?? 0;
+                    final nextDateTime = (index + 1 < numItems)
+                        ? _pagingController.itemList![index + 1].sentTime
+                        : null;
+                    final prevDateTime = (index > 0)
+                        ? _pagingController.itemList![index - 1].sentTime
+                        : null;
+                    return Column(
+                      children: [
+                        // The date of the message.
+                        // Displays only once on the top for consecutive messages
+                        // with the same date.
+                        if ((index == numItems - 1) ||
+                            (nextDateTime != null &&
+                                getYMD(nextDateTime) != getYMD(item.sentTime)))
+                          Text(DateFormat('EEEE, yyyy-MM-dd')
+                              .format(item.sentTime)),
+
+                        // The message.
+                        MessageListItem(
+                          message: item,
+                          userId: getIt<GetCurrentUser>()()!.id,
+                          printTime: prevDateTime == null ||
+                              getYMDhm(prevDateTime) != getYMDhm(item.sentTime),
+                        ),
+                      ],
+                    );
+                  },
+                ),
+              ),
+            ),
+
             const SizedBox(height: 10),
 
             // Bottom message input text field.
             _MessageInput(
-              chatId: chatId,
+              chatId: widget.chatId,
               chatInputController: _chatInputController,
             ),
           ],
@@ -42,73 +128,11 @@ class ChatDetailsPage extends StatelessWidget {
       ),
     );
   }
-}
-
-class _MessagesList extends StatelessWidget {
-  const _MessagesList(this.chatId);
-
-  final String chatId;
 
   @override
-  Widget build(BuildContext context) {
-    return BlocBuilder<ChatBloc, ChatState>(
-      builder: (ctx, state) {
-        final messagesByDateTime =
-            context.read<ChatBloc>().state.chatMessagesByDateTime[chatId] ?? {};
-
-        if (state.messagesLoadingStatus == MessagesLoadingStatus.inProgress) {
-          return const CircularProgressIndicator();
-        }
-        // Get all dates for messages
-        final dateKeys =
-            Set.from(messagesByDateTime.keys.map((dt) => getYMD(dt))).toList();
-        dateKeys.sort((a, b) => b.compareTo(a));
-        // Get all keys of messagesByDateTime grouped by dates
-        final timeKeysByDate = {
-          for (var dateKey in dateKeys)
-            dateKey: messagesByDateTime.keys
-                .where((dt) => getYMD(dt) == dateKey)
-                .toList(),
-        };
-        for (var timeKeys in timeKeysByDate.values) {
-          timeKeys.sort((a, b) => b.compareTo(a));
-        }
-
-        return Expanded(
-          // Messages grouped by date
-          child: ListView.builder(
-            reverse: true,
-            itemBuilder: (ctx, dateIndex) {
-              final dateKey = dateKeys.elementAt(dateIndex);
-              final timeKeys = timeKeysByDate[dateKey] ?? [];
-              return Column(
-                children: [
-                  Text(DateFormat('EEEE, yyyy-MM-dd').format(dateKey)),
-                  ListView.builder(
-                    shrinkWrap: true,
-                    physics: const NeverScrollableScrollPhysics(),
-                    itemBuilder: (ctx, timeIndex) {
-                      final timeKey = timeKeys.elementAt(timeIndex);
-                      return Column(
-                        children: messagesByDateTime[timeKey]!.map((messageId) {
-                          return MessageListItem(
-                              message: state.messagesById[messageId]!,
-                              userId: getIt<GetCurrentUser>()()!.id,
-                              printTime: messageId ==
-                                  messagesByDateTime[timeKey]!.last);
-                        }).toList(),
-                      );
-                    },
-                    itemCount: timeKeys.length,
-                  ),
-                ],
-              );
-            },
-            itemCount: dateKeys.length,
-          ),
-        );
-      },
-    );
+  void dispose() {
+    _blocMessagesPagingStateSubscription.cancel();
+    super.dispose();
   }
 }
 

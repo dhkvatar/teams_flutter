@@ -85,6 +85,9 @@ class MessagesPagingState with _$MessagesPagingState {
 
     // Whether the current oldestMessageId is the oldest message in the chat.
     @Default(false) bool isOldestMessage,
+
+    // The messages loaded for the chat over all pages, sorted.
+    @Default({}) Map<String, Message> messages,
   }) = _MessagesPagingState;
 }
 

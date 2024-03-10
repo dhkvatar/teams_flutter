@@ -674,7 +674,9 @@ mixin _$MessagesPagingState {
       throw _privateConstructorUsedError; // The sent time of the oldest message for the chat.
   DateTime? get oldestMessageSentTime =>
       throw _privateConstructorUsedError; // Whether the current oldestMessageId is the oldest message in the chat.
-  bool get isOldestMessage => throw _privateConstructorUsedError;
+  bool get isOldestMessage =>
+      throw _privateConstructorUsedError; // The messages loaded for the chat over all pages, sorted.
+  Map<String, Message> get messages => throw _privateConstructorUsedError;
 
   @JsonKey(ignore: true)
   $MessagesPagingStateCopyWith<MessagesPagingState> get copyWith =>
@@ -691,7 +693,8 @@ abstract class $MessagesPagingStateCopyWith<$Res> {
       {String chatId,
       String? oldestMessageId,
       DateTime? oldestMessageSentTime,
-      bool isOldestMessage});
+      bool isOldestMessage,
+      Map<String, Message> messages});
 }
 
 /// @nodoc
@@ -711,6 +714,7 @@ class _$MessagesPagingStateCopyWithImpl<$Res, $Val extends MessagesPagingState>
     Object? oldestMessageId = freezed,
     Object? oldestMessageSentTime = freezed,
     Object? isOldestMessage = null,
+    Object? messages = null,
   }) {
     return _then(_value.copyWith(
       chatId: null == chatId
@@ -729,6 +733,10 @@ class _$MessagesPagingStateCopyWithImpl<$Res, $Val extends MessagesPagingState>
           ? _value.isOldestMessage
           : isOldestMessage // ignore: cast_nullable_to_non_nullable
               as bool,
+      messages: null == messages
+          ? _value.messages
+          : messages // ignore: cast_nullable_to_non_nullable
+              as Map<String, Message>,
     ) as $Val);
   }
 }
@@ -745,7 +753,8 @@ abstract class _$$MessagesPagingStateImplCopyWith<$Res>
       {String chatId,
       String? oldestMessageId,
       DateTime? oldestMessageSentTime,
-      bool isOldestMessage});
+      bool isOldestMessage,
+      Map<String, Message> messages});
 }
 
 /// @nodoc
@@ -763,6 +772,7 @@ class __$$MessagesPagingStateImplCopyWithImpl<$Res>
     Object? oldestMessageId = freezed,
     Object? oldestMessageSentTime = freezed,
     Object? isOldestMessage = null,
+    Object? messages = null,
   }) {
     return _then(_$MessagesPagingStateImpl(
       chatId: null == chatId
@@ -781,6 +791,10 @@ class __$$MessagesPagingStateImplCopyWithImpl<$Res>
           ? _value.isOldestMessage
           : isOldestMessage // ignore: cast_nullable_to_non_nullable
               as bool,
+      messages: null == messages
+          ? _value._messages
+          : messages // ignore: cast_nullable_to_non_nullable
+              as Map<String, Message>,
     ));
   }
 }
@@ -792,7 +806,9 @@ class _$MessagesPagingStateImpl implements _MessagesPagingState {
       {required this.chatId,
       this.oldestMessageId,
       this.oldestMessageSentTime,
-      this.isOldestMessage = false});
+      this.isOldestMessage = false,
+      final Map<String, Message> messages = const {}})
+      : _messages = messages;
 
 // The Id of the Chat that the state represents.
   @override
@@ -807,10 +823,20 @@ class _$MessagesPagingStateImpl implements _MessagesPagingState {
   @override
   @JsonKey()
   final bool isOldestMessage;
+// The messages loaded for the chat over all pages, sorted.
+  final Map<String, Message> _messages;
+// The messages loaded for the chat over all pages, sorted.
+  @override
+  @JsonKey()
+  Map<String, Message> get messages {
+    if (_messages is EqualUnmodifiableMapView) return _messages;
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableMapView(_messages);
+  }
 
   @override
   String toString() {
-    return 'MessagesPagingState(chatId: $chatId, oldestMessageId: $oldestMessageId, oldestMessageSentTime: $oldestMessageSentTime, isOldestMessage: $isOldestMessage)';
+    return 'MessagesPagingState(chatId: $chatId, oldestMessageId: $oldestMessageId, oldestMessageSentTime: $oldestMessageSentTime, isOldestMessage: $isOldestMessage, messages: $messages)';
   }
 
   @override
@@ -824,12 +850,18 @@ class _$MessagesPagingStateImpl implements _MessagesPagingState {
             (identical(other.oldestMessageSentTime, oldestMessageSentTime) ||
                 other.oldestMessageSentTime == oldestMessageSentTime) &&
             (identical(other.isOldestMessage, isOldestMessage) ||
-                other.isOldestMessage == isOldestMessage));
+                other.isOldestMessage == isOldestMessage) &&
+            const DeepCollectionEquality().equals(other._messages, _messages));
   }
 
   @override
-  int get hashCode => Object.hash(runtimeType, chatId, oldestMessageId,
-      oldestMessageSentTime, isOldestMessage);
+  int get hashCode => Object.hash(
+      runtimeType,
+      chatId,
+      oldestMessageId,
+      oldestMessageSentTime,
+      isOldestMessage,
+      const DeepCollectionEquality().hash(_messages));
 
   @JsonKey(ignore: true)
   @override
@@ -844,7 +876,8 @@ abstract class _MessagesPagingState implements MessagesPagingState {
       {required final String chatId,
       final String? oldestMessageId,
       final DateTime? oldestMessageSentTime,
-      final bool isOldestMessage}) = _$MessagesPagingStateImpl;
+      final bool isOldestMessage,
+      final Map<String, Message> messages}) = _$MessagesPagingStateImpl;
 
   @override // The Id of the Chat that the state represents.
   String get chatId;
@@ -854,6 +887,8 @@ abstract class _MessagesPagingState implements MessagesPagingState {
   DateTime? get oldestMessageSentTime;
   @override // Whether the current oldestMessageId is the oldest message in the chat.
   bool get isOldestMessage;
+  @override // The messages loaded for the chat over all pages, sorted.
+  Map<String, Message> get messages;
   @override
   @JsonKey(ignore: true)
   _$$MessagesPagingStateImplCopyWith<_$MessagesPagingStateImpl> get copyWith =>
