@@ -17,14 +17,84 @@
 // import 'package:teams/presentation/blocs/chat/chat_event.dart';
 // import 'package:teams/presentation/blocs/chat/chat_state.dart';
 
-void main() {}
-// @GenerateNiceMocks([
-//   MockSpec<Stream>(),
-//   MockSpec<GetChats>(),
-//   MockSpec<GetMessages>(),
-//   MockSpec<SendMessage>(),
-// ])
-// import 'chat_bloc_test.mocks.dart';
+import 'package:bloc_test/bloc_test.dart';
+import 'package:flutter_test/flutter_test.dart';
+import 'package:mockito/annotations.dart';
+import 'package:mockito/mockito.dart';
+import 'package:teams/domain/repositories/chat_repository.dart';
+import 'package:teams/domain/usecases/chat/get_chats.dart';
+import 'package:teams/domain/usecases/chat/get_messages.dart';
+import 'package:teams/domain/usecases/chat/send_message.dart';
+import 'package:teams/presentation/blocs/chat/chat_bloc.dart';
+import 'package:teams/presentation/blocs/chat/chat_state.dart';
+
+@GenerateNiceMocks([
+  MockSpec<Stream>(),
+  MockSpec<GetChats>(),
+  MockSpec<GetMessages>(),
+  MockSpec<SendMessage>(),
+])
+import 'chat_bloc_test.mocks.dart';
+
+void main() {
+  group(ChatBloc, () {
+    // Mock for chat updates stream that needs to be inserted in the constructor.
+    late MockStream<ChatUpdateStreamItem> mockChatUpdatesStream;
+
+    setUp(() {
+      mockChatUpdatesStream = MockStream<ChatUpdateStreamItem>();
+      // The bloc sets up a subscription on the given stream for ChatUpdateItems,
+      // and this mock setup is needed so that the subsciption setup passes.
+      when(mockChatUpdatesStream.listen(any)).thenAnswer(
+        (inv) => const Stream<ChatUpdateStreamItem>.empty().listen((event) {}),
+      );
+    });
+
+    group('initialization', () {
+      late ChatBloc bloc;
+
+      setUp(() => bloc = ChatBloc.fromParameters(
+            chatUpdatesStream: mockChatUpdatesStream,
+            getChats: MockGetChats(),
+            getMessages: MockGetMessages(),
+            sendMessage: MockSendMessage(),
+          ));
+
+      group(ChatState, () {
+        blocTest(
+          'state is default ChatState',
+          build: () => bloc,
+          verify: (bloc) => expect(bloc.state, const ChatState()),
+        );
+      });
+      group('chatUpdatesStream', () {
+        test('initially empty', () {
+          final subscription = bloc.chatUpdatesStream.listen((event) {
+            fail('listener received unexpected event: $event');
+          });
+          subscription.cancel();
+        });
+      });
+      group('directChatsPagingStateStream', () {
+        test('initially empty', () {
+          final subscription =
+              bloc.directChatsPagingStateStream.listen((event) {
+            fail('listener received unexpected event: $event');
+          });
+          subscription.cancel();
+        });
+      });
+      group('groupChatsPagingStateStream', () {
+        test('initially empty', () {
+          final subscription = bloc.groupChatsPagingStateStream.listen((event) {
+            fail('listener received unexpected event: $event');
+          });
+          subscription.cancel();
+        });
+      });
+    });
+  });
+}
 
 // List<Chat> chats = [
 //   Chat(
