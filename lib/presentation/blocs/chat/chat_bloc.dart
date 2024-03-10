@@ -249,7 +249,6 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
       // Emit new ChatState.
       emit(state.copyWith(
         messagesById: allMessagesById,
-        lastChatAccess: {...state.lastChatAccess, event.chatId: DateTime.now()},
       ));
     } catch (e) {
       emit(state.copyWith(
