@@ -50,7 +50,7 @@ Map<String, Message> _generateMessagesInChats(
 Map<String, Chat> testChats = {
   ..._generateChatsBetweenUsers(
     ['nU7rIBOgJIQGcjVwleEedggSQEz1', 'GQR5MKaA1tN57YHZKJFhU98jXco1'],
-    100,
+    40,
   ),
   ..._generateChatsBetweenUsers(
     [
@@ -58,12 +58,12 @@ Map<String, Chat> testChats = {
       'GQR5MKaA1tN57YHZKJFhU98jXco1',
       'ORtAX6QeBrdCoHKF1bUeMjQWPIv1'
     ],
-    100,
+    40,
   ),
 };
-Map<String, Message> testMessages = _generateMessagesInChats(testChats, 50);
+Map<String, Message> testMessages = _generateMessagesInChats(testChats, 100);
 
-@LazySingleton(as: ChatRepository)
+@Singleton(as: ChatRepository)
 class FakeChatRepository implements ChatRepository, Disposable {
   FakeChatRepository() {
     _messageStreamController = StreamController<Message>.broadcast();
@@ -133,13 +133,17 @@ class FakeChatRepository implements ChatRepository, Disposable {
 
     // Filter by beforeId
     if (beforeId != null) {
-      userChats.retainWhere((element) => element.id.compareTo(beforeId) < 0);
+      userChats.retainWhere((chat) =>
+          chat.updateTime.isBefore(beforeDateTime!) ||
+          (chat.id.compareTo(beforeId) < 0));
     }
+
     // Sort by updateTime and choose the latest ones upto limit.
     userChats.sort((a, b) => b.updateTime.compareTo(a.updateTime));
     if (limit != null && limit > 0 && userChats.length > limit) {
       userChats.removeRange(limit, userChats.length);
     }
+
     return userChats;
   }
 
@@ -164,7 +168,9 @@ class FakeChatRepository implements ChatRepository, Disposable {
 
     // Filter by beforeId
     if (beforeId != null) {
-      chatMessages.retainWhere((element) => element.id.compareTo(beforeId) < 0);
+      chatMessages.retainWhere((element) =>
+          element.sentTime.isBefore(beforeDateTime!) ||
+          element.id.compareTo(beforeId) < 0);
     }
 
     // Sort by sentTime and choose the latest ones upto limit.
