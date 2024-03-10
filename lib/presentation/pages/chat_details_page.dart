@@ -51,17 +51,22 @@ class _ChatDetailsPageState extends State<ChatDetailsPage> {
 
     // Subscription on stream on MessagesPagingState computed by bloc to update
     // UI with new messages and the next paging state to be requested.
-    _blocMessagesPagingStateSubscription = bloc
-        .getMessagesPagingStateStreamForChat(widget.chatId)
-        .listen((messagesPagingState) {
-      final newItemList = messagesPagingState.messages.values.toList();
-      newItemList.sort((a, b) => b.sentTime.compareTo(a.sentTime));
-      _pagingController.value = PagingState(
-        nextPageKey:
-            messagesPagingState.isOldestMessage ? null : messagesPagingState,
-        itemList: newItemList,
-      );
-    });
+    _blocMessagesPagingStateSubscription =
+        bloc.getMessagesPagingStateStreamForChat(widget.chatId).listen(
+      (messagesPagingState) {
+        final newItemList = messagesPagingState.messages.values.toList();
+        newItemList.sort((a, b) => b.sentTime.compareTo(a.sentTime));
+        _pagingController.value = PagingState(
+          nextPageKey:
+              messagesPagingState.isOldestMessage ? null : messagesPagingState,
+          itemList: newItemList,
+        );
+      },
+    );
+
+    // Clear the chat textfield input.
+    _chatInputController.clear();
+    bloc.add(const ChatResetChatInputRequested());
 
     super.initState();
   }
@@ -83,6 +88,7 @@ class _ChatDetailsPageState extends State<ChatDetailsPage> {
                 reverse: true,
                 pagingController: _pagingController,
                 builderDelegate: PagedChildBuilderDelegate<Message>(
+                  animateTransitions: true,
                   itemBuilder: (context, item, index) {
                     final numItems = _pagingController.itemList?.length ?? 0;
                     final nextDateTime = (index + 1 < numItems)

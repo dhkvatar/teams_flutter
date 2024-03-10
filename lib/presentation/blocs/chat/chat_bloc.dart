@@ -3,7 +3,6 @@ import 'dart:async';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:formz/formz.dart';
 import 'package:injectable/injectable.dart';
-import 'package:rxdart/subjects.dart';
 import 'package:teams/app/di/di.dart';
 import 'package:teams/core/constants/chat_constants.dart';
 import 'package:teams/core/forms/chat.dart';
@@ -73,7 +72,7 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
 
   // Used to manage yielded ChatsPagingState in the chatsPagingStateStream.
   final _chatsListingController =
-      BehaviorSubject<ChatsPagingState>.seeded(const ChatsPagingState());
+      StreamController<ChatsPagingState>.broadcast();
 
   // Stream of ChatPagingState for the UI to load paginated Chats.
   Stream<ChatsPagingState> get chatsPagingStateStream =>
@@ -84,13 +83,15 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
 
   // Used to manage yielded MessagesPagingState in the streams returned by
   // getMessagesPagingStateStream.
-  final _messagesListingController = BehaviorSubject<MessagesPagingState>();
+  final _messagesListingController =
+      StreamController<MessagesPagingState>.broadcast();
 
   // Stream of MessagesPagingState's for the UI to load paginated Message's.
   Stream<MessagesPagingState> getMessagesPagingStateStreamForChat(
       String chatId) {
-    _messagesListingController.add(_messagesPagingStateByChatId[chatId] ??
-        MessagesPagingState(chatId: chatId));
+    if (_messagesPagingStateByChatId[chatId] != null) {
+      _messagesListingController.add(MessagesPagingState(chatId: chatId));
+    }
     return _messagesListingController.stream;
   }
 
@@ -100,6 +101,7 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
     on<ChatMessageInputChanged>(_onMessageInputChanged);
     on<ChatSendMessageRequested>(_onSendMessageRequested);
     on<ChatUpdateStreamReceived>(_onUpdateStreamReceived);
+    on<ChatResetChatInputRequested>(_onResetChatInputRequested);
   }
 
   Future<void> _onUpdateStreamReceived(
@@ -158,7 +160,6 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
   ) async {
     try {
       // Signal to UI that loading of new chats is in-progress.
-      // emit(state.copyWith(chatsLoadingStatus: ChatsLoadingStatus.inProgress));
       final newChats = await getChats(
         GetChatsParams(
           groupChats: event.groupChats,
@@ -305,5 +306,14 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
   Future<void> close() {
     chatUpdatesSubscription.cancel();
     return super.close();
+  }
+
+  Future<void> _onResetChatInputRequested(
+      ChatResetChatInputRequested event, Emitter<ChatState> emit) async {
+    emit(state.copyWith(
+      chatInput: const ChatInput.pure(),
+      formzStatus: FormzSubmissionStatus.initial,
+      isValid: false,
+    ));
   }
 }

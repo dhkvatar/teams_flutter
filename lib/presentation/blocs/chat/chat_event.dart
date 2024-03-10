@@ -52,3 +52,7 @@ final class ChatUpdateStreamReceived extends ChatEvent {
 
   final ChatUpdateStreamItem update;
 }
+
+final class ChatResetChatInputRequested extends ChatEvent {
+  const ChatResetChatInputRequested();
+}
