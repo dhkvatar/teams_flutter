@@ -196,12 +196,10 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
       // Emit new state with additionally loaded chats.
       emit(state.copyWith(
         chatsById: updatedChatsById,
-        // chatsLoadingStatus: ChatsLoadingStatus.complete,
       ));
     } catch (e) {
       // Signal to UI that loading of new chats has fialed.
       emit(state.copyWith(
-        // chatsLoadingStatus: ChatsLoadingStatus.failed,
         errorMessage: 'Error fetching Chats: ${e.toString()}',
       ));
     }
@@ -238,7 +236,6 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
         isOldestMessage:
             newMessages.length < (event.limit ?? ChatConstants.chatPageSize),
         messages: {for (var msg in messagesForChat) msg.id: msg},
-        // messages: messagesForChat,
       );
 
       // Yield new paging state.
