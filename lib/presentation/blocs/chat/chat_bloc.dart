@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:formz/formz.dart';
 import 'package:injectable/injectable.dart';
+import 'package:rxdart/subjects.dart';
 import 'package:teams/app/di/di.dart';
 import 'package:teams/core/constants/chat_constants.dart';
 import 'package:teams/core/forms/chat.dart';
@@ -71,8 +72,7 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
   late final StreamSubscription<ChatUpdateStreamItem> chatUpdatesSubscription;
 
   // Used to manage yielded ChatsPagingState in the chatsPagingStateStream.
-  final _chatsListingController =
-      StreamController<ChatsPagingState>.broadcast();
+  final _chatsListingController = BehaviorSubject<ChatsPagingState>();
 
   // Stream of ChatPagingState for the UI to load paginated Chats.
   Stream<ChatsPagingState> get chatsPagingStateStream =>
@@ -83,15 +83,11 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
 
   // Used to manage yielded MessagesPagingState in the streams returned by
   // getMessagesPagingStateStream.
-  final _messagesListingController =
-      StreamController<MessagesPagingState>.broadcast();
+  final _messagesListingController = BehaviorSubject<MessagesPagingState>();
 
   // Stream of MessagesPagingState's for the UI to load paginated Message's.
   Stream<MessagesPagingState> getMessagesPagingStateStreamForChat(
       String chatId) {
-    if (_messagesPagingStateByChatId[chatId] != null) {
-      _messagesListingController.add(MessagesPagingState(chatId: chatId));
-    }
     return _messagesListingController.stream;
   }
 
