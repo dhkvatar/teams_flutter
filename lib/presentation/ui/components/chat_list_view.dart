@@ -37,24 +37,21 @@ class _ChatListViewState extends State<ChatListView> {
     _pagingController.addPageRequestListener((pageKey) {
       bloc.add(ChatGetChatsRequested(
         groupChats: widget.isGroupChat,
-        beforeChatId: widget.isGroupChat
-            ? pageKey.oldestGroupChatId
-            : pageKey.oldestDirectChatId,
-        beforeDateTime: widget.isGroupChat
-            ? pageKey.oldestGroupChatDateTime
-            : pageKey.oldestDirectChatUpdateTime,
+        beforeChatId: pageKey.oldestChatId,
+        beforeDateTime: pageKey.oldestChatUpdateTime,
         limit: ChatConstants.chatPageSize,
       ));
     });
 
     // Subscription on stream on ChatsPagingState computed by bloc to update
     // UI with new chats and the next paging state to be requested.
+    final blocChatPagingStateStream = widget.isGroupChat
+        ? bloc.groupChatsPagingStateStream
+        : bloc.directChatsPagingStateStream;
     _blocChatListingSubscription =
-        bloc.chatsPagingStateStream.listen((chatsPagingState) {
+        blocChatPagingStateStream.listen((chatsPagingState) {
       _pagingController.value = PagingState(
-        nextPageKey: widget.isGroupChat
-            ? (!chatsPagingState.isOldestGroupChat ? chatsPagingState : null)
-            : (!chatsPagingState.isOldestDirectChat ? chatsPagingState : null),
+        nextPageKey: chatsPagingState.isOldestChat ? null : chatsPagingState,
         itemList: bloc.state.chatsById.values
             .where((chat) => chat.isGroupChat == widget.isGroupChat)
             .toList(),
