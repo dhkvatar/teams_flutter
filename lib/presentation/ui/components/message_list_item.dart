@@ -67,11 +67,11 @@ class MessageListItem extends StatelessWidget {
                         ),
                       ),
 
-                    // Pending message indidcator
+                    // Pending message indicator
                     BlocBuilder<ChatBloc, ChatState>(
-                      buildWhen: (previous, current) =>
-                          previous.messagesById[message.id] !=
-                          current.messagesById[message.id],
+                      // buildWhen: (previous, current) =>
+                      //     previous.messagesById[message.id] !=
+                      //     current.messagesById[message.id],
                       builder: (ctx, state) {
                         if (isMe &&
                             message.uploadStatus ==

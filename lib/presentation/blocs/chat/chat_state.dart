@@ -16,9 +16,6 @@ class ChatState with _$ChatState {
     // Id) for each chat.
     @Default({}) Map<String, String?> lastMessageByChat,
 
-    // The loading status of the messages on the chat details page.
-    @Default(MessagesLoadingStatus.complete) messagesLoadingStatus,
-
     // All messagtes loaded by Id.
     @Default({}) Map<String, Message> messagesById,
 

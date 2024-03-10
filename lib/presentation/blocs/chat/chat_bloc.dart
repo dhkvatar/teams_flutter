@@ -248,8 +248,6 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
     Emitter<ChatState> emit,
   ) async {
     try {
-      emit(state.copyWith(
-          messagesLoadingStatus: MessagesLoadingStatus.inProgress));
       final newMessages = await getMessages(
         GetMessagesParams(
           chatId: event.chatId,
@@ -301,11 +299,9 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
                   .toList())
               ?.id,
         },
-        messagesLoadingStatus: MessagesLoadingStatus.complete,
       ));
     } catch (e) {
       emit(state.copyWith(
-        messagesLoadingStatus: MessagesLoadingStatus.failed,
         errorMessage: 'Error fetching messages: ${e.toString()}',
       ));
     }
