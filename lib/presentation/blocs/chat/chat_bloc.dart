@@ -16,7 +16,6 @@ import 'package:teams/domain/usecases/chat/get_messages.dart';
 import 'package:teams/domain/usecases/chat/send_message.dart';
 import 'package:teams/presentation/blocs/chat/chat_event.dart';
 import 'package:teams/presentation/blocs/chat/chat_state.dart';
-import 'package:teams/presentation/ui/utils/date_time_utils.dart';
 
 @injectable
 class ChatBloc extends Bloc<ChatEvent, ChatState> {
@@ -101,34 +100,6 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
     on<ChatMessageInputChanged>(_onMessageInputChanged);
     on<ChatSendMessageRequested>(_onSendMessageRequested);
     on<ChatUpdateStreamReceived>(_onUpdateStreamReceived);
-  }
-
-  Map<DateTime, List<String>> _groupAndSortMessageIdsByDateTime(
-      Map<String, Message> messages, String? chatId) {
-    final messageIds = messages.keys.toList();
-    Map<DateTime, List<String>> res = {};
-    for (var msgId in messageIds) {
-      final message = messages[msgId]!;
-      if (chatId != null && message.chatId != chatId) {
-        continue;
-      }
-      final dateTime = getDateHourMin(message.sentTime);
-      res.putIfAbsent(dateTime, () => []);
-      res[dateTime]!.add(message.id);
-    }
-
-    res.forEach((dateTime, messagesForDateTime) {
-      messagesForDateTime.sort((a, b) {
-        final msgA = messages[a]!;
-        final msgB = messages[b]!;
-        final timeComparison = msgA.sentTime.compareTo(msgB.sentTime);
-        if (timeComparison == 0) {
-          return msgA.id.compareTo(msgB.id);
-        }
-        return timeComparison;
-      });
-    });
-    return res;
   }
 
   Future<void> _onUpdateStreamReceived(
@@ -225,22 +196,13 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
       // Emit new state with additionally loaded chats.
       emit(state.copyWith(
         chatsById: updatedChatsById,
-        // chatsLoadingStatus: ChatsLoadingStatus.complete,
       ));
     } catch (e) {
       // Signal to UI that loading of new chats has fialed.
       emit(state.copyWith(
-        // chatsLoadingStatus: ChatsLoadingStatus.failed,
         errorMessage: 'Error fetching Chats: ${e.toString()}',
       ));
     }
-  }
-
-  Message? _getOldestMessage(List<Message> messages) {
-    messages.sort((a, b) {
-      return a.sentTime.compareTo(b.sentTime);
-    });
-    return messages.isNotEmpty ? messages.first : null;
   }
 
   Future<void> _onGetMessagesRequested(
@@ -248,8 +210,6 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
     Emitter<ChatState> emit,
   ) async {
     try {
-      emit(state.copyWith(
-          messagesLoadingStatus: MessagesLoadingStatus.inProgress));
       final newMessages = await getMessages(
         GetMessagesParams(
           chatId: event.chatId,
@@ -262,8 +222,6 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
         ...state.messagesById,
         ...{for (var msg in newMessages) msg.id: msg},
       };
-      final sortedMessagesGroupedByDateTime =
-          _groupAndSortMessageIdsByDateTime(allMessagesById, event.chatId);
 
       // get paging here
       final messagesForChat = allMessagesById.values
@@ -278,7 +236,6 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
         isOldestMessage:
             newMessages.length < (event.limit ?? ChatConstants.chatPageSize),
         messages: {for (var msg in messagesForChat) msg.id: msg},
-        // messages: messagesForChat,
       );
 
       // Yield new paging state.
@@ -289,23 +246,9 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
       // Emit new ChatState.
       emit(state.copyWith(
         messagesById: allMessagesById,
-        chatMessagesByDateTime: {
-          ...state.chatMessagesByDateTime,
-          event.chatId: sortedMessagesGroupedByDateTime
-        },
-        lastChatAccess: {...state.lastChatAccess, event.chatId: DateTime.now()},
-        lastMessageByChat: {
-          ...state.lastMessageByChat,
-          event.chatId: _getOldestMessage(allMessagesById.values
-                  .where((msg) => msg.chatId == event.chatId)
-                  .toList())
-              ?.id,
-        },
-        messagesLoadingStatus: MessagesLoadingStatus.complete,
       ));
     } catch (e) {
       emit(state.copyWith(
-        messagesLoadingStatus: MessagesLoadingStatus.failed,
         errorMessage: 'Error fetching messages: ${e.toString()}',
       ));
     }
@@ -332,20 +275,10 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
           sentMessage.id: sentMessage.copyWith(
               uploadStatus: MessageUploadStatus.uploadInProgress),
         };
-        final sortedMessagesGroupedByDate =
-            _groupAndSortMessageIdsByDateTime(allMessagesById, event.chatId);
 
         emit(state.copyWith(
           messagesById: allMessagesById,
           chatInput: const ChatInput.pure(),
-          chatMessagesByDateTime: {
-            ...state.chatMessagesByDateTime,
-            event.chatId: sortedMessagesGroupedByDate,
-          },
-          lastMessageByChat: {
-            event.chatId:
-                state.lastMessageByChat[event.chatId] ?? sentMessage.id
-          },
           formzStatus: FormzSubmissionStatus.success,
           isValid: false,
         ));
