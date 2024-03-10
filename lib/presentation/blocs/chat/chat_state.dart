@@ -34,23 +34,14 @@ class ChatState with _$ChatState {
 @freezed
 class ChatsPagingState with _$ChatsPagingState {
   const factory ChatsPagingState({
-    // The DM chat with the oldest updateTime that's currently loaded.
-    String? oldestDirectChatId,
+    // The chat with the oldest updateTime that's currently loaded.
+    String? oldestChatId,
 
-    // The update time of the oldest direct message chat.
-    DateTime? oldestDirectChatUpdateTime,
+    // The update time of the oldest chat.
+    DateTime? oldestChatUpdateTime,
 
-    // The group chat with the oldest updateTime that's currently loaded.
-    String? oldestGroupChatId,
-
-    // The update time of the oldest group chat.
-    DateTime? oldestGroupChatDateTime,
-
-    // Whether the current oldestDirectChatId is the oldest direct chat.
-    @Default(false) bool isOldestDirectChat,
-
-    // Whether the current oldestGroupChatId is the oldest group chat.
-    @Default(false) bool isOldestGroupChat,
+    // Whether the current oldestChatId is the oldest chat in the chat repository.
+    @Default(false) bool isOldestChat,
   }) = _ChatsPagingState;
 }
 
@@ -74,10 +65,4 @@ class MessagesPagingState with _$MessagesPagingState {
     // The messages loaded for the chat over all pages, sorted.
     @Default({}) Map<String, Message> messages,
   }) = _MessagesPagingState;
-}
-
-enum MessagesLoadingStatus {
-  inProgress,
-  complete,
-  failed,
 }

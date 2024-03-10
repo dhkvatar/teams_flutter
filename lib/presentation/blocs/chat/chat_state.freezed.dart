@@ -20,9 +20,7 @@ mixin _$ChatState {
   Map<String, Chat> get chatsById =>
       throw _privateConstructorUsedError; // All messagtes loaded by Id.
   Map<String, Message> get messagesById =>
-      throw _privateConstructorUsedError; // The last access time of each chat during the session.
-// @Default({}) Map<String, DateTime?> lastChatAccess,
-// The chat input state.
+      throw _privateConstructorUsedError; // The chat input state.
   ChatInput get chatInput =>
       throw _privateConstructorUsedError; // The status of chat input submission.
   FormzSubmissionStatus get formzStatus =>
@@ -198,8 +196,6 @@ class _$ChatStateImpl implements _ChatState {
     return EqualUnmodifiableMapView(_messagesById);
   }
 
-// The last access time of each chat during the session.
-// @Default({}) Map<String, DateTime?> lastChatAccess,
 // The chat input state.
   @override
   @JsonKey()
@@ -269,9 +265,7 @@ abstract class _ChatState implements ChatState {
   Map<String, Chat> get chatsById;
   @override // All messagtes loaded by Id.
   Map<String, Message> get messagesById;
-  @override // The last access time of each chat during the session.
-// @Default({}) Map<String, DateTime?> lastChatAccess,
-// The chat input state.
+  @override // The chat input state.
   ChatInput get chatInput;
   @override // The status of chat input submission.
   FormzSubmissionStatus get formzStatus;
@@ -287,18 +281,12 @@ abstract class _ChatState implements ChatState {
 
 /// @nodoc
 mixin _$ChatsPagingState {
-// The DM chat with the oldest updateTime that's currently loaded.
-  String? get oldestDirectChatId =>
-      throw _privateConstructorUsedError; // The update time of the oldest direct message chat.
-  DateTime? get oldestDirectChatUpdateTime =>
-      throw _privateConstructorUsedError; // The group chat with the oldest updateTime that's currently loaded.
-  String? get oldestGroupChatId =>
-      throw _privateConstructorUsedError; // The update time of the oldest group chat.
-  DateTime? get oldestGroupChatDateTime =>
-      throw _privateConstructorUsedError; // Whether the current oldestDirectChatId is the oldest direct chat.
-  bool get isOldestDirectChat =>
-      throw _privateConstructorUsedError; // Whether the current oldestGroupChatId is the oldest group chat.
-  bool get isOldestGroupChat => throw _privateConstructorUsedError;
+// The chat with the oldest updateTime that's currently loaded.
+  String? get oldestChatId =>
+      throw _privateConstructorUsedError; // The update time of the oldest chat.
+  DateTime? get oldestChatUpdateTime =>
+      throw _privateConstructorUsedError; // Whether the current oldestChatId is the oldest chat in the chat repository.
+  bool get isOldestChat => throw _privateConstructorUsedError;
 
   @JsonKey(ignore: true)
   $ChatsPagingStateCopyWith<ChatsPagingState> get copyWith =>
@@ -312,12 +300,9 @@ abstract class $ChatsPagingStateCopyWith<$Res> {
       _$ChatsPagingStateCopyWithImpl<$Res, ChatsPagingState>;
   @useResult
   $Res call(
-      {String? oldestDirectChatId,
-      DateTime? oldestDirectChatUpdateTime,
-      String? oldestGroupChatId,
-      DateTime? oldestGroupChatDateTime,
-      bool isOldestDirectChat,
-      bool isOldestGroupChat});
+      {String? oldestChatId,
+      DateTime? oldestChatUpdateTime,
+      bool isOldestChat});
 }
 
 /// @nodoc
@@ -333,37 +318,22 @@ class _$ChatsPagingStateCopyWithImpl<$Res, $Val extends ChatsPagingState>
   @pragma('vm:prefer-inline')
   @override
   $Res call({
-    Object? oldestDirectChatId = freezed,
-    Object? oldestDirectChatUpdateTime = freezed,
-    Object? oldestGroupChatId = freezed,
-    Object? oldestGroupChatDateTime = freezed,
-    Object? isOldestDirectChat = null,
-    Object? isOldestGroupChat = null,
+    Object? oldestChatId = freezed,
+    Object? oldestChatUpdateTime = freezed,
+    Object? isOldestChat = null,
   }) {
     return _then(_value.copyWith(
-      oldestDirectChatId: freezed == oldestDirectChatId
-          ? _value.oldestDirectChatId
-          : oldestDirectChatId // ignore: cast_nullable_to_non_nullable
+      oldestChatId: freezed == oldestChatId
+          ? _value.oldestChatId
+          : oldestChatId // ignore: cast_nullable_to_non_nullable
               as String?,
-      oldestDirectChatUpdateTime: freezed == oldestDirectChatUpdateTime
-          ? _value.oldestDirectChatUpdateTime
-          : oldestDirectChatUpdateTime // ignore: cast_nullable_to_non_nullable
+      oldestChatUpdateTime: freezed == oldestChatUpdateTime
+          ? _value.oldestChatUpdateTime
+          : oldestChatUpdateTime // ignore: cast_nullable_to_non_nullable
               as DateTime?,
-      oldestGroupChatId: freezed == oldestGroupChatId
-          ? _value.oldestGroupChatId
-          : oldestGroupChatId // ignore: cast_nullable_to_non_nullable
-              as String?,
-      oldestGroupChatDateTime: freezed == oldestGroupChatDateTime
-          ? _value.oldestGroupChatDateTime
-          : oldestGroupChatDateTime // ignore: cast_nullable_to_non_nullable
-              as DateTime?,
-      isOldestDirectChat: null == isOldestDirectChat
-          ? _value.isOldestDirectChat
-          : isOldestDirectChat // ignore: cast_nullable_to_non_nullable
-              as bool,
-      isOldestGroupChat: null == isOldestGroupChat
-          ? _value.isOldestGroupChat
-          : isOldestGroupChat // ignore: cast_nullable_to_non_nullable
+      isOldestChat: null == isOldestChat
+          ? _value.isOldestChat
+          : isOldestChat // ignore: cast_nullable_to_non_nullable
               as bool,
     ) as $Val);
   }
@@ -378,12 +348,9 @@ abstract class _$$ChatsPagingStateImplCopyWith<$Res>
   @override
   @useResult
   $Res call(
-      {String? oldestDirectChatId,
-      DateTime? oldestDirectChatUpdateTime,
-      String? oldestGroupChatId,
-      DateTime? oldestGroupChatDateTime,
-      bool isOldestDirectChat,
-      bool isOldestGroupChat});
+      {String? oldestChatId,
+      DateTime? oldestChatUpdateTime,
+      bool isOldestChat});
 }
 
 /// @nodoc
@@ -397,37 +364,22 @@ class __$$ChatsPagingStateImplCopyWithImpl<$Res>
   @pragma('vm:prefer-inline')
   @override
   $Res call({
-    Object? oldestDirectChatId = freezed,
-    Object? oldestDirectChatUpdateTime = freezed,
-    Object? oldestGroupChatId = freezed,
-    Object? oldestGroupChatDateTime = freezed,
-    Object? isOldestDirectChat = null,
-    Object? isOldestGroupChat = null,
+    Object? oldestChatId = freezed,
+    Object? oldestChatUpdateTime = freezed,
+    Object? isOldestChat = null,
   }) {
     return _then(_$ChatsPagingStateImpl(
-      oldestDirectChatId: freezed == oldestDirectChatId
-          ? _value.oldestDirectChatId
-          : oldestDirectChatId // ignore: cast_nullable_to_non_nullable
+      oldestChatId: freezed == oldestChatId
+          ? _value.oldestChatId
+          : oldestChatId // ignore: cast_nullable_to_non_nullable
               as String?,
-      oldestDirectChatUpdateTime: freezed == oldestDirectChatUpdateTime
-          ? _value.oldestDirectChatUpdateTime
-          : oldestDirectChatUpdateTime // ignore: cast_nullable_to_non_nullable
+      oldestChatUpdateTime: freezed == oldestChatUpdateTime
+          ? _value.oldestChatUpdateTime
+          : oldestChatUpdateTime // ignore: cast_nullable_to_non_nullable
               as DateTime?,
-      oldestGroupChatId: freezed == oldestGroupChatId
-          ? _value.oldestGroupChatId
-          : oldestGroupChatId // ignore: cast_nullable_to_non_nullable
-              as String?,
-      oldestGroupChatDateTime: freezed == oldestGroupChatDateTime
-          ? _value.oldestGroupChatDateTime
-          : oldestGroupChatDateTime // ignore: cast_nullable_to_non_nullable
-              as DateTime?,
-      isOldestDirectChat: null == isOldestDirectChat
-          ? _value.isOldestDirectChat
-          : isOldestDirectChat // ignore: cast_nullable_to_non_nullable
-              as bool,
-      isOldestGroupChat: null == isOldestGroupChat
-          ? _value.isOldestGroupChat
-          : isOldestGroupChat // ignore: cast_nullable_to_non_nullable
+      isOldestChat: null == isOldestChat
+          ? _value.isOldestChat
+          : isOldestChat // ignore: cast_nullable_to_non_nullable
               as bool,
     ));
   }
@@ -437,37 +389,24 @@ class __$$ChatsPagingStateImplCopyWithImpl<$Res>
 
 class _$ChatsPagingStateImpl implements _ChatsPagingState {
   const _$ChatsPagingStateImpl(
-      {this.oldestDirectChatId,
-      this.oldestDirectChatUpdateTime,
-      this.oldestGroupChatId,
-      this.oldestGroupChatDateTime,
-      this.isOldestDirectChat = false,
-      this.isOldestGroupChat = false});
+      {this.oldestChatId,
+      this.oldestChatUpdateTime,
+      this.isOldestChat = false});
 
-// The DM chat with the oldest updateTime that's currently loaded.
+// The chat with the oldest updateTime that's currently loaded.
   @override
-  final String? oldestDirectChatId;
-// The update time of the oldest direct message chat.
+  final String? oldestChatId;
+// The update time of the oldest chat.
   @override
-  final DateTime? oldestDirectChatUpdateTime;
-// The group chat with the oldest updateTime that's currently loaded.
-  @override
-  final String? oldestGroupChatId;
-// The update time of the oldest group chat.
-  @override
-  final DateTime? oldestGroupChatDateTime;
-// Whether the current oldestDirectChatId is the oldest direct chat.
+  final DateTime? oldestChatUpdateTime;
+// Whether the current oldestChatId is the oldest chat in the chat repository.
   @override
   @JsonKey()
-  final bool isOldestDirectChat;
-// Whether the current oldestGroupChatId is the oldest group chat.
-  @override
-  @JsonKey()
-  final bool isOldestGroupChat;
+  final bool isOldestChat;
 
   @override
   String toString() {
-    return 'ChatsPagingState(oldestDirectChatId: $oldestDirectChatId, oldestDirectChatUpdateTime: $oldestDirectChatUpdateTime, oldestGroupChatId: $oldestGroupChatId, oldestGroupChatDateTime: $oldestGroupChatDateTime, isOldestDirectChat: $isOldestDirectChat, isOldestGroupChat: $isOldestGroupChat)';
+    return 'ChatsPagingState(oldestChatId: $oldestChatId, oldestChatUpdateTime: $oldestChatUpdateTime, isOldestChat: $isOldestChat)';
   }
 
   @override
@@ -475,32 +414,17 @@ class _$ChatsPagingStateImpl implements _ChatsPagingState {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
             other is _$ChatsPagingStateImpl &&
-            (identical(other.oldestDirectChatId, oldestDirectChatId) ||
-                other.oldestDirectChatId == oldestDirectChatId) &&
-            (identical(other.oldestDirectChatUpdateTime,
-                    oldestDirectChatUpdateTime) ||
-                other.oldestDirectChatUpdateTime ==
-                    oldestDirectChatUpdateTime) &&
-            (identical(other.oldestGroupChatId, oldestGroupChatId) ||
-                other.oldestGroupChatId == oldestGroupChatId) &&
-            (identical(
-                    other.oldestGroupChatDateTime, oldestGroupChatDateTime) ||
-                other.oldestGroupChatDateTime == oldestGroupChatDateTime) &&
-            (identical(other.isOldestDirectChat, isOldestDirectChat) ||
-                other.isOldestDirectChat == isOldestDirectChat) &&
-            (identical(other.isOldestGroupChat, isOldestGroupChat) ||
-                other.isOldestGroupChat == isOldestGroupChat));
+            (identical(other.oldestChatId, oldestChatId) ||
+                other.oldestChatId == oldestChatId) &&
+            (identical(other.oldestChatUpdateTime, oldestChatUpdateTime) ||
+                other.oldestChatUpdateTime == oldestChatUpdateTime) &&
+            (identical(other.isOldestChat, isOldestChat) ||
+                other.isOldestChat == isOldestChat));
   }
 
   @override
   int get hashCode => Object.hash(
-      runtimeType,
-      oldestDirectChatId,
-      oldestDirectChatUpdateTime,
-      oldestGroupChatId,
-      oldestGroupChatDateTime,
-      isOldestDirectChat,
-      isOldestGroupChat);
+      runtimeType, oldestChatId, oldestChatUpdateTime, isOldestChat);
 
   @JsonKey(ignore: true)
   @override
@@ -512,25 +436,16 @@ class _$ChatsPagingStateImpl implements _ChatsPagingState {
 
 abstract class _ChatsPagingState implements ChatsPagingState {
   const factory _ChatsPagingState(
-      {final String? oldestDirectChatId,
-      final DateTime? oldestDirectChatUpdateTime,
-      final String? oldestGroupChatId,
-      final DateTime? oldestGroupChatDateTime,
-      final bool isOldestDirectChat,
-      final bool isOldestGroupChat}) = _$ChatsPagingStateImpl;
+      {final String? oldestChatId,
+      final DateTime? oldestChatUpdateTime,
+      final bool isOldestChat}) = _$ChatsPagingStateImpl;
 
-  @override // The DM chat with the oldest updateTime that's currently loaded.
-  String? get oldestDirectChatId;
-  @override // The update time of the oldest direct message chat.
-  DateTime? get oldestDirectChatUpdateTime;
-  @override // The group chat with the oldest updateTime that's currently loaded.
-  String? get oldestGroupChatId;
-  @override // The update time of the oldest group chat.
-  DateTime? get oldestGroupChatDateTime;
-  @override // Whether the current oldestDirectChatId is the oldest direct chat.
-  bool get isOldestDirectChat;
-  @override // Whether the current oldestGroupChatId is the oldest group chat.
-  bool get isOldestGroupChat;
+  @override // The chat with the oldest updateTime that's currently loaded.
+  String? get oldestChatId;
+  @override // The update time of the oldest chat.
+  DateTime? get oldestChatUpdateTime;
+  @override // Whether the current oldestChatId is the oldest chat in the chat repository.
+  bool get isOldestChat;
   @override
   @JsonKey(ignore: true)
   _$$ChatsPagingStateImplCopyWith<_$ChatsPagingStateImpl> get copyWith =>

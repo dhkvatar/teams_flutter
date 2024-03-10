@@ -71,12 +71,19 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
   // sent from the chat repository.
   late final StreamSubscription<ChatUpdateStreamItem> chatUpdatesSubscription;
 
-  // Used to manage yielded ChatsPagingState in the chatsPagingStateStream.
-  final _chatsListingController = BehaviorSubject<ChatsPagingState>();
+  // Used to manage yielded ChatsPagingState in the directChatsPagingStateStream.
+  final _directChatsPagingStateController = BehaviorSubject<ChatsPagingState>();
+
+  // Used to manage yielded ChatsPagingState in the groupChatsPagingStateStream.
+  final _groupChatsPagingStateController = BehaviorSubject<ChatsPagingState>();
 
   // Stream of ChatPagingState for the UI to load paginated Chats.
-  Stream<ChatsPagingState> get chatsPagingStateStream =>
-      _chatsListingController.stream;
+  Stream<ChatsPagingState> get directChatsPagingStateStream =>
+      _directChatsPagingStateController.stream;
+
+  // Stream of ChatPagingState for the UI to load paginated Chats.
+  Stream<ChatsPagingState> get groupChatsPagingStateStream =>
+      _groupChatsPagingStateController.stream;
 
   // Stores the MessagesPagingState for each of the chatId's previously loaded.
   final Map<String, MessagesPagingState> _messagesPagingStateByChatId = {};
@@ -170,25 +177,20 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
         ...{for (var chat in newChats) chat.id: chat}
       };
 
-      final oldestChat =
-          _getOldestChatWithSmallestId(updatedChatsById.values.toList());
+      final oldestChat = _getOldestChatWithSmallestId(updatedChatsById.values
+          .where((chat) => chat.isGroupChat == event.groupChats)
+          .toList());
 
-      final newPagingState = event.groupChats
-          ? ChatsPagingState(
-              oldestGroupChatId: oldestChat?.id,
-              oldestGroupChatDateTime: oldestChat?.updateTime,
-              isOldestGroupChat:
-                  newChats.length < (event.limit ?? ChatConstants.chatPageSize),
-            )
-          : ChatsPagingState(
-              oldestDirectChatId: oldestChat?.id,
-              oldestDirectChatUpdateTime: oldestChat?.updateTime,
-              isOldestDirectChat:
-                  newChats.length < (event.limit ?? ChatConstants.chatPageSize),
-            );
+      final newPagingState = ChatsPagingState(
+          oldestChatId: oldestChat?.id,
+          oldestChatUpdateTime: oldestChat?.updateTime,
+          isOldestChat:
+              newChats.length < (event.limit ?? ChatConstants.chatPageSize));
 
       // Emit chat listing update to stream
-      _chatsListingController.add(newPagingState);
+      event.groupChats
+          ? _groupChatsPagingStateController.add(newPagingState)
+          : _directChatsPagingStateController.add(newPagingState);
 
       // Emit new state with additionally loaded chats.
       emit(state.copyWith(
