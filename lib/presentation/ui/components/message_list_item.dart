@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:intl/intl.dart';
 import 'package:teams/domain/entities/message.dart';
 import 'package:teams/presentation/blocs/chat/chat_bloc.dart';
 import 'package:teams/presentation/blocs/chat/chat_state.dart';
@@ -59,7 +60,7 @@ class MessageListItem extends StatelessWidget {
                     // Message sent time
                     if (printTime)
                       Text(
-                        _formatDateTime(message.sentTime),
+                        DateFormat('hh:mm a').format(message.sentTime),
                         style: const TextStyle(
                           fontSize: 12.0,
                           color: Colors.grey,
@@ -108,17 +109,5 @@ class MessageListItem extends StatelessWidget {
         ),
       ),
     );
-  }
-
-  String _formatTwoDigit(int value) {
-    return (value % 12).toString().padLeft(2, '0');
-  }
-
-  String _getAmPm(DateTime dateTime) {
-    return dateTime.hour < 12 ? 'AM' : 'PM';
-  }
-
-  String _formatDateTime(DateTime dateTime) {
-    return '${_formatTwoDigit(dateTime.hour)}:${_formatTwoDigit(dateTime.minute)} ${_getAmPm(dateTime)}';
   }
 }

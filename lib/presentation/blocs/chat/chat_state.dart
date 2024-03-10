@@ -69,6 +69,28 @@ class ChatsPagingState with _$ChatsPagingState {
   }) = _ChatsPagingState;
 }
 
+// The paging state of loaded messages for a chat.
+// The oldest message retrieve for the chat.
+@freezed
+class MessagesPagingState with _$MessagesPagingState {
+  const factory MessagesPagingState({
+    // The Id of the Chat that the state represents.
+    required String chatId,
+
+    // The Id of the oldest message for the chat currently loaded.
+    String? oldestMessageId,
+
+    // The sent time of the oldest message for the chat.
+    DateTime? oldestMessageSentTime,
+
+    // Whether the current oldestMessageId is the oldest message in the chat.
+    @Default(false) bool isOldestMessage,
+
+    // The messages loaded for the chat over all pages, sorted.
+    @Default({}) Map<String, Message> messages,
+  }) = _MessagesPagingState;
+}
+
 enum MessagesLoadingStatus {
   inProgress,
   complete,

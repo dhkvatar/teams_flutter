@@ -3,10 +3,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:injectable/injectable.dart';
 import 'package:teams/app/di/di.dart';
-import 'package:teams/core/constants/chat_constants.dart';
 import 'package:teams/core/navigation/routing_flow.dart';
 import 'package:teams/presentation/blocs/chat/chat_bloc.dart';
-import 'package:teams/presentation/blocs/chat/chat_event.dart';
 import 'package:teams/presentation/pages/chat_details_page.dart';
 import 'package:teams/presentation/pages/chat_page.dart';
 import 'package:teams/presentation/pages/home_page.dart';
@@ -29,10 +27,9 @@ class HomeFlow extends RoutingFlow {
       navigatorKey: _shellNavigatorKey,
       builder: (context, goRouterState, body) {
         return BlocProvider(
-            create: (_) => getIt<ChatBloc>()
-              ..add(const ChatGetChatsRequested(
-                  groupChats: false, limit: ChatConstants.chatPageSize)),
-            child: Scaffold(body: body));
+          create: (_) => getIt<ChatBloc>(),
+          child: Scaffold(body: body),
+        );
       },
       routes: [
         // The Home screen

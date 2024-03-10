@@ -52,7 +52,7 @@ extension GetItInjectableX on _i1.GetIt {
     gh.lazySingleton<_i4.AuthRepository>(
         () => authRepositoryInjection.getAuthRepository());
     gh.factory<_i5.ChatBloc>(() => _i5.ChatBloc.fromDefaultStream());
-    gh.lazySingleton<_i6.ChatRepository>(() => _i7.FakeChatRepository());
+    gh.singleton<_i6.ChatRepository>(_i7.FakeChatRepository());
     gh.factory<_i8.GetChatUpdatesStream>(() =>
         _i8.GetChatUpdatesStream(chatRepository: gh<_i6.ChatRepository>()));
     gh.factory<_i9.GetChats>(() => _i9.GetChats(
