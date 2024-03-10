@@ -236,13 +236,6 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
     }
   }
 
-  Message? _getOldestMessage(List<Message> messages) {
-    messages.sort((a, b) {
-      return a.sentTime.compareTo(b.sentTime);
-    });
-    return messages.isNotEmpty ? messages.first : null;
-  }
-
   Future<void> _onGetMessagesRequested(
     ChatGetMessagesRequested event,
     Emitter<ChatState> emit,
@@ -292,13 +285,6 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
           event.chatId: sortedMessagesGroupedByDateTime
         },
         lastChatAccess: {...state.lastChatAccess, event.chatId: DateTime.now()},
-        lastMessageByChat: {
-          ...state.lastMessageByChat,
-          event.chatId: _getOldestMessage(allMessagesById.values
-                  .where((msg) => msg.chatId == event.chatId)
-                  .toList())
-              ?.id,
-        },
       ));
     } catch (e) {
       emit(state.copyWith(
@@ -337,10 +323,6 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
           chatMessagesByDateTime: {
             ...state.chatMessagesByDateTime,
             event.chatId: sortedMessagesGroupedByDate,
-          },
-          lastMessageByChat: {
-            event.chatId:
-                state.lastMessageByChat[event.chatId] ?? sentMessage.id
           },
           formzStatus: FormzSubmissionStatus.success,
           isValid: false,

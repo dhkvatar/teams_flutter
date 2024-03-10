@@ -12,10 +12,6 @@ class ChatState with _$ChatState {
     // All chats loaded by Id.
     @Default({}) Map<String, Chat> chatsById,
 
-    // Map from Chat Id to the ID of the last message (earliest timestamp and smallest
-    // Id) for each chat.
-    @Default({}) Map<String, String?> lastMessageByChat,
-
     // All messagtes loaded by Id.
     @Default({}) Map<String, Message> messagesById,
 
