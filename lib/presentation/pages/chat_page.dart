@@ -5,6 +5,7 @@ import 'package:teams/presentation/blocs/chat/chat_state.dart';
 import 'package:teams/presentation/ui/components/chat_list_view.dart';
 import 'package:teams/presentation/ui/components/home_app_bar.dart';
 import 'package:teams/presentation/ui/components/home_bottom_navigation_bar.dart';
+import 'package:teams/presentation/ui/components/scaffold_drawer.dart';
 
 class ChatPage extends StatelessWidget {
   const ChatPage({super.key});
@@ -36,6 +37,7 @@ class ChatPage extends StatelessWidget {
           ],
         ),
         bottomNavigationBar: HomeBottomNavigationBar(),
+        drawer: const ScaffoldDrawer(),
       ),
     );
   }

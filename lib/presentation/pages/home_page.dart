@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:teams/app/di/di.dart';
+import 'package:teams/domain/usecases/authentication/get_current_user.dart';
 import 'package:teams/domain/usecases/authentication/logout.dart';
 import 'package:teams/presentation/ui/components/home_app_bar.dart';
 import 'package:teams/presentation/ui/components/home_bottom_navigation_bar.dart';
+import 'package:teams/presentation/ui/components/scaffold_drawer.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -12,6 +14,8 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
+  final user = getIt<GetCurrentUser>()()!;
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -31,6 +35,7 @@ class _HomePageState extends State<HomePage> {
         ),
       ),
       bottomNavigationBar: HomeBottomNavigationBar(),
+      drawer: const ScaffoldDrawer(),
     );
   }
 }
