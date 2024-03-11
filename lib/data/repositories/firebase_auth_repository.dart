@@ -42,9 +42,7 @@ class FirebaseAuthRepository implements AuthRepository {
 
   @override
   Future<app.User> signUp(
-      {required String email,
-      required String phone,
-      required String password}) async {
+      {required String email, required String password}) async {
     try {
       final userCredential = await fbAuth.createUserWithEmailAndPassword(
           email: email, password: password);

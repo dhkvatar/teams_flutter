@@ -15,7 +15,7 @@ class RegisterUser implements UseCase<User, RegisterUserParams> {
   @override
   Future<User> call(RegisterUserParams params) async {
     return await _authRepository.signUp(
-        email: params.email, password: params.password, phone: params.phone);
+        email: params.email, password: params.password);
   }
 }
 
@@ -23,7 +23,6 @@ class RegisterUser implements UseCase<User, RegisterUserParams> {
 class RegisterUserParams with _$RegisterUserParams {
   const factory RegisterUserParams({
     required String email,
-    required String phone,
     required String password,
   }) = _RegisterUserParams;
 }
