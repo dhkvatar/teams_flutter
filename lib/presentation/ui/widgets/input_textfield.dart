@@ -39,6 +39,7 @@ class InputTextField extends StatelessWidget {
           hintStyle: TextStyle(color: Colors.grey.shade500),
           errorText: errorText,
         ),
+        style: const TextStyle(height: 1.0),
         onChanged: onChanged,
       ),
     );

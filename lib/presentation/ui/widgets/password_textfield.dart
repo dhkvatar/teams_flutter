@@ -34,8 +34,6 @@ class _PasswordTextFieldState extends State<PasswordTextField> {
           focusedBorder: OutlineInputBorder(
             borderSide: BorderSide(color: Colors.grey.shade600),
           ),
-          // fillColor: Colors.grey.shade200,
-          // filled: true,
           hintText: widget.hintText,
           hintStyle: TextStyle(color: Colors.grey.shade500),
           suffixIcon: widget.enableVisibilityToggle
@@ -52,6 +50,7 @@ class _PasswordTextFieldState extends State<PasswordTextField> {
               : null,
         ),
         obscureText: _obscureText,
+        style: const TextStyle(height: 1.0),
         onChanged: widget.onChanged,
       ),
     );

@@ -52,7 +52,7 @@ class LoginPage extends StatelessWidget {
                   // username or phone textfield
                   _EmailPhoneInput(emailController: _emailController),
 
-                  const SizedBox(height: 20),
+                  const SizedBox(height: 10),
 
                   // password input
                   _PasswordInput(passwordController: _passwordController),

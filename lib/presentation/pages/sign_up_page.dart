@@ -36,14 +36,14 @@ class SignUpPage extends StatelessWidget {
                   const SizedBox(height: 50),
 
                   // Name input
-                  _NameInput(),
+                  // _NameInput(),
 
-                  const SizedBox(height: 10),
+                  // const SizedBox(height: 10),
 
                   // Phone input
-                  _PhoneInput(),
+                  // _PhoneInput(),
 
-                  const SizedBox(height: 10),
+                  // const SizedBox(height: 10),
 
                   // Email input
                   _EmailInput(),
@@ -171,35 +171,35 @@ class _EmailInput extends StatelessWidget {
   }
 }
 
-class _PhoneInput extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return BlocBuilder<SignUpBloc, SignUpState>(
-      buildWhen: (previous, current) => previous.phone != current.phone,
-      builder: (ctx, state) => InputTextField(
-        inputType: TextInputType.phone,
-        hintText: 'Phone Number',
-        onChanged: (phone) {
-          context.read<SignUpBloc>().add(SignUpPhoneChanged(phone));
-        },
-        errorText: state.phone.displayError != null ? 'invalid phone' : null,
-      ),
-    );
-  }
-}
+// class _PhoneInput extends StatelessWidget {
+//   @override
+//   Widget build(BuildContext context) {
+//     return BlocBuilder<SignUpBloc, SignUpState>(
+//       buildWhen: (previous, current) => previous.phone != current.phone,
+//       builder: (ctx, state) => InputTextField(
+//         inputType: TextInputType.phone,
+//         hintText: 'Phone Number',
+//         onChanged: (phone) {
+//           context.read<SignUpBloc>().add(SignUpPhoneChanged(phone));
+//         },
+//         errorText: state.phone.displayError != null ? 'invalid phone' : null,
+//       ),
+//     );
+//   }
+// }
 
-class _NameInput extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return BlocBuilder<SignUpBloc, SignUpState>(
-      buildWhen: (previous, current) => previous.name != current.name,
-      builder: (ctx, state) => InputTextField(
-        hintText: 'Full Name',
-        onChanged: (name) {
-          context.read<SignUpBloc>().add(SignUpNameChanged(name));
-        },
-        errorText: state.name.displayError != null ? 'invalid name' : null,
-      ),
-    );
-  }
-}
+// class _NameInput extends StatelessWidget {
+//   @override
+//   Widget build(BuildContext context) {
+//     return BlocBuilder<SignUpBloc, SignUpState>(
+//       buildWhen: (previous, current) => previous.name != current.name,
+//       builder: (ctx, state) => InputTextField(
+//         hintText: 'Full Name',
+//         onChanged: (name) {
+//           context.read<SignUpBloc>().add(SignUpNameChanged(name));
+//         },
+//         errorText: state.name.displayError != null ? 'invalid name' : null,
+//       ),
+//     );
+//   }
+// }
