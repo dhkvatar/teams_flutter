@@ -119,7 +119,7 @@ class FakeChatRepository implements ChatRepository, Disposable {
     final List<Chat> userChats =
         _chats.values.where((chat) => chat.userIds.contains(userId)).toList();
     if (userChats.isEmpty) {
-      throw const ChatException(type: ChatExceptionType.userNotFound);
+      return [];
     }
 
     // Filter by group or direct message chats.
@@ -157,7 +157,8 @@ class FakeChatRepository implements ChatRepository, Disposable {
     final chatMessages =
         _messages.values.where((message) => message.chatId == chatId).toList();
     if (chatMessages.isEmpty) {
-      throw const ChatException(type: ChatExceptionType.chatNotFound);
+      // throw const ChatException(type: ChatExceptionType.chatNotFound);
+      return [];
     }
 
     // Filter by beforeDateTime
