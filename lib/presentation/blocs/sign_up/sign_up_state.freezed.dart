@@ -16,14 +16,20 @@ final _privateConstructorUsedError = UnsupportedError(
 
 /// @nodoc
 mixin _$SignUpState {
-  Name get name => throw _privateConstructorUsedError;
-  Phone get phone => throw _privateConstructorUsedError;
-  Email get email => throw _privateConstructorUsedError;
-  Password get password => throw _privateConstructorUsedError;
-  Password get confirmPassword => throw _privateConstructorUsedError;
+// Full name input.
+// @Default(Name.pure()) Name name,
+// Phone number input.
+// @Default(Phone.pure()) Phone phone,
+// Email input.
+  Email get email => throw _privateConstructorUsedError; // Password input.
+  Password get password =>
+      throw _privateConstructorUsedError; // Confirm password input.
+  Password get confirmPassword =>
+      throw _privateConstructorUsedError; // Form submission status.
   FormzSubmissionStatus get formzSubmissionStatus =>
-      throw _privateConstructorUsedError;
-  bool get isValid => throw _privateConstructorUsedError;
+      throw _privateConstructorUsedError; // Whether the state is valid for submission.
+  bool get isValid =>
+      throw _privateConstructorUsedError; // Error message to display.
   String? get errorMessage => throw _privateConstructorUsedError;
 
   @JsonKey(ignore: true)
@@ -38,9 +44,7 @@ abstract class $SignUpStateCopyWith<$Res> {
       _$SignUpStateCopyWithImpl<$Res, SignUpState>;
   @useResult
   $Res call(
-      {Name name,
-      Phone phone,
-      Email email,
+      {Email email,
       Password password,
       Password confirmPassword,
       FormzSubmissionStatus formzSubmissionStatus,
@@ -61,8 +65,6 @@ class _$SignUpStateCopyWithImpl<$Res, $Val extends SignUpState>
   @pragma('vm:prefer-inline')
   @override
   $Res call({
-    Object? name = null,
-    Object? phone = null,
     Object? email = null,
     Object? password = null,
     Object? confirmPassword = null,
@@ -71,14 +73,6 @@ class _$SignUpStateCopyWithImpl<$Res, $Val extends SignUpState>
     Object? errorMessage = freezed,
   }) {
     return _then(_value.copyWith(
-      name: null == name
-          ? _value.name
-          : name // ignore: cast_nullable_to_non_nullable
-              as Name,
-      phone: null == phone
-          ? _value.phone
-          : phone // ignore: cast_nullable_to_non_nullable
-              as Phone,
       email: null == email
           ? _value.email
           : email // ignore: cast_nullable_to_non_nullable
@@ -116,9 +110,7 @@ abstract class _$$SignUpStateImplCopyWith<$Res>
   @override
   @useResult
   $Res call(
-      {Name name,
-      Phone phone,
-      Email email,
+      {Email email,
       Password password,
       Password confirmPassword,
       FormzSubmissionStatus formzSubmissionStatus,
@@ -137,8 +129,6 @@ class __$$SignUpStateImplCopyWithImpl<$Res>
   @pragma('vm:prefer-inline')
   @override
   $Res call({
-    Object? name = null,
-    Object? phone = null,
     Object? email = null,
     Object? password = null,
     Object? confirmPassword = null,
@@ -147,14 +137,6 @@ class __$$SignUpStateImplCopyWithImpl<$Res>
     Object? errorMessage = freezed,
   }) {
     return _then(_$SignUpStateImpl(
-      name: null == name
-          ? _value.name
-          : name // ignore: cast_nullable_to_non_nullable
-              as Name,
-      phone: null == phone
-          ? _value.phone
-          : phone // ignore: cast_nullable_to_non_nullable
-              as Phone,
       email: null == email
           ? _value.email
           : email // ignore: cast_nullable_to_non_nullable
@@ -187,42 +169,44 @@ class __$$SignUpStateImplCopyWithImpl<$Res>
 
 class _$SignUpStateImpl implements _SignUpState {
   const _$SignUpStateImpl(
-      {this.name = const Name.pure(),
-      this.phone = const Phone.pure(),
-      this.email = const Email.pure(),
+      {this.email = const Email.pure(),
       this.password = const Password.pure(),
       this.confirmPassword = const Password.pure(),
       this.formzSubmissionStatus = FormzSubmissionStatus.initial,
       this.isValid = false,
       this.errorMessage});
 
-  @override
-  @JsonKey()
-  final Name name;
-  @override
-  @JsonKey()
-  final Phone phone;
+// Full name input.
+// @Default(Name.pure()) Name name,
+// Phone number input.
+// @Default(Phone.pure()) Phone phone,
+// Email input.
   @override
   @JsonKey()
   final Email email;
+// Password input.
   @override
   @JsonKey()
   final Password password;
+// Confirm password input.
   @override
   @JsonKey()
   final Password confirmPassword;
+// Form submission status.
   @override
   @JsonKey()
   final FormzSubmissionStatus formzSubmissionStatus;
+// Whether the state is valid for submission.
   @override
   @JsonKey()
   final bool isValid;
+// Error message to display.
   @override
   final String? errorMessage;
 
   @override
   String toString() {
-    return 'SignUpState(name: $name, phone: $phone, email: $email, password: $password, confirmPassword: $confirmPassword, formzSubmissionStatus: $formzSubmissionStatus, isValid: $isValid, errorMessage: $errorMessage)';
+    return 'SignUpState(email: $email, password: $password, confirmPassword: $confirmPassword, formzSubmissionStatus: $formzSubmissionStatus, isValid: $isValid, errorMessage: $errorMessage)';
   }
 
   @override
@@ -230,8 +214,6 @@ class _$SignUpStateImpl implements _SignUpState {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
             other is _$SignUpStateImpl &&
-            (identical(other.name, name) || other.name == name) &&
-            (identical(other.phone, phone) || other.phone == phone) &&
             (identical(other.email, email) || other.email == email) &&
             (identical(other.password, password) ||
                 other.password == password) &&
@@ -245,8 +227,8 @@ class _$SignUpStateImpl implements _SignUpState {
   }
 
   @override
-  int get hashCode => Object.hash(runtimeType, name, phone, email, password,
-      confirmPassword, formzSubmissionStatus, isValid, errorMessage);
+  int get hashCode => Object.hash(runtimeType, email, password, confirmPassword,
+      formzSubmissionStatus, isValid, errorMessage);
 
   @JsonKey(ignore: true)
   @override
@@ -257,30 +239,28 @@ class _$SignUpStateImpl implements _SignUpState {
 
 abstract class _SignUpState implements SignUpState {
   const factory _SignUpState(
-      {final Name name,
-      final Phone phone,
-      final Email email,
+      {final Email email,
       final Password password,
       final Password confirmPassword,
       final FormzSubmissionStatus formzSubmissionStatus,
       final bool isValid,
       final String? errorMessage}) = _$SignUpStateImpl;
 
-  @override
-  Name get name;
-  @override
-  Phone get phone;
-  @override
+  @override // Full name input.
+// @Default(Name.pure()) Name name,
+// Phone number input.
+// @Default(Phone.pure()) Phone phone,
+// Email input.
   Email get email;
-  @override
+  @override // Password input.
   Password get password;
-  @override
+  @override // Confirm password input.
   Password get confirmPassword;
-  @override
+  @override // Form submission status.
   FormzSubmissionStatus get formzSubmissionStatus;
-  @override
+  @override // Whether the state is valid for submission.
   bool get isValid;
-  @override
+  @override // Error message to display.
   String? get errorMessage;
   @override
   @JsonKey(ignore: true)
