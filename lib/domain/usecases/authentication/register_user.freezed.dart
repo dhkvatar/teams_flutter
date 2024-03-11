@@ -17,7 +17,6 @@ final _privateConstructorUsedError = UnsupportedError(
 /// @nodoc
 mixin _$RegisterUserParams {
   String get email => throw _privateConstructorUsedError;
-  String get phone => throw _privateConstructorUsedError;
   String get password => throw _privateConstructorUsedError;
 
   @JsonKey(ignore: true)
@@ -31,7 +30,7 @@ abstract class $RegisterUserParamsCopyWith<$Res> {
           RegisterUserParams value, $Res Function(RegisterUserParams) then) =
       _$RegisterUserParamsCopyWithImpl<$Res, RegisterUserParams>;
   @useResult
-  $Res call({String email, String phone, String password});
+  $Res call({String email, String password});
 }
 
 /// @nodoc
@@ -48,17 +47,12 @@ class _$RegisterUserParamsCopyWithImpl<$Res, $Val extends RegisterUserParams>
   @override
   $Res call({
     Object? email = null,
-    Object? phone = null,
     Object? password = null,
   }) {
     return _then(_value.copyWith(
       email: null == email
           ? _value.email
           : email // ignore: cast_nullable_to_non_nullable
-              as String,
-      phone: null == phone
-          ? _value.phone
-          : phone // ignore: cast_nullable_to_non_nullable
               as String,
       password: null == password
           ? _value.password
@@ -76,7 +70,7 @@ abstract class _$$RegisterUserParamsImplCopyWith<$Res>
       __$$RegisterUserParamsImplCopyWithImpl<$Res>;
   @override
   @useResult
-  $Res call({String email, String phone, String password});
+  $Res call({String email, String password});
 }
 
 /// @nodoc
@@ -91,17 +85,12 @@ class __$$RegisterUserParamsImplCopyWithImpl<$Res>
   @override
   $Res call({
     Object? email = null,
-    Object? phone = null,
     Object? password = null,
   }) {
     return _then(_$RegisterUserParamsImpl(
       email: null == email
           ? _value.email
           : email // ignore: cast_nullable_to_non_nullable
-              as String,
-      phone: null == phone
-          ? _value.phone
-          : phone // ignore: cast_nullable_to_non_nullable
               as String,
       password: null == password
           ? _value.password
@@ -114,19 +103,16 @@ class __$$RegisterUserParamsImplCopyWithImpl<$Res>
 /// @nodoc
 
 class _$RegisterUserParamsImpl implements _RegisterUserParams {
-  const _$RegisterUserParamsImpl(
-      {required this.email, required this.phone, required this.password});
+  const _$RegisterUserParamsImpl({required this.email, required this.password});
 
   @override
   final String email;
-  @override
-  final String phone;
   @override
   final String password;
 
   @override
   String toString() {
-    return 'RegisterUserParams(email: $email, phone: $phone, password: $password)';
+    return 'RegisterUserParams(email: $email, password: $password)';
   }
 
   @override
@@ -135,13 +121,12 @@ class _$RegisterUserParamsImpl implements _RegisterUserParams {
         (other.runtimeType == runtimeType &&
             other is _$RegisterUserParamsImpl &&
             (identical(other.email, email) || other.email == email) &&
-            (identical(other.phone, phone) || other.phone == phone) &&
             (identical(other.password, password) ||
                 other.password == password));
   }
 
   @override
-  int get hashCode => Object.hash(runtimeType, email, phone, password);
+  int get hashCode => Object.hash(runtimeType, email, password);
 
   @JsonKey(ignore: true)
   @override
@@ -154,13 +139,10 @@ class _$RegisterUserParamsImpl implements _RegisterUserParams {
 abstract class _RegisterUserParams implements RegisterUserParams {
   const factory _RegisterUserParams(
       {required final String email,
-      required final String phone,
       required final String password}) = _$RegisterUserParamsImpl;
 
   @override
   String get email;
-  @override
-  String get phone;
   @override
   String get password;
   @override

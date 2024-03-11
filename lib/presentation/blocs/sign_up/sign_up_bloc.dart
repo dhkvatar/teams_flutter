@@ -1,8 +1,10 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:formz/formz.dart';
 import 'package:injectable/injectable.dart';
+import 'package:teams/app/di/di.dart';
 import 'package:teams/core/forms/email.dart';
 import 'package:teams/core/forms/password.dart';
+import 'package:teams/domain/usecases/authentication/register_user.dart';
 import 'package:teams/presentation/blocs/sign_up/sign_up_event.dart';
 import 'package:teams/presentation/blocs/sign_up/sign_up_state.dart';
 
@@ -61,7 +63,11 @@ class SignUpBloc extends Bloc<SignUpEvent, SignUpState> {
       emit(state.copyWith(
           formzSubmissionStatus: FormzSubmissionStatus.inProgress));
       try {
-        await Future.delayed(const Duration(seconds: 1));
+        // await Future.delayed(const Duration(seconds: 1));
+        await getIt<RegisterUser>()(RegisterUserParams(
+          email: state.email.value,
+          password: state.password.value,
+        ));
         emit(state.copyWith(
             formzSubmissionStatus: FormzSubmissionStatus.success));
       } catch (_) {

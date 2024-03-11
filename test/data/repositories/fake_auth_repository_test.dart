@@ -18,7 +18,7 @@ void main() {
       expect(
         () async {
           await fakeAuthRepository.signUp(
-              email: user2.email!, phone: user2.phone!, password: password2);
+              email: user2.email!, password: password2);
         },
         throwsA(predicate((e) =>
             e is AuthException && e.type == AuthExceptionType.alreadyLoggedIn)),
@@ -32,7 +32,7 @@ void main() {
       expect(
         () async {
           await fakeAuthRepository.signUp(
-              email: user1.email!, phone: user1.phone!, password: password2);
+              email: user1.email!, password: password2);
         },
         throwsA(predicate((e) =>
             e is AuthException && e.type == AuthExceptionType.emailExists)),
@@ -42,7 +42,7 @@ void main() {
     test('new user', () async {
       final fakeAuthRepository = FakeAuthRepository();
       final newUser = await fakeAuthRepository.signUp(
-          email: user1.email!, phone: user1.phone!, password: password1);
+          email: user1.email!, password: password1);
       // We don't know the uid that's generated, just check email matches.
       expect(newUser.email, user1.email);
       await fakeAuthRepository.onDispose();

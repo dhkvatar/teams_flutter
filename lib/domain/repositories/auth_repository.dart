@@ -15,8 +15,7 @@ abstract class AuthRepository {
   Stream<User?> get user;
 
   /// Register a user.
-  Future<User> signUp(
-      {required String email, required String phone, required String password});
+  Future<User> signUp({required String email, required String password});
 
   /// The currently authenticated user.
   User? get currentUser;

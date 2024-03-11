@@ -74,10 +74,7 @@ class FakeAuthRepository implements AuthRepository, Disposable {
   }
 
   @override
-  Future<User> signUp(
-      {required String email,
-      required String phone,
-      required String password}) async {
+  Future<User> signUp({required String email, required String password}) async {
     if (_currentUser != null) {
       throw const AuthException(type: AuthExceptionType.alreadyLoggedIn);
     }
